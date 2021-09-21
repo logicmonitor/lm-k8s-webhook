@@ -1,0 +1,18 @@
+{{- if .Values.enableRBAC -}}
+apiVersion: {{ template "rbac.apiVersion" . }}
+kind: ClusterRole
+metadata:
+  name: {{ template "lm-webhook.name" . }}-role
+{{- if .Values.labels}}
+  labels:
+{{ toYaml .Values.labels| indent 4 }}
+{{- end }}
+{{- if .Values.annotations }}
+  annotations:
+{{ toYaml .Values.annotations | indent 4 }}
+{{- end }}
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list", "patch", "update"]
+{{- end -}}

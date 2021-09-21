@@ -1,0 +1,88 @@
+# Default values for lm-webhook.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+
+# mandatory
+cluster_name: ""
+
+replicaCount: 1
+
+mutatingWebhook:
+  annotations: {}
+  failurePolicy: Ignore  # Posssible values Fail, Ignore
+  timeoutSeconds: 30   # Max 30 sec
+  objectSelector: {}
+  namespaceSelector: {}
+
+lmconfig: {}
+
+loglevel: ""
+
+# Enable RBAC. If your cluster does not have RBAC enabled, this value should be set to false.
+enableRBAC: true
+
+image:
+  # The image respository of the [lm-webhook](https://hub.docker.com/r/logicmonitor/lm-webhook) container.
+  repository: docker-registry.logicmonitor.net/development/lm-webhook
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: test
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+labels: {}
+
+# annotations to be applied on all the objects created by webhook
+annotations: {}
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  name: lm-webhook-svc
+  port: 443
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 1
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

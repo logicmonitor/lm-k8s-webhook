@@ -1,0 +1,2 @@
+1. View the logs for lm-webhook by running this command:
+kubectl logs -f $(kubectl get pods --namespace={{ .Release.Namespace }} -o name) -n {{ .Release.Namespace }}
