@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "lm-webhook.name" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ include "lm-webhook.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ include "lm-webhook.chart" . }}
+{{- if .Values.labels}}
+{{ toYaml .Values.labels| indent 4 }}
+{{- end }}
+
+data:
+  cluster_name: {{ required "A valid .Values.cluster_name entry is required!" .Values.cluster_name }}
+{{- if .Values.lmconfig }}   
+  lmconfig.yaml: |
+{{ .Values.lmconfig | indent 4 }}
+{{- end }}

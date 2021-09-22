@@ -1,0 +1,22 @@
+{{- if .Values.enableRBAC -}}
+apiVersion: {{ template "rbac.apiVersion" . }}
+kind: ClusterRoleBinding
+metadata:
+  name: {{ template "lm-webhook.name" . }}-rolebinding
+{{- if .Values.labels}}
+  labels:
+{{ toYaml .Values.labels| indent 4 }}
+{{- end }}
+{{- if .Values.annotations }}
+  annotations:
+{{ toYaml .Values.annotations | indent 4 }}
+{{- end }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ template "lm-webhook.name" . }}-role
+subjects:
+- kind: ServiceAccount
+  name: {{ template "lm-webhook.name" . }}
+  namespace: {{ .Release.Namespace }}
+{{- end -}}
