@@ -139,7 +139,9 @@ lmEnvVars:
     - name: COMPANY_NAME
       value: ABC Corporation
     - name: OTLP_ENDPOINT
-      value: lmotel-svc.logicmonitor.svc.cluster.local:55680
+      value: lmotel-svc:55680
+    - name: OTEL_JAVAAGENT_ENABLED
+      value: true
 ```
 
 environment variables can be of two types, i.e. resource and operation
