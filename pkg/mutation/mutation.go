@@ -174,6 +174,8 @@ func MutatePod(pod *corev1.Pod, lmconfig *config.Config, k8sClient client.Client
 			workloadResource, _ := getParentWorkloadNameForPod(pod, k8sClient, namespace)
 			svcNameEnv := corev1.EnvVar{Name: ServiceName, Value: workloadResource}
 			newEnvVars = append(newEnvVars, svcNameEnv)
+			// Add it to the OTELResourceAttributes
+			newEnvVars, otelResourceAttributesIndex = addResEnvToOtelResAttribute(svcNameEnv, newEnvVars)
 		}
 
 		// Check if OTEL_RESOURCE_ATTRIBUTES is not the last element already, then no need to move it
