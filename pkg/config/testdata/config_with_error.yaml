@@ -1,6 +1,6 @@
 lmEnvVars:
   resource:
-    - name: SERVICE_ACCOUNT_NAME
+    name: SERVICE_ACCOUNT_NAME
       valueFrom:
         fieldRef:
           fieldPath: spec.serviceAccountName
@@ -19,4 +19,3 @@ lmEnvVars:
       value: lmotel-svc:4317
     - name: OTEL_JAVAAGENT_ENABLED
       value: true
-      

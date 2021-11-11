@@ -9,25 +9,32 @@ cluster_name: ""
 replicaCount: 1
 
 mutatingWebhook:
+  enabled: true
   annotations: {}
   failurePolicy: Ignore  # Posssible values Fail, Ignore
   timeoutSeconds: 30   # Max 30 sec
   objectSelector: {}
   namespaceSelector: {}
+  caBundle: ""
+  tlsCertSecretName: ""
+  certManager:
+    enabled: true
+    issuerRef: {}
 
 lmconfig: {}
 
-loglevel: ""
+loglevel: debug # Possible values debug, info, error
 
 # Enable RBAC. If your cluster does not have RBAC enabled, this value should be set to false.
 enableRBAC: true
 
 image:
   # The image respository of the [lm-webhook](https://hub.docker.com/r/logicmonitor/lm-webhook) container.
-  repository: docker-registry.logicmonitor.net/development/lm-webhook
+  # repository: docker-registry.logicmonitor.net/development/lm-webhook
+  repository: avadhutp123/lm-webhook
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: test
+  tag: dev
 
 imagePullSecrets: []
 nameOverride: ""

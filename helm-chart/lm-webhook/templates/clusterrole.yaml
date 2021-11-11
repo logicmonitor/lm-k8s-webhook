@@ -15,4 +15,12 @@ rules:
 - apiGroups: [""]
   resources: ["pods"]
   verbs: ["get", "list", "patch", "update"]
+
+- apiGroups: ["apps"]
+  resources: ["daemonsets", "replicasets", "statefulsets"]
+  verbs: ["get", "list", "watch"]
+
+- apiGroups: ["batch"]
+  resources: ["jobs"]
+  verbs: ["get", "list", "watch"]
 {{- end -}}

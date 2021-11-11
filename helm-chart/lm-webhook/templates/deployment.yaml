@@ -53,6 +53,7 @@ spec:
             - "--health-probe-bind-address=:3333"
             - "--webhook-cert-dir=/etc/lmwebhook/certs"
             - "--lmconfig-file-path=/etc/lmwebhook/config/lmconfig.yaml"
+            - "--zap-log-level={{ .Values.loglevel }}"
           env:
             - name: CLUSTER_NAME
               valueFrom:
@@ -76,7 +77,11 @@ spec:
       volumes:
         - name: {{ template "lm-webhook.name" . }}-tls-certs
           secret:
+            {{- if and (eq .Values.mutatingWebhook.certManager.enabled false) (.Values.mutatingWebhook.tlsCertSecretName) }}
+            secretName: {{ .Values.mutatingWebhook.tlsCertSecretName }}
+            {{- else }}
             secretName: {{ template "lm-webhook.name" . }}-tls-cert
+            {{- end }}
 
       {{- if .Values.lmconfig }}
         - name: {{ template "lm-webhook.name" . }}-lmconfig
