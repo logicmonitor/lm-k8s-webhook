@@ -15,14 +15,51 @@ helm-chart which is provided in this repo, installs the lm-webhook in the Kubern
 
 ## Prerequisites:
 
-* Kubernetes cluster
-* Helm is required for the deployment of lm-webhook witn helm-chart  
+* Kubernetes: Please refer [Kubernetes admission webhook prerequisites](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#prerequisites)
+* Helm 3.0+ is required for the deployment of lm-webhook with helm-chart  
+
+### TLS Certificate Requirement:
 
 In Kubernetes, in order for the API server to communicate with the webhook component, the webhook requires a TLS certificate that the API server is configured to trust.
+There are three ways for you to generate the required TLS certificate.
 
-- #### TLS certificate management using cert-manager:
-    You can refer to [cert-manager installation](https://cert-manager.io/docs/installation/) for TLS the certificate setup using cert-manager
+   - The easiest and default method is to install the [cert-manager](https://cert-manager.io/docs/installation/). With this, cert-manager will generate a self-signed certificate. 
+   - Second way is to provide your own issuer by configuring the `mutatingWebhook.certManager.issuerRef` value. You need to spcify the kind (Issuer or ClusterIssuer) and the name. This method also requires cert-manager
+   - Last way is to manually create the tls secret in the same namespace where lm-webhook will be deployed. In this case, you need to set `mutatingWebhook.certManager.enabled` to false.
+     
+     - Create the namespace for the lm-webhook if not exists 
+       ```
+       kubectl create namespace lm-webhook
+       ```
 
+     - Create the tls secret in the created namespace
+       ```
+        kubectl create secret tls lm-webhook-tls-cert \
+          --cert=path/to/cert/file \
+          --key=path/to/key/file \
+          -n lm-webhook
+       ```
+
+       or you can also create tls secret by applying the following secret configuration
+      
+        ```
+          kubectl apply -f - <<EOF
+          apiVersion: v1
+          kind: Secret
+          metadata:
+            name: lm-webhook-tls-cert
+            namespace: lm-webhook
+          type: kubernetes.io/tls
+          data:
+            tls.crt: |
+              # your signed cert
+            tls.key: |
+              # your private key
+          EOF
+        ```
+      - Set the base64 encoded value of CA trust chain to the `mutatingWebhook.caBundle`, which will be used by the api-server to validate the tls certificates. 
+
+        **Note:** Default tls secret name used in lm-webhook is lm-webhook-tls-cert. If you are using different name, then you need to pass it by configuring the value of the `mutatingWebhook.tlsCertSecretName`
 -----
 ## Using Selectors
 
@@ -82,34 +119,77 @@ namespaceSelector:
 -----
 ## Deploying the lm-webhook helm-chart
 
-You can refer the following demo command for deploying the lm-webhook with the helm-chart.
+You can refer the following demo commands for deploying the lm-webhook with the helm-chart.
 Run following command in the bash terminal from the helm-chart/lm-webhook directory.
 
-```
-helm install --debug --wait -n lm-webhook \
---create-namespace \
---set cluster_name="default" \
---set mutatingWebhook.objectSelector.matchLabels.tier="backend" \
---set mutatingWebhook.objectSelector.matchExpressions[0].key="type" \
---set mutatingWebhook.objectSelector.matchExpressions[0].operator="In" \
---set mutatingWebhook.objectSelector.matchExpressions[0].values[0]=application \
---set mutatingWebhook.objectSelector.matchExpressions[0].values[1]=service \
---set mutatingWebhook.namespaceSelector.matchExpressions[0].key="environment" \
---set mutatingWebhook.namespaceSelector.matchExpressions[0].operator="In" \
---set mutatingWebhook.namespaceSelector.matchExpressions[0].values[0]="dev" \
---set-file lmconfig=<path_to_external_config> \
-lm-webhook .
-```
+- Using default tls certificate handling (using cert-manager)
+    ```
+    helm install --debug --wait -n lm-webhook \
+    --create-namespace \
+    --set cluster_name="default" \
+    --set mutatingWebhook.objectSelector.matchLabels.tier="backend" \
+    --set mutatingWebhook.objectSelector.matchExpressions[0].key="type" \
+    --set mutatingWebhook.objectSelector.matchExpressions[0].operator="In" \
+    --set mutatingWebhook.objectSelector.matchExpressions[0].values[0]=application \
+    --set mutatingWebhook.objectSelector.matchExpressions[0].values[1]=service \
+    --set mutatingWebhook.namespaceSelector.matchExpressions[0].key="environment" \
+    --set mutatingWebhook.namespaceSelector.matchExpressions[0].operator="In" \
+    --set mutatingWebhook.namespaceSelector.matchExpressions[0].values[0]="dev" \
+    --set-file lmconfig=<path_to_external_config> \
+    lm-webhook .
+    ```
+
+- Using custom issuer other than self-signed issuer
+    ```
+    helm install --debug --wait -n lm-webhook \
+    --create-namespace \
+    --set cluster_name="default" \
+    --set mutatingWebhook.objectSelector.matchLabels.tier="backend" \
+    --set mutatingWebhook.objectSelector.matchExpressions[0].key="type" \
+    --set mutatingWebhook.objectSelector.matchExpressions[0].operator="In" \
+    --set mutatingWebhook.objectSelector.matchExpressions[0].values[0]=application \
+    --set mutatingWebhook.objectSelector.matchExpressions[0].values[1]=service \
+    --set mutatingWebhook.namespaceSelector.matchExpressions[0].key="environment" \
+    --set mutatingWebhook.namespaceSelector.matchExpressions[0].operator="In" \
+    --set mutatingWebhook.namespaceSelector.matchExpressions[0].values[0]="dev" \
+    --set mutatingWebhook.certManager.issuerRef.name=private-ca-issuer \
+    --set-file lmconfig=<path_to_external_config> \
+    lm-webhook .
+    ```
+
+- Using your own tls certificates
+    ```
+    helm install --debug --wait -n lm-webhook \
+    --create-namespace \
+    --set cluster_name="default" \
+    --set mutatingWebhook.objectSelector.matchLabels.tier="backend" \
+    --set mutatingWebhook.objectSelector.matchExpressions[0].key="type" \
+    --set mutatingWebhook.objectSelector.matchExpressions[0].operator="In" \
+    --set mutatingWebhook.objectSelector.matchExpressions[0].values[0]=application \
+    --set mutatingWebhook.objectSelector.matchExpressions[0].values[1]=service \
+    --set mutatingWebhook.namespaceSelector.matchExpressions[0].key="environment" \
+    --set mutatingWebhook.namespaceSelector.matchExpressions[0].operator="In" \
+    --set mutatingWebhook.namespaceSelector.matchExpressions[0].values[0]="dev" \
+    --set mutatingWebhook.certManager.enabled=false \
+    --set mutatingWebhook.caBundle=$(base64 /tmp/cert/ca.pem) \
+    --set-file lmconfig=<path_to_external_config> \
+    lm-webhook .
+    ```
+  
 
 #### Required Values:
 
 - **cluster_name (default: ""):** Name of the k8s cluster in which lm-webhook will be deployed.
+- **mutatingWebhook.caBundle (default: ""):** Base64 encoded value of CA trust chain. Required if `mutatingWebhook.certManager.enabled` is set to false.
 
 #### Optional Values:
 
-- **mutatingWebhook.objectSelector (default: ""):** specifies the label based selectors for the objects (pod) for which the requests are required to be intercepted
+- **mutatingWebhook.objectSelector (default: ""):** specifies the label based selectors for the objects (pod) for which the requests are required to be intercepted.
 - **mutatingWebhook.namespaceSelector (default: ""):** specifies the label based selectors for the namespaces.
-- **lmconfig (default: ""):** specifies the external config file path
+- **lmconfig (default: ""):** specifies the external config file path.
+- **mutatingWebhook.tlsCertSecretName (default: ""):** tls secret name.
+- **mutatingWebhook.certManager.issuerRef (default: ""):** custom issuer other than self-signed issuer.
+- **loglevel (default: "debug"):** sets log level. Possible values are debug, info, error
 
 Selectors used in the above example command states that, only the object (pod) creation requests with the object (pod) having lables as tier="backend" and type=["application" or "service"] 
 which belong to the namespaces having label as environment=["dev" or "staging"] will be intercepted by the lm-webhook.
@@ -139,7 +219,7 @@ lmEnvVars:
     - name: COMPANY_NAME
       value: ABC Corporation
     - name: OTLP_ENDPOINT
-      value: lmotel-svc:55680
+      value: lmotel-svc:4317
     - name: OTEL_JAVAAGENT_ENABLED
       value: true
 ```

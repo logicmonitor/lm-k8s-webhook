@@ -1,4 +1,4 @@
-apiVersion: admissionregistration.k8s.io/v1
+apiVersion: {{ template "admissionregistration.apiVersion" . }}
 kind: MutatingWebhookConfiguration
 metadata:
   name: {{ template "lm-webhook.name" . }}-mutating-webhook-configuration
@@ -30,6 +30,9 @@ webhooks:
 {{- end }}
 
     clientConfig:
+{{- if eq .Values.mutatingWebhook.certManager.enabled false }}
+      caBundle: {{ required ".Values.mutatingWebhook.caBundle is required because certManager is disabled" .Values.mutatingWebhook.caBundle }}
+{{- end }}
       service:
         name: {{ .Values.service.name }}
         namespace: {{ .Release.Namespace }}

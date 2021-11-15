@@ -71,3 +71,14 @@ Return the appropriate apiVersion for rbac.
 {{- print "rbac.authorization.k8s.io/v1beta1" -}}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Return the appropriate apiVersion for admissionregistration.
+*/}}
+{{- define "admissionregistration.apiVersion" -}}
+{{- if .Capabilities.APIVersions.Has "admissionregistration.k8s.io/v1" }}
+{{- print "admissionregistration.k8s.io/v1" -}}
+{{- else -}}
+{{- print "admissionregistration.k8s.io/v1beta1" -}}
+{{- end -}}
+{{- end -}}

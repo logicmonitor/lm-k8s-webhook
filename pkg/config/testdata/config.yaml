@@ -19,4 +19,3 @@ lmEnvVars:
       value: lmotel-svc:4317
     - name: OTEL_JAVAAGENT_ENABLED
       value: true
-      

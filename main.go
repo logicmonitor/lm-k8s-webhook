@@ -2,10 +2,11 @@ package main
 
 import (
 	"flag"
-	lmconfig "lm-webhook/pkg/config"
-	"lm-webhook/pkg/handler"
 	"os"
 	"strconv"
+
+	lmconfig "github.com/logicmonitor/lm-k8s-webhook/pkg/config"
+	"github.com/logicmonitor/lm-k8s-webhook/pkg/handler"
 
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 
@@ -14,6 +15,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
+	"k8s.io/client-go/rest"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client/config"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
@@ -42,6 +44,7 @@ func main() {
 	var webhookCertDir string
 	var probeAddr string
 	var lmconfigFilePath string
+	var k8sRestConfig *rest.Config
 
 	flag.StringVar(&metricAddr, "metrics-bind-address", ":8080", "The address the metric endpoint binds to.")
 	flag.StringVar(&webhookPort, "webhook-bind-port", "9443", "The port webhook will listen on.")
@@ -50,7 +53,7 @@ func main() {
 	flag.StringVar(&lmconfigFilePath, "lmconfig-file-path", "/etc/lmwebhook/config/lmconfig.yaml", "File path of lmconfig")
 
 	opts := zap.Options{
-		Development: true,
+		// Development: true,
 	}
 	opts.BindFlags(flag.CommandLine)
 	flag.Parse()
@@ -86,7 +89,8 @@ func main() {
 		HealthProbeBindAddress: probeAddr,
 	}
 
-	mgr, err := manager.New(config.GetConfigOrDie(), mgrOptions)
+	k8sRestConfig = config.GetConfigOrDie()
+	mgr, err := manager.New(k8sRestConfig, mgrOptions)
 
 	if err != nil {
 		setupLog.Error(err, "unable to set up overall LM webhook")
@@ -100,8 +104,14 @@ func main() {
 	lmWebhookServer.CertName = webhookCertName
 	lmWebhookServer.KeyName = webhookKeyName
 
+	k8sClient, err := lmconfig.NewK8sClient(k8sRestConfig, lmconfig.NewK8sClientSet)
+	if err != nil {
+		setupLog.Error(err, "error in getting k8s client")
+		os.Exit(1)
+	}
+
 	setupLog.Info("registering webhooks to the webhook server")
-	lmWebhookServer.Register("/mutate", &webhook.Admission{Handler: &handler.LMPodMutator{Client: mgr.GetClient(), Log: ctrl.Log.WithName("lm-podmutator-webhook"), LMConfig: cfg}})
+	lmWebhookServer.Register("/mutate", &webhook.Admission{Handler: &handler.LMPodMutationHandler{Client: k8sClient, Log: ctrl.Log.WithName("lm-podmutator-webhook"), LMConfig: cfg}})
 
 	if err := mgr.AddHealthzCheck("health", healthz.Ping); err != nil {
 		setupLog.Error(err, "unable to set up health check")

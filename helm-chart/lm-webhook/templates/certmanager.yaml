@@ -1,4 +1,4 @@
-
+{{- if and .Values.mutatingWebhook.enabled .Values.mutatingWebhook.certManager.enabled }}
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
@@ -9,8 +9,15 @@ spec:
     - {{ .Values.service.name }}.{{ .Release.Namespace }}.svc
     - {{ .Values.service.name }}.{{ .Release.Namespace }}.svc.cluster.local
   issuerRef:
+    {{- if .Values.mutatingWebhook.certManager.issuerRef }}
+    {{- toYaml .Values.mutatingWebhook.certManager.issuerRef | nindent 4 }}
+    {{- else }}
+    kind: Issuer
     name: {{ template "lm-webhook.name" . }}-selfsigned-issuer
+    {{- end }}
   secretName: {{ template "lm-webhook.name" . }}-tls-cert
+
+{{- if not .Values.mutatingWebhook.certManager.issuerRef }}
 ---
 apiVersion: cert-manager.io/v1
 kind: Issuer
@@ -19,3 +26,5 @@ metadata:
   namespace: {{ .Release.Namespace }}
 spec:
   selfSigned: {}
+{{- end }}
+{{- end }}
