@@ -30,11 +30,10 @@ enableRBAC: true
 
 image:
   # The image respository of the [lm-webhook](https://hub.docker.com/r/logicmonitor/lm-webhook) container.
-  # repository: docker-registry.logicmonitor.net/development/lm-webhook
-  repository: avadhutp123/lm-webhook
+  repository: docker-registry.logicmonitor.net/development/lm-webhook
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: dev
+  tag: test
 
 imagePullSecrets: []
 nameOverride: ""

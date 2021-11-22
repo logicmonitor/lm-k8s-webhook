@@ -29,14 +29,14 @@ func mutateEnvVariables(ctx context.Context, params *Params) error {
 	newEnvVars := getLmotelEnvironmentVariables()
 
 	// If external config is provided then only perform this operation
-	if params.LMConfig != nil {
+	if params.LMConfig.MutationConfigProvided {
 		logger.Info("As external config present, checking for new env vars")
 		var isEnvVarToBeSkipped bool
 		var isServiceNamespaceEnvFound bool
 
 		otelResourceAttributesIndex = len(newEnvVars) - 1
 
-		for _, resourceEnvVar := range params.LMConfig.LMEnvVars.Resource {
+		for _, resourceEnvVar := range params.LMConfig.MutationConfig.LMEnvVars.Resource {
 			isEnvVarToBeSkipped = false
 			isServiceNamespaceEnvFound = false
 			// Check if resourceEnvVar is a part of skipList, if present in skip list then skip that env variable
@@ -112,7 +112,7 @@ func mutateEnvVariables(ctx context.Context, params *Params) error {
 			}
 		}
 
-		for _, operationEnvVar := range params.LMConfig.LMEnvVars.Operation {
+		for _, operationEnvVar := range params.LMConfig.MutationConfig.LMEnvVars.Operation {
 			isEnvVarToBeSkipped = false
 			// Check if operationEnvVar is a part of skipList, if present in skip list then skip that env variable
 			for _, skipListEnvvar := range skipList {
@@ -169,6 +169,7 @@ func mutateEnvVariables(ctx context.Context, params *Params) error {
 	}
 
 	for i, ctr := range params.Pod.Spec.Containers {
+		// TODO: Mutate only the specific container
 		envVars, err := mergeNewEnv(ctr.Env, newEnvVars)
 		if err != nil {
 			return err

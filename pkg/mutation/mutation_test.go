@@ -62,7 +62,7 @@ func TestMutatePod(t *testing.T) {
 			}{
 				params: &Params{
 					Client:    k8sClient,
-					LMConfig:  nil,
+					LMConfig:  config.Config{},
 					Log:       logger,
 					Namespace: "default",
 					Pod: &corev1.Pod{
@@ -146,38 +146,41 @@ func TestMutatePod(t *testing.T) {
 				params: &Params{
 					Client: k8sClient,
 					Log:    logger,
-					LMConfig: &config.Config{
-						LMEnvVars: config.LMEnvVars{
-							Resource: []corev1.EnvVar{
-								{
-									Name: "SERVICE_NAMESPACE",
-									ValueFrom: &corev1.EnvVarSource{
-										FieldRef: &corev1.ObjectFieldSelector{
-											FieldPath: "metadata.labels['app-namespace']",
+					LMConfig: config.Config{
+						MutationConfigProvided: true,
+						MutationConfig: config.MutationConfig{
+							LMEnvVars: config.LMEnvVars{
+								Resource: []corev1.EnvVar{
+									{
+										Name: "SERVICE_NAMESPACE",
+										ValueFrom: &corev1.EnvVarSource{
+											FieldRef: &corev1.ObjectFieldSelector{
+												FieldPath: "metadata.labels['app-namespace']",
+											},
+										},
+									},
+									{
+										Name: "SERVICE_NAME",
+										ValueFrom: &corev1.EnvVarSource{
+											FieldRef: &corev1.ObjectFieldSelector{
+												FieldPath: "metadata.labels['app-name']",
+											},
+										},
+									},
+									{
+										Name: "SERVICE_ACCOUNT_NAME",
+										ValueFrom: &corev1.EnvVarSource{
+											FieldRef: &corev1.ObjectFieldSelector{
+												FieldPath: "spec.serviceAccountName",
+											},
 										},
 									},
 								},
-								{
-									Name: "SERVICE_NAME",
-									ValueFrom: &corev1.EnvVarSource{
-										FieldRef: &corev1.ObjectFieldSelector{
-											FieldPath: "metadata.labels['app-name']",
-										},
+								Operation: []corev1.EnvVar{
+									{
+										Name:  "OTLP_ENDPOINT",
+										Value: "lmotel-svc:55680",
 									},
-								},
-								{
-									Name: "SERVICE_ACCOUNT_NAME",
-									ValueFrom: &corev1.EnvVarSource{
-										FieldRef: &corev1.ObjectFieldSelector{
-											FieldPath: "spec.serviceAccountName",
-										},
-									},
-								},
-							},
-							Operation: []corev1.EnvVar{
-								{
-									Name:  "OTLP_ENDPOINT",
-									Value: "lmotel-svc:55680",
 								},
 							},
 						},
@@ -268,34 +271,37 @@ func TestMutatePod(t *testing.T) {
 				params: &Params{
 					Client: k8sClient,
 					Log:    logger,
-					LMConfig: &config.Config{
-						LMEnvVars: config.LMEnvVars{
-							Resource: []corev1.EnvVar{
-								{
-									Name:  "SERVICE_NAMESPACE",
-									Value: "us-west-2-techops",
-								},
-								{
-									Name: "SERVICE_NAME",
-									ValueFrom: &corev1.EnvVarSource{
-										FieldRef: &corev1.ObjectFieldSelector{
-											FieldPath: "metadata.labels['app-name']",
+					LMConfig: config.Config{
+						MutationConfigProvided: true,
+						MutationConfig: config.MutationConfig{
+							LMEnvVars: config.LMEnvVars{
+								Resource: []corev1.EnvVar{
+									{
+										Name:  "SERVICE_NAMESPACE",
+										Value: "us-west-2-techops",
+									},
+									{
+										Name: "SERVICE_NAME",
+										ValueFrom: &corev1.EnvVarSource{
+											FieldRef: &corev1.ObjectFieldSelector{
+												FieldPath: "metadata.labels['app-name']",
+											},
+										},
+									},
+									{
+										Name: "SERVICE_ACCOUNT_NAME",
+										ValueFrom: &corev1.EnvVarSource{
+											FieldRef: &corev1.ObjectFieldSelector{
+												FieldPath: "spec.serviceAccountName",
+											},
 										},
 									},
 								},
-								{
-									Name: "SERVICE_ACCOUNT_NAME",
-									ValueFrom: &corev1.EnvVarSource{
-										FieldRef: &corev1.ObjectFieldSelector{
-											FieldPath: "spec.serviceAccountName",
-										},
+								Operation: []corev1.EnvVar{
+									{
+										Name:  "OTLP_ENDPOINT",
+										Value: "lmotel-svc:55680",
 									},
-								},
-							},
-							Operation: []corev1.EnvVar{
-								{
-									Name:  "OTLP_ENDPOINT",
-									Value: "lmotel-svc:55680",
 								},
 							},
 						},
@@ -386,38 +392,41 @@ func TestMutatePod(t *testing.T) {
 				params: &Params{
 					Client: k8sClient,
 					Log:    logger,
-					LMConfig: &config.Config{
-						LMEnvVars: config.LMEnvVars{
-							Resource: []corev1.EnvVar{
-								{
-									Name: "SERVICE_NAMESPACE",
-									ValueFrom: &corev1.EnvVarSource{
-										FieldRef: &corev1.ObjectFieldSelector{
-											FieldPath: "metadata.labels['app-namespace']",
+					LMConfig: config.Config{
+						MutationConfigProvided: true,
+						MutationConfig: config.MutationConfig{
+							LMEnvVars: config.LMEnvVars{
+								Resource: []corev1.EnvVar{
+									{
+										Name: "SERVICE_NAMESPACE",
+										ValueFrom: &corev1.EnvVarSource{
+											FieldRef: &corev1.ObjectFieldSelector{
+												FieldPath: "metadata.labels['app-namespace']",
+											},
+										},
+									},
+									{
+										Name: "SERVICE_NAME",
+										ValueFrom: &corev1.EnvVarSource{
+											FieldRef: &corev1.ObjectFieldSelector{
+												FieldPath: "metadata.labels['app-name']",
+											},
+										},
+									},
+									{
+										Name: "SERVICE_ACCOUNT_NAME",
+										ValueFrom: &corev1.EnvVarSource{
+											FieldRef: &corev1.ObjectFieldSelector{
+												FieldPath: "spec.serviceAccountName",
+											},
 										},
 									},
 								},
-								{
-									Name: "SERVICE_NAME",
-									ValueFrom: &corev1.EnvVarSource{
-										FieldRef: &corev1.ObjectFieldSelector{
-											FieldPath: "metadata.labels['app-name']",
-										},
+								Operation: []corev1.EnvVar{
+									{
+										Name:  "OTLP_ENDPOINT",
+										Value: "lmotel-svc:55680",
 									},
-								},
-								{
-									Name: "SERVICE_ACCOUNT_NAME",
-									ValueFrom: &corev1.EnvVarSource{
-										FieldRef: &corev1.ObjectFieldSelector{
-											FieldPath: "spec.serviceAccountName",
-										},
-									},
-								},
-							},
-							Operation: []corev1.EnvVar{
-								{
-									Name:  "OTLP_ENDPOINT",
-									Value: "lmotel-svc:55680",
 								},
 							},
 						},
@@ -508,46 +517,49 @@ func TestMutatePod(t *testing.T) {
 				params: &Params{
 					Client: k8sClient,
 					Log:    logger,
-					LMConfig: &config.Config{
-						LMEnvVars: config.LMEnvVars{
-							Resource: []corev1.EnvVar{
-								{
-									Name: "SERVICE_NAMESPACE",
-									ValueFrom: &corev1.EnvVarSource{
-										FieldRef: &corev1.ObjectFieldSelector{
-											FieldPath: "metadata.labels['app-namespace']",
+					LMConfig: config.Config{
+						MutationConfigProvided: true,
+						MutationConfig: config.MutationConfig{
+							LMEnvVars: config.LMEnvVars{
+								Resource: []corev1.EnvVar{
+									{
+										Name: "SERVICE_NAMESPACE",
+										ValueFrom: &corev1.EnvVarSource{
+											FieldRef: &corev1.ObjectFieldSelector{
+												FieldPath: "metadata.labels['app-namespace']",
+											},
 										},
 									},
-								},
-								{
-									Name: "SERVICE_NAME",
-									ValueFrom: &corev1.EnvVarSource{
-										FieldRef: &corev1.ObjectFieldSelector{
-											FieldPath: "metadata.labels['app-name']",
+									{
+										Name: "SERVICE_NAME",
+										ValueFrom: &corev1.EnvVarSource{
+											FieldRef: &corev1.ObjectFieldSelector{
+												FieldPath: "metadata.labels['app-name']",
+											},
 										},
 									},
-								},
-								{
-									Name: "SERVICE_ACCOUNT_NAME",
-									ValueFrom: &corev1.EnvVarSource{
-										FieldRef: &corev1.ObjectFieldSelector{
-											FieldPath: "spec.serviceAccountName",
+									{
+										Name: "SERVICE_ACCOUNT_NAME",
+										ValueFrom: &corev1.EnvVarSource{
+											FieldRef: &corev1.ObjectFieldSelector{
+												FieldPath: "spec.serviceAccountName",
+											},
 										},
 									},
+									{
+										Name:  "LM_APM_CLUSTER_NAME",
+										Value: "default",
+									},
 								},
-								{
-									Name:  "LM_APM_CLUSTER_NAME",
-									Value: "default",
-								},
-							},
-							Operation: []corev1.EnvVar{
-								{
-									Name:  "OTLP_ENDPOINT",
-									Value: "lmotel-svc:55680",
-								},
-								{
-									Name:  "LM_APM_NODE_NAME",
-									Value: "linux-node",
+								Operation: []corev1.EnvVar{
+									{
+										Name:  "OTLP_ENDPOINT",
+										Value: "lmotel-svc:55680",
+									},
+									{
+										Name:  "LM_APM_NODE_NAME",
+										Value: "linux-node",
+									},
 								},
 							},
 						},
@@ -637,36 +649,39 @@ func TestMutatePod(t *testing.T) {
 				params: &Params{
 					Client: k8sClient,
 					Log:    logger,
-					LMConfig: &config.Config{
-						LMEnvVars: config.LMEnvVars{
-							Resource: []corev1.EnvVar{
-								{
-									Name: "SERVICE_ACCOUNT_NAME",
-									ValueFrom: &corev1.EnvVarSource{
-										FieldRef: &corev1.ObjectFieldSelector{
-											FieldPath: "spec.serviceAccountName",
+					LMConfig: config.Config{
+						MutationConfigProvided: true,
+						MutationConfig: config.MutationConfig{
+							LMEnvVars: config.LMEnvVars{
+								Resource: []corev1.EnvVar{
+									{
+										Name: "SERVICE_ACCOUNT_NAME",
+										ValueFrom: &corev1.EnvVarSource{
+											FieldRef: &corev1.ObjectFieldSelector{
+												FieldPath: "spec.serviceAccountName",
+											},
 										},
 									},
 								},
-							},
-							Operation: []corev1.EnvVar{
-								{
-									Name:  "OTLP_ENDPOINT",
-									Value: "lmotel-svc:55680",
-								},
-								{
-									Name: "SERVICE_NAMESPACE",
-									ValueFrom: &corev1.EnvVarSource{
-										FieldRef: &corev1.ObjectFieldSelector{
-											FieldPath: "metadata.labels['app-namespace']",
+								Operation: []corev1.EnvVar{
+									{
+										Name:  "OTLP_ENDPOINT",
+										Value: "lmotel-svc:55680",
+									},
+									{
+										Name: "SERVICE_NAMESPACE",
+										ValueFrom: &corev1.EnvVarSource{
+											FieldRef: &corev1.ObjectFieldSelector{
+												FieldPath: "metadata.labels['app-namespace']",
+											},
 										},
 									},
-								},
-								{
-									Name: "SERVICE_NAME",
-									ValueFrom: &corev1.EnvVarSource{
-										FieldRef: &corev1.ObjectFieldSelector{
-											FieldPath: "metadata.labels['app-name']",
+									{
+										Name: "SERVICE_NAME",
+										ValueFrom: &corev1.EnvVarSource{
+											FieldRef: &corev1.ObjectFieldSelector{
+												FieldPath: "metadata.labels['app-name']",
+											},
 										},
 									},
 								},
@@ -1723,7 +1738,7 @@ func TestRunMutations(t *testing.T) {
 				params: &Params{
 					Client:    &config.K8sClient{},
 					Pod:       &corev1.Pod{ObjectMeta: v1.ObjectMeta{Name: "demo"}},
-					LMConfig:  &config.Config{},
+					LMConfig:  config.Config{},
 					Mutations: Mutations,
 					Namespace: "default",
 					Log:       logger,

@@ -65,10 +65,10 @@ func TestHandle(t *testing.T) {
 		{
 			name: "Handle the admission request",
 			LMPodMutationHandler: &LMPodMutationHandler{
-				Client:   k8sClient,
-				LMConfig: nil,
-				Log:      logger,
-				decoder:  decoder,
+				Client: k8sClient,
+				// LMConfig: nil,
+				Log:     logger,
+				decoder: decoder,
 			},
 			args: struct {
 				ctx context.Context
@@ -161,10 +161,10 @@ func TestInjectDecoder(t *testing.T) {
 		{
 			name: "Inject Decoder",
 			LMPodMutationHandler: &LMPodMutationHandler{
-				Client:   k8sClient,
-				LMConfig: nil,
-				Log:      logger,
-				decoder:  decoder,
+				Client: k8sClient,
+				// LMConfig: nil,
+				Log:     logger,
+				decoder: decoder,
 			},
 			args: struct{ decoder *admission.Decoder }{
 				decoder: decoder,
@@ -201,16 +201,16 @@ func TestNewParams(t *testing.T) {
 		}{
 			pod: corev1.Pod{ObjectMeta: v1.ObjectMeta{Name: "demo"}},
 			mutationHandler: &LMPodMutationHandler{
-				Client:   &config.K8sClient{},
-				Log:      logger,
-				LMConfig: &config.Config{},
+				Client: &config.K8sClient{},
+				Log:    logger,
+				// LMConfig: &config.Config{},
 			},
 			namespace: "default",
 		},
 		expectedPayload: &mutation.Params{
 			Client:    &config.K8sClient{},
 			Pod:       &corev1.Pod{ObjectMeta: v1.ObjectMeta{Name: "demo"}},
-			LMConfig:  &config.Config{},
+			LMConfig:  config.GetConfig(),
 			Mutations: mutation.Mutations,
 			Namespace: "default",
 			Log:       logger,

@@ -17,10 +17,10 @@ import (
 )
 
 type LMPodMutationHandler struct {
-	Client   *config.K8sClient
-	decoder  *admission.Decoder
-	Log      logr.Logger
-	LMConfig *config.Config
+	Client  *config.K8sClient
+	decoder *admission.Decoder
+	Log     logr.Logger
+	// LMConfig *config.Config
 }
 
 // Handle is called internally to handle the admission request
@@ -67,7 +67,7 @@ func NewParams(pod *corev1.Pod, mutationHandler *LMPodMutationHandler, namespace
 	return &mutation.Params{
 		Client:    mutationHandler.Client,
 		Pod:       pod,
-		LMConfig:  mutationHandler.LMConfig,
+		LMConfig:  config.GetConfig(),
 		Mutations: mutation.Mutations,
 		Namespace: namespace,
 		Log:       mutationHandler.Log,
