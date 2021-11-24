@@ -4,14 +4,26 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"sync"
 
 	"github.com/ghodss/yaml"
 	corev1 "k8s.io/api/core/v1"
 	logr "sigs.k8s.io/controller-runtime/pkg/log"
 )
 
+var (
+	configLock = new(sync.RWMutex)
+	cfg        Config
+	logger     = logr.Log.WithName(("config-loader"))
+)
+
 // Config holds the external configuration
 type Config struct {
+	MutationConfigProvided bool
+	MutationConfig         MutationConfig
+}
+
+type MutationConfig struct {
 	LMEnvVars LMEnvVars `yaml:"lmEnvVars"`
 }
 
@@ -28,25 +40,37 @@ type LMEnvVars struct {
 }
 
 // LoadConfig loads the external config passed by the user
-func LoadConfig(configFilePath string) (*Config, error) {
-	logger := logr.Log.WithName(("load-config"))
+func LoadConfig(configFilePath string) error {
+	logger = logr.Log.WithName(("load-config"))
 
 	// Check if config file provided
 	if _, err := os.Stat(filepath.Clean(configFilePath)); os.IsNotExist(err) {
 		// As external config is optional
 		logger.Info("Config file is not provided")
-		return nil, err
+		return err
 	}
-
+	var tempCfg MutationConfig
 	data, err := ioutil.ReadFile(filepath.Clean(configFilePath))
 	if err != nil {
 		logger.Error(err, "Error in reading the config file", "configFilePath", configFilePath)
-		return nil, err
+		return err
 	}
-	var cfg Config
-	if err := yaml.Unmarshal(data, &cfg); err != nil {
+
+	if err := yaml.Unmarshal(data, &tempCfg); err != nil {
 		logger.Error(err, "Error in reading the config file", "configFilePath", configFilePath)
-		return nil, err
+		return err
 	}
-	return &cfg, nil
+
+	configLock.Lock()
+	cfg.MutationConfig = tempCfg
+	cfg.MutationConfigProvided = true
+	configLock.Unlock()
+
+	return nil
+}
+
+func GetConfig() Config {
+	configLock.RLock()
+	defer configLock.RUnlock()
+	return cfg
 }

@@ -59,7 +59,7 @@ var Mutations = []Mutation{{Name: MutationEnvVarInjection, Do: mutateEnvVariable
 type Params struct {
 	Client    *config.K8sClient
 	Log       logr.Logger
-	LMConfig  *config.Config
+	LMConfig  config.Config
 	Mutations []Mutation
 	Pod       *corev1.Pod
 	Namespace string

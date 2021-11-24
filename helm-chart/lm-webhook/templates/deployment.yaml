@@ -68,8 +68,8 @@ spec:
             
           {{- if .Values.lmconfig }}
             - name: {{ template "lm-webhook.name" . }}-lmconfig
-              mountPath: /etc/lmwebhook/config/lmconfig.yaml
-              subPath: lmconfig.yaml
+              mountPath: /etc/lmwebhook/config
+              # subPath: lmconfig.yaml
           {{- end }}
           
           resources:

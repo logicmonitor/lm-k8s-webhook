@@ -1,12 +1,14 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"os"
 	"strconv"
 
 	lmconfig "github.com/logicmonitor/lm-k8s-webhook/pkg/config"
 	"github.com/logicmonitor/lm-k8s-webhook/pkg/handler"
+	"github.com/logicmonitor/lm-k8s-webhook/pkg/reloader"
 
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 
@@ -52,6 +54,11 @@ func main() {
 	flag.StringVar(&probeAddr, "health-probe-bind-address", ":8081", "The address the probe endpoint binds to.")
 	flag.StringVar(&lmconfigFilePath, "lmconfig-file-path", "/etc/lmwebhook/config/lmconfig.yaml", "File path of lmconfig")
 
+	var ctx context.Context
+	ctx = context.Background()
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
 	opts := zap.Options{
 		// Development: true,
 	}
@@ -70,7 +77,7 @@ func main() {
 
 	// Load the external config
 
-	cfg, err := lmconfig.LoadConfig(lmconfigFilePath)
+	err = lmconfig.LoadConfig(lmconfigFilePath)
 
 	if err != nil {
 		// As external config is optional
@@ -111,7 +118,7 @@ func main() {
 	}
 
 	setupLog.Info("registering webhooks to the webhook server")
-	lmWebhookServer.Register("/mutate", &webhook.Admission{Handler: &handler.LMPodMutationHandler{Client: k8sClient, Log: ctrl.Log.WithName("lm-podmutator-webhook"), LMConfig: cfg}})
+	lmWebhookServer.Register("/mutate", &webhook.Admission{Handler: &handler.LMPodMutationHandler{Client: k8sClient, Log: ctrl.Log.WithName("lm-podmutator-webhook")}})
 
 	if err := mgr.AddHealthzCheck("health", healthz.Ping); err != nil {
 		setupLog.Error(err, "unable to set up health check")
@@ -122,9 +129,15 @@ func main() {
 		os.Exit(1)
 	}
 
+	if lmconfig.GetConfig().MutationConfigProvided {
+		setupLog.Info("setup config reloader")
+		reloader.SetupConfigReloader(ctx, lmconfigFilePath)
+	}
+
 	setupLog.Info("starting manager")
 	if err := mgr.Start(signals.SetupSignalHandler()); err != nil {
 		setupLog.Error(err, "unable to run manager")
+		cancel()
 		os.Exit(1)
 	}
 }
