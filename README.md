@@ -1,8 +1,6 @@
 
 # LM-Webhook
 
------
-
 [![codecov](https://codecov.io/gh/logicmonitor/lm-k8s-webhook/branch/main/graph/badge.svg?token=DTWHXaXZzl)](https://codecov.io/gh/logicmonitor/lm-k8s-webhook)
 [![build_and_test](https://github.com/logicmonitor/lm-k8s-webhook/actions/workflows/ci.yml/badge.svg)](https://github.com/logicmonitor/lm-k8s-webhook/actions/workflows/ci.yml)
 
