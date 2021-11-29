@@ -3,6 +3,9 @@
 
 -----
 
+[![codecov](https://codecov.io/gh/logicmonitor/lm-k8s-webhook/branch/main/graph/badge.svg?token=DTWHXaXZzl)](https://codecov.io/gh/logicmonitor/lm-k8s-webhook)
+[![build_and_test](https://github.com/logicmonitor/lm-k8s-webhook/actions/workflows/ci.yml/badge.svg)](https://github.com/logicmonitor/lm-k8s-webhook/actions/workflows/ci.yml)
+
 **LM-Webhook** is the implementation of the Kubenetes Mutating Admission webhook. Some of the key features of the LM-Webhook are:
 
 - LM-Webhook can be used to inject the kubernetes specific resource attributes like pod name, ip, pod namespace, service namespace, pod UUID in the pod as an environment variables, which avoids the need of manually updating the deployment manifests to include these resource attributes. 
