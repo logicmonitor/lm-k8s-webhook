@@ -131,7 +131,11 @@ func main() {
 
 	if lmconfig.GetConfig().MutationConfigProvided {
 		setupLog.Info("setup config reloader")
-		reloader.SetupConfigReloader(ctx, lmconfigFilePath)
+		err := reloader.SetupConfigReloader(ctx, lmconfigFilePath)
+		if err != nil {
+			setupLog.Error(err, "failed to setup config-reloader")
+			os.Exit(1)
+		}
 	}
 
 	setupLog.Info("starting manager")
