@@ -208,7 +208,6 @@ func mutateEnvVariables(ctx context.Context, params *Params) error {
 			svcNamespaceIdx := getIndexOfEnv(newEnvVars, ServiceNamespace)
 			svcNamespaceEnv := corev1.EnvVar{Name: ServiceNamespace, Value: container.Env[idx].Value, ValueFrom: container.Env[idx].ValueFrom}
 			newEnvVars[svcNamespaceIdx] = svcNamespaceEnv
-			isServiceNamespaceEnvProcessed = true
 			logger.Info("resourceEnvVar is SERVICE_NAMESPACE, using value from container", "env value", svcNamespaceEnv)
 		}
 	}
@@ -221,7 +220,6 @@ func mutateEnvVariables(ctx context.Context, params *Params) error {
 		if idx := getIndexOfEnv(container.Env, ServiceName); idx > -1 {
 			svcNameEnv := corev1.EnvVar{Name: ServiceName, Value: container.Env[idx].Value, ValueFrom: container.Env[idx].ValueFrom}
 			newEnvVars = append(newEnvVars, svcNameEnv)
-			isServiceNameEnvProcessed = true
 			// Add it to the OTELResourceAttributes
 			newEnvVars, otelResourceAttributesIndex = addResEnvToOtelResAttribute(svcNameEnv, newEnvVars, "")
 			logger.Info("resourceEnvVar is SERVICE_NAME, using value from container", "env value", svcNameEnv)
