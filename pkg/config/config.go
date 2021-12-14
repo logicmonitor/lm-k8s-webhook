@@ -31,12 +31,24 @@ type LMEnvVars struct {
 	/* Resource holds the resource environment variables,
 	which will be the part of OTEL_RESOURCE_ATTRIBUTES
 	*/
-	Resource []corev1.EnvVar `yaml:"resource,omitempty"`
+	Resource []ResourceEnv `yaml:"resource,omitempty"`
 
 	/* Operation holds the operation environment variables,
 	which will not be the part of OTEL_RESOURCE_ATTRIBUTES.
 	*/
-	Operation []corev1.EnvVar `yaml:"operation,omitempty"`
+	Operation []OperationEnv `yaml:"operation,omitempty"`
+}
+
+type ResourceEnv struct {
+	Env              corev1.EnvVar `yaml:"env"`
+	ResAttrName      string        `yaml:"resAttrName,omitempty"`
+	OverrideDisabled bool          `yaml:"overrideDisabled,omitempty"`
+}
+
+type OperationEnv struct {
+	Env              corev1.EnvVar `yaml:"env"`
+	ResAttrName      string        `yaml:"resAttrName,omitempty"`
+	OverrideDisabled bool          `yaml:"overrideDisabled,omitempty"`
 }
 
 // LoadConfig loads the external config passed by the user
@@ -55,7 +67,6 @@ func LoadConfig(configFilePath string) error {
 		logger.Error(err, "Error in reading the config file", "configFilePath", configFilePath)
 		return err
 	}
-
 	if err := yaml.Unmarshal(data, &tempCfg); err != nil {
 		logger.Error(err, "Error in reading the config file", "configFilePath", configFilePath)
 		return err
@@ -64,6 +75,7 @@ func LoadConfig(configFilePath string) error {
 	configLock.Lock()
 	cfg.MutationConfig = tempCfg
 	cfg.MutationConfigProvided = true
+	// logger.Info("Config:", "Config", cfg)
 	configLock.Unlock()
 
 	return nil

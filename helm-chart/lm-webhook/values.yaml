@@ -33,7 +33,7 @@ image:
   repository: docker-registry.logicmonitor.net/development/lm-webhook
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: test
+  tag: dev
 
 imagePullSecrets: []
 nameOverride: ""
