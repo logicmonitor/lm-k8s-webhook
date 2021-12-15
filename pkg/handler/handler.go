@@ -16,11 +16,11 @@ import (
 	corev1 "k8s.io/api/core/v1"
 )
 
+// LMPodMutationHandler represents the handler for the admission requests
 type LMPodMutationHandler struct {
 	Client  *config.K8sClient
 	decoder *admission.Decoder
 	Log     logr.Logger
-	// LMConfig *config.Config
 }
 
 // Handle is called internally to handle the admission request
@@ -42,7 +42,7 @@ func (podMutationHandler *LMPodMutationHandler) Handle(ctx context.Context, req 
 	err = mutation.RunMutations(ctx, params)
 
 	if err != nil {
-		logger.Error(err, "Error occured in mutating the k8s resource")
+		logger.Error(err, "Error occurred in mutating the k8s resource")
 		return admission.Errored(http.StatusInternalServerError, err)
 	}
 
@@ -63,6 +63,7 @@ func (a *LMPodMutationHandler) InjectDecoder(d *admission.Decoder) error {
 	return nil
 }
 
+// NewParams returns Params object
 func NewParams(pod *corev1.Pod, mutationHandler *LMPodMutationHandler, namespace string) *mutation.Params {
 	return &mutation.Params{
 		Client:    mutationHandler.Client,

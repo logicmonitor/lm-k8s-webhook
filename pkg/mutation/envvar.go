@@ -9,6 +9,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/go-logr/logr"
 	"github.com/logicmonitor/lm-k8s-webhook/pkg/config"
 	"go.opentelemetry.io/otel/semconv"
 	appsv1 "k8s.io/api/apps/v1"
@@ -36,25 +37,15 @@ func mutateEnvVariables(ctx context.Context, params *Params) error {
 	// If external config is provided then only perform this operation
 	if params.LMConfig.MutationConfigProvided {
 		logger.Info("As external config present, checking for new env vars")
-		var isEnvVarToBeSkipped bool
+		// var isEnvVarToBeSkipped bool
 
 		otelResourceAttributesIndex = len(newEnvVars) - 1
 
 		for _, resourceEnvVar := range params.LMConfig.MutationConfig.LMEnvVars.Resource {
-			isEnvVarToBeSkipped = false
-			// isServiceNamespaceEnvProcessed = false
-			// Check if resourceEnvVar is a part of skipList, if present in skip list then skip that env variable
-			for _, skipListEnvvar := range skipList {
-				if skipListEnvvar == resourceEnvVar.Env.Name {
-					isEnvVarToBeSkipped = true
-					logger.Info("Skipped resource env variable", "env var", resourceEnvVar.Env.Name, "env value", resourceEnvVar.Env.Name, "env valueFrom", resourceEnvVar.Env.ValueFrom)
-					break
-				}
-			}
 
-			// If env variable is not in skip list
-			// add as a new env variable to the env list
-			if !isEnvVarToBeSkipped {
+			// Check if resourceEnvVar is a part of skipList, if present in skip list then skip that env variable
+			// If env variable is not in skip list then add it as a new env variable to the env list
+			if !isResourceEnvVarToBeSkipped(skipList, resourceEnvVar.Env, logger) {
 
 				// If resourceEnvVar is SERVICE_NAMESPACE
 				if resourceEnvVar.Env.Name == ServiceNamespace {
@@ -160,31 +151,12 @@ func mutateEnvVariables(ctx context.Context, params *Params) error {
 		}
 
 		for _, operationEnvVar := range params.LMConfig.MutationConfig.LMEnvVars.Operation {
-			isEnvVarToBeSkipped = false
+
 			// Check if operationEnvVar is a part of skipList, if present in skip list then skip that env variable
-			for _, skipListEnvvar := range skipList {
-				if skipListEnvvar == operationEnvVar.Env.Name {
-					isEnvVarToBeSkipped = true
-					logger.Info("Skipped operation env variable", "Name:", operationEnvVar.Env.Name)
-					break
-				}
-			}
 
-			// If operationEnvVar is SERVICE_NAMESPACE
-			if operationEnvVar.Env.Name == ServiceNamespace {
-				logger.Info("operationEnvVar is SERVICE_NAMESPACE, skipping it as ServiceNamespace should be the part of resource environment variables")
-				isEnvVarToBeSkipped = true
-			}
+			// If env variable is not in skip list then add it as a new env variable to the env list
 
-			// If operationEnvVar is SERVICE_NAME
-			if operationEnvVar.Env.Name == ServiceName {
-				logger.Info("operationEnvVar is SERVICE_NAME, skipping it as ServiceName should be the part of resource environment variables")
-				isEnvVarToBeSkipped = true
-			}
-
-			// If env variable is not in skip list
-			// add as a new env variable to the env list
-			if !isEnvVarToBeSkipped {
+			if !isOperationEnvVarToBeSkipped(skipList, operationEnvVar.Env, logger) {
 				// for any other env var
 				var envToBeAdded corev1.EnvVar
 				if !operationEnvVar.OverrideDisabled {
@@ -248,6 +220,10 @@ func mutateEnvVariables(ctx context.Context, params *Params) error {
 		newEnvVars[otelResourceAttributesIndex] = currentLastEnvVar
 	}
 
+	return mutateContainerEnvVariables(container, newEnvVars, params, logger)
+}
+
+func mutateContainerEnvVariables(container corev1.Container, newEnvVars []corev1.EnvVar, params *Params, logger logr.Logger) error {
 	envVars, err := mergeNewEnv(container.Env, newEnvVars)
 	if err != nil {
 		return err
@@ -485,22 +461,22 @@ func checkIfPodHasLabel(pod *corev1.Pod, envVar corev1.EnvVar) (string, bool, er
 	if err != nil {
 		logger.Error(err, "Invalid regex")
 		return "", false, err
-	} else {
-		if envVar.ValueFrom.FieldRef != nil {
-			matchedStrings := exp.FindStringSubmatch(envVar.ValueFrom.FieldRef.FieldPath)
-			if len(matchedStrings) > 1 {
-				podLabelValue, found := pod.Labels[matchedStrings[1]]
-
-				// If specified label is not present on pod or if its value is empty
-				if !found || (len(strings.Trim(podLabelValue, " ")) == 0) {
-					logger.Error(err, "cannot find the label-name specified in "+envVar.Name+" environment variable value metadata.labels['label-name'] on pod.")
-					return "", false, errEnvVarValueLabelNotFoundOnPod
-				}
-				return podLabelValue, true, nil
-			}
-		}
-		return "", false, errEnvVarValueNotInLabelBasedFieldPathFormat
 	}
+	if envVar.ValueFrom.FieldRef != nil {
+		matchedStrings := exp.FindStringSubmatch(envVar.ValueFrom.FieldRef.FieldPath)
+		if len(matchedStrings) > 1 {
+			podLabelValue, found := pod.Labels[matchedStrings[1]]
+
+			// If specified label is not present on pod or if its value is empty
+			if !found || (len(strings.Trim(podLabelValue, " ")) == 0) {
+				logger.Error(err, "cannot find the label-name specified in "+envVar.Name+" environment variable value metadata.labels['label-name'] on pod.")
+				return "", false, errEnvVarValueLabelNotFoundOnPod
+			}
+			return podLabelValue, true, nil
+		}
+	}
+	return "", false, errEnvVarValueNotInLabelBasedFieldPathFormat
+
 }
 
 func createResMapStr(res map[string]string) string {
@@ -530,4 +506,33 @@ func getIndexOfEnv(envs []corev1.EnvVar, name string) int {
 
 func getApplicationContainer(pod *corev1.Pod) corev1.Container {
 	return pod.Spec.Containers[0]
+}
+
+func isResourceEnvVarToBeSkipped(skipList []string, envVar corev1.EnvVar, logger logr.Logger) bool {
+	for _, skipListEnvvar := range skipList {
+		if skipListEnvvar == envVar.Name {
+			return true
+		}
+	}
+	return false
+}
+
+func isOperationEnvVarToBeSkipped(skipList []string, envVar corev1.EnvVar, logger logr.Logger) bool {
+	for _, skipListEnvvar := range skipList {
+		if skipListEnvvar == envVar.Name {
+			return true
+		}
+	}
+	// If operationEnvVar is SERVICE_NAMESPACE
+	if envVar.Name == ServiceNamespace {
+		logger.Info("operationEnvVar is SERVICE_NAMESPACE, skipping it as ServiceNamespace should be the part of resource environment variables")
+		return true
+	}
+
+	// If operationEnvVar is SERVICE_NAME
+	if envVar.Name == ServiceName {
+		logger.Info("operationEnvVar is SERVICE_NAME, skipping it as ServiceName should be the part of resource environment variables")
+		return true
+	}
+	return false
 }

@@ -4,17 +4,14 @@ LMEnvVars:
       name: COMPANY_NAME
       value: ABC Corporation
     OverrideDisabled: false
-    ResAttrName: ""
   - Env:
       name: OTLP_ENDPOINT
       value: lmotel-svc:4317
     OverrideDisabled: false
-    ResAttrName: ""
   - Env:
       name: OTEL_JAVAAGENT_ENABLED
       value: "true"
     OverrideDisabled: false
-    ResAttrName: ""
   Resource:
   - Env:
       name: SERVICE_ACCOUNT_NAME

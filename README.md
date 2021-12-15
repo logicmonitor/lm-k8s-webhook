@@ -3,6 +3,8 @@
 
 [![codecov](https://codecov.io/gh/logicmonitor/lm-k8s-webhook/branch/main/graph/badge.svg?token=DTWHXaXZzl)](https://codecov.io/gh/logicmonitor/lm-k8s-webhook)
 [![build_and_test](https://github.com/logicmonitor/lm-k8s-webhook/actions/workflows/ci.yml/badge.svg)](https://github.com/logicmonitor/lm-k8s-webhook/actions/workflows/ci.yml)
+[![Go Reference](https://pkg.go.dev/badge/github.com/logicmonitor/lm-k8s-webhook.svg)](https://pkg.go.dev/github.com/logicmonitor/lm-k8s-webhook)
+[![Go Report Card](https://goreportcard.com/badge/github.com/logicmonitor/lm-k8s-webhook)](https://goreportcard.com/report/github.com/logicmonitor/lm-k8s-webhook)
 
 **LM-Webhook** is the implementation of the Kubernetes Mutating Admission webhook. Some of the key features of the LM-Webhook are:
 
@@ -12,7 +14,7 @@
 -----
 ## Setup:
 
-helm-chart which is provided in this repo, installs the lm-webhook in the Kubernetes Cluster.  
+helm-chart which is provided in this repo, installs the lm-webhook in the Kubernetes Cluster.
 
 ## Prerequisites:
 

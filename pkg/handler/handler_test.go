@@ -36,7 +36,7 @@ func TestHandle(t *testing.T) {
 
 	k8sClient, err := getFakeK8sClient()
 	if err != nil {
-		t.Errorf("Error occured in getting fake k8s client: %v", err)
+		t.Errorf("Error occurred in getting fake k8s client: %v", err)
 		return
 	}
 	os.Setenv("CLUSTER_NAME", "default")
@@ -47,7 +47,7 @@ func TestHandle(t *testing.T) {
 	decoder, err := admission.NewDecoder(scheme)
 
 	if err != nil {
-		t.Errorf("Error occured in getting decoder: %v", err)
+		t.Errorf("Error occurred in getting decoder: %v", err)
 		return
 	}
 
@@ -137,7 +137,7 @@ func TestInjectDecoder(t *testing.T) {
 
 	k8sClient, err := getFakeK8sClient()
 	if err != nil {
-		t.Errorf("Error occured in getting fake k8s client: %v", err)
+		t.Errorf("Error occurred in getting fake k8s client: %v", err)
 		return
 	}
 
@@ -146,7 +146,7 @@ func TestInjectDecoder(t *testing.T) {
 	decoder, err := admission.NewDecoder(scheme)
 
 	if err != nil {
-		t.Errorf("Error occured in getting decoder: %v", err)
+		t.Errorf("Error occurred in getting decoder: %v", err)
 		return
 	}
 
