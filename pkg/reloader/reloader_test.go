@@ -36,31 +36,43 @@ func TestSetupConfigReloader(t *testing.T) {
 			wantPayload: config.Config{
 				MutationConfigProvided: true,
 				MutationConfig: config.MutationConfig{
-					LMEnvVars: config.LMEnvVars{Resource: []corev1.EnvVar{
+					LMEnvVars: config.LMEnvVars{Resource: []config.ResourceEnv{
 						{
-							Name:      "SERVICE_ACCOUNT_NAME",
-							ValueFrom: &corev1.EnvVarSource{FieldRef: &corev1.ObjectFieldSelector{FieldPath: "spec.serviceAccountName"}},
+							Env: corev1.EnvVar{
+								Name:      "SERVICE_ACCOUNT_NAME",
+								ValueFrom: &corev1.EnvVarSource{FieldRef: &corev1.ObjectFieldSelector{FieldPath: "spec.serviceAccountName"}},
+							},
 						},
 						{
-							Name:      "SERVICE_NAMESPACE",
-							ValueFrom: &corev1.EnvVarSource{FieldRef: &corev1.ObjectFieldSelector{FieldPath: "metadata.labels['app-namespace']"}},
+							Env: corev1.EnvVar{
+								Name:      "SERVICE_NAMESPACE",
+								ValueFrom: &corev1.EnvVarSource{FieldRef: &corev1.ObjectFieldSelector{FieldPath: "metadata.labels['app-namespace']"}},
+							},
 						},
 						{
-							Name:      "SERVICE_NAME",
-							ValueFrom: &corev1.EnvVarSource{FieldRef: &corev1.ObjectFieldSelector{FieldPath: "metadata.labels['app-name']"}},
+							Env: corev1.EnvVar{
+								Name:      "SERVICE_NAME",
+								ValueFrom: &corev1.EnvVarSource{FieldRef: &corev1.ObjectFieldSelector{FieldPath: "metadata.labels['app-name']"}},
+							},
 						},
-					}, Operation: []corev1.EnvVar{
+					}, Operation: []config.OperationEnv{
 						{
-							Name:  "COMPANY_NAME",
-							Value: "ABC Corporation",
+							Env: corev1.EnvVar{
+								Name:  "COMPANY_NAME",
+								Value: "ABC Corporation",
+							},
 						},
 						{
-							Name:  "OTLP_ENDPOINT",
-							Value: "lmotel-svc:4317",
+							Env: corev1.EnvVar{
+								Name:  "OTLP_ENDPOINT",
+								Value: "lmotel-svc:4317",
+							},
 						},
 						{
-							Name:  "OTEL_JAVAAGENT_ENABLED",
-							Value: "true",
+							Env: corev1.EnvVar{
+								Name:  "OTEL_JAVAAGENT_ENABLED",
+								Value: "true",
+							},
 						},
 					}},
 				},

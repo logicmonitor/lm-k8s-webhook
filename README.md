@@ -4,7 +4,7 @@
 [![codecov](https://codecov.io/gh/logicmonitor/lm-k8s-webhook/branch/main/graph/badge.svg?token=DTWHXaXZzl)](https://codecov.io/gh/logicmonitor/lm-k8s-webhook)
 [![build_and_test](https://github.com/logicmonitor/lm-k8s-webhook/actions/workflows/ci.yml/badge.svg)](https://github.com/logicmonitor/lm-k8s-webhook/actions/workflows/ci.yml)
 
-**LM-Webhook** is the implementation of the Kubenetes Mutating Admission webhook. Some of the key features of the LM-Webhook are:
+**LM-Webhook** is the implementation of the Kubernetes Mutating Admission webhook. Some of the key features of the LM-Webhook are:
 
 - LM-Webhook can be used to inject the kubernetes specific resource attributes like pod name, ip, pod namespace, service namespace, pod UUID in the pod as an environment variables, which avoids the need of manually updating the deployment manifests to include these resource attributes. 
 - Custom environment variables can also be injected by passing the external configuration.    
@@ -204,32 +204,48 @@ Currently as a part of the external config, user can define the custom environme
 ```
 lmEnvVars:
   resource:
-    - name: SERVICE_ACCOUNT_NAME
-      valueFrom:
-        fieldRef:
-          fieldPath: spec.serviceAccountName
-    - name: SERVICE_NAMESPACE
-      valueFrom:
-        fieldRef:
-          fieldPath: metadata.labels['app-namespace']
-    - name: SERVICE_NAME
-      valueFrom:
-        fieldRef:
-          fieldPath: metadata.labels['app-name']
+    - env: 
+        name: SERVICE_ACCOUNT_NAME
+        valueFrom:
+          fieldRef:
+            fieldPath: spec.serviceAccountName
+      resAttrName: serviceaccount.name
+      overrideDisabled: true
+    - env:
+        name: SERVICE_NAMESPACE
+        valueFrom:
+          fieldRef:
+            fieldPath: metadata.labels['app-namespace']
+    - env:
+        name: SERVICE_NAME
+        valueFrom:
+          fieldRef:
+            fieldPath: metadata.labels['app-name']
   operation:
-    - name: COMPANY_NAME
-      value: ABC Corporation
-    - name: OTLP_ENDPOINT
-      value: lmotel-svc:4317
-    - name: OTEL_JAVAAGENT_ENABLED
-      value: true
+    - env:
+        name: COMPANY_NAME
+        value: ABC Corporation
+      overrideDisabled: true 
+    - env:
+        name: OTLP_ENDPOINT
+        value: lmotel-svc:4317
+      overrideDisabled: true 
+    - env:
+        name: OTEL_JAVAAGENT_ENABLED
+        value: true
+      overrideDisabled: true
+    - env:
+        name: DEPLOYMENT_ENV
+        value: production
 ```
 
 environment variables can be of two types, i.e. resource and operation
 - Resource holds the resource environment variables, which will be the part of _OTEL_RESOURCE_ATTRIBUTES_.
 - Operation holds the operation environment variables, which will not be the part of _OTEL_RESOURCE_ATTRIBUTES_ but can be used in the application for custom use cases.
+- resAttrName field can be used only in resource section. The value assigned to resAttrName will be used as a name of the resource attribute instead of the actual env variable name while passing it through the _OTEL_RESOURCE_ATTRIBUTES_.
+- overrideDisabled field can be used in both, resource as well as operation sections. It decides if the value of the env variable which is defined in external config is allowed to be overriden by the same name env variable from the container definition. Default value of this field is false, which means that overriding of the value of the env variable defined in external config is allowed.
 
-LM-Webhook injects following environment variables in the application pods. It is not recommanded to explicitely specify these environment variables as a part of pod definition. Only SERVICE_NAMESPACE can be overriden, either by specifying it as a part of pod definition or in the external configuration. Default value of SERVICE_NAMESPACE is the value of the pod namespace. 
+LM-Webhook injects following environment variables in the application pods. It is not recommanded to explicitely specify these environment variables except SERVICE_NAMESPACE & OTEL_RESOURCE_ATTRIBUTES as a part of pod definition. Default value of SERVICE_NAMESPACE is the value of the pod namespace, which can be overriden, either by specifying it as a part of pod definition (if overriding is allowed) or in the external configuration. You can pass the resource attributes which are not getting set by the lm-webhook by defining the OTEL_RESOURCE_ATTRIBUTES env variable in the pod definition, which will get merged with the ones which are defined by lm-webhook.
 
 Values for SERVICE_NAME and SERVICE_NAMESPACE can also be specified in terms of pod label as shown in above example config. So that value of the specified pod label can be used as a SERVICE_NAME or SERVICE_NAMESPACE. 
 

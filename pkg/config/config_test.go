@@ -30,31 +30,47 @@ func TestLoadConfig(t *testing.T) {
 			wantPayload: Config{
 				MutationConfigProvided: true,
 				MutationConfig: MutationConfig{
-					LMEnvVars: LMEnvVars{Resource: []corev1.EnvVar{
+					LMEnvVars: LMEnvVars{Resource: []ResourceEnv{
 						{
-							Name:      "SERVICE_ACCOUNT_NAME",
-							ValueFrom: &corev1.EnvVarSource{FieldRef: &corev1.ObjectFieldSelector{FieldPath: "spec.serviceAccountName"}},
+							Env: corev1.EnvVar{
+								Name:      "SERVICE_ACCOUNT_NAME",
+								ValueFrom: &corev1.EnvVarSource{FieldRef: &corev1.ObjectFieldSelector{FieldPath: "spec.serviceAccountName"}},
+							},
+							OverrideDisabled: true,
 						},
 						{
-							Name:      "SERVICE_NAMESPACE",
-							ValueFrom: &corev1.EnvVarSource{FieldRef: &corev1.ObjectFieldSelector{FieldPath: "metadata.labels['app-namespace']"}},
+							Env: corev1.EnvVar{
+								Name:      "SERVICE_NAMESPACE",
+								ValueFrom: &corev1.EnvVarSource{FieldRef: &corev1.ObjectFieldSelector{FieldPath: "metadata.labels['app-namespace']"}},
+							},
 						},
 						{
-							Name:      "SERVICE_NAME",
-							ValueFrom: &corev1.EnvVarSource{FieldRef: &corev1.ObjectFieldSelector{FieldPath: "metadata.labels['app-name']"}},
+							Env: corev1.EnvVar{
+								Name:      "SERVICE_NAME",
+								ValueFrom: &corev1.EnvVarSource{FieldRef: &corev1.ObjectFieldSelector{FieldPath: "metadata.labels['app-name']"}},
+							},
 						},
-					}, Operation: []corev1.EnvVar{
+					}, Operation: []OperationEnv{
 						{
-							Name:  "COMPANY_NAME",
-							Value: "ABC Corporation",
+							Env: corev1.EnvVar{
+								Name:  "COMPANY_NAME",
+								Value: "ABC Corporation",
+							},
+							OverrideDisabled: true,
 						},
 						{
-							Name:  "OTLP_ENDPOINT",
-							Value: "lmotel-svc:4317",
+							Env: corev1.EnvVar{
+								Name:  "OTLP_ENDPOINT",
+								Value: "lmotel-svc:4317",
+							},
+							OverrideDisabled: true,
 						},
 						{
-							Name:  "OTEL_JAVAAGENT_ENABLED",
-							Value: "true",
+							Env: corev1.EnvVar{
+								Name:  "OTEL_JAVAAGENT_ENABLED",
+								Value: "true",
+							},
+							OverrideDisabled: true,
 						},
 					}},
 				},
@@ -81,12 +97,12 @@ func TestLoadConfig(t *testing.T) {
 		err := LoadConfig(tt.args.configFilePath)
 
 		if (err != nil) != tt.wantErr {
-			t.Errorf("LoadConfig() error = %v, wantErr %v", err, tt.wantErr)
+			t.Errorf("LoadConfig() error = %+v, wantErr %+v", err, tt.wantErr)
 			return
 		}
 
 		if !cmp.Equal(cfg, tt.wantPayload, cmpOpt) {
-			t.Errorf("LoadConfig() returned config = %v, but expected config = %v", cfg, tt.wantPayload)
+			t.Errorf("LoadConfig() returned config = %+v, but expected config = %+v", cfg, tt.wantPayload)
 			return
 		}
 	}
@@ -110,31 +126,47 @@ func TestGetConfig(t *testing.T) {
 			wantPayload: Config{
 				MutationConfigProvided: true,
 				MutationConfig: MutationConfig{
-					LMEnvVars: LMEnvVars{Resource: []corev1.EnvVar{
+					LMEnvVars: LMEnvVars{Resource: []ResourceEnv{
 						{
-							Name:      "SERVICE_ACCOUNT_NAME",
-							ValueFrom: &corev1.EnvVarSource{FieldRef: &corev1.ObjectFieldSelector{FieldPath: "spec.serviceAccountName"}},
+							Env: corev1.EnvVar{
+								Name:      "SERVICE_ACCOUNT_NAME",
+								ValueFrom: &corev1.EnvVarSource{FieldRef: &corev1.ObjectFieldSelector{FieldPath: "spec.serviceAccountName"}},
+							},
+							OverrideDisabled: true,
 						},
 						{
-							Name:      "SERVICE_NAMESPACE",
-							ValueFrom: &corev1.EnvVarSource{FieldRef: &corev1.ObjectFieldSelector{FieldPath: "metadata.labels['app-namespace']"}},
+							Env: corev1.EnvVar{
+								Name:      "SERVICE_NAMESPACE",
+								ValueFrom: &corev1.EnvVarSource{FieldRef: &corev1.ObjectFieldSelector{FieldPath: "metadata.labels['app-namespace']"}},
+							},
 						},
 						{
-							Name:      "SERVICE_NAME",
-							ValueFrom: &corev1.EnvVarSource{FieldRef: &corev1.ObjectFieldSelector{FieldPath: "metadata.labels['app-name']"}},
+							Env: corev1.EnvVar{
+								Name:      "SERVICE_NAME",
+								ValueFrom: &corev1.EnvVarSource{FieldRef: &corev1.ObjectFieldSelector{FieldPath: "metadata.labels['app-name']"}},
+							},
 						},
-					}, Operation: []corev1.EnvVar{
+					}, Operation: []OperationEnv{
 						{
-							Name:  "COMPANY_NAME",
-							Value: "ABC Corporation",
+							Env: corev1.EnvVar{
+								Name:  "COMPANY_NAME",
+								Value: "ABC Corporation",
+							},
+							OverrideDisabled: true,
 						},
 						{
-							Name:  "OTLP_ENDPOINT",
-							Value: "lmotel-svc:4317",
+							Env: corev1.EnvVar{
+								Name:  "OTLP_ENDPOINT",
+								Value: "lmotel-svc:4317",
+							},
+							OverrideDisabled: true,
 						},
 						{
-							Name:  "OTEL_JAVAAGENT_ENABLED",
-							Value: "true",
+							Env: corev1.EnvVar{
+								Name:  "OTEL_JAVAAGENT_ENABLED",
+								Value: "true",
+							},
+							OverrideDisabled: true,
 						},
 					}},
 				},

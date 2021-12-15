@@ -25,9 +25,9 @@ var logger = logf.Log.WithName("unit-tests")
 func getFakeK8sClient() (*config.K8sClient, error) {
 	return config.NewK8sClient(nil, func(r *rest.Config) (kubernetes.Interface, error) {
 		return testclient.NewSimpleClientset(
-			&batchv1.Job{ObjectMeta: v1.ObjectMeta{Name: "hello-job", Namespace: "default"}},
-			&appsv1.DaemonSet{ObjectMeta: v1.ObjectMeta{Name: "hello-daemonSet", Namespace: "default"}},
-			&appsv1.StatefulSet{ObjectMeta: v1.ObjectMeta{Name: "hello-statefulSet", Namespace: "default"}},
+			//	&batchv1.Job{ObjectMeta: v1.ObjectMeta{Name: "hello-job", Namespace: "default"}},
+			//	&appsv1.DaemonSet{ObjectMeta: v1.ObjectMeta{Name: "hello-daemonSet", Namespace: "default"}},
+			//	&appsv1.StatefulSet{ObjectMeta: v1.ObjectMeta{Name: "hello-statefulSet", Namespace: "default"}},
 			&appsv1.ReplicaSet{ObjectMeta: v1.ObjectMeta{Name: "hello-replicaSet", Namespace: "default"}},
 			&appsv1.ReplicaSet{ObjectMeta: v1.ObjectMeta{Name: "hello-replicaSetManagedByDeployment", Namespace: "default", OwnerReferences: []v1.OwnerReference{{Name: "hello-deployment", Kind: "Deployment"}}}},
 		), nil
@@ -129,7 +129,99 @@ func TestMutatePod(t *testing.T) {
 								},
 								{
 									Name:  "OTEL_RESOURCE_ATTRIBUTES",
-									Value: "resource.type=kubernetes-pod,ip=$(LM_APM_POD_IP),host.name=$(LM_APM_POD_NAME),k8s.pod.uid=$(LM_APM_POD_UID),service.namespace=$(SERVICE_NAMESPACE),k8s.namespace.name=$(LM_APM_POD_NAMESPACE),k8s.node.name=$(LM_APM_NODE_NAME),k8s.cluster.name=$(LM_APM_CLUSTER_NAME),service.name=$(SERVICE_NAME)",
+									Value: "host.name=$(LM_APM_POD_NAME),ip=$(LM_APM_POD_IP),k8s.cluster.name=$(LM_APM_CLUSTER_NAME),k8s.namespace.name=$(LM_APM_POD_NAMESPACE),k8s.node.name=$(LM_APM_NODE_NAME),k8s.pod.uid=$(LM_APM_POD_UID),resource.type=kubernetes-pod,service.namespace=$(SERVICE_NAMESPACE),service.name=$(SERVICE_NAME)",
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "Mutate pod without external config but SERVICE_NAMESPACE & SERVICE_NAME present in container already",
+			args: struct {
+				params *Params
+				ctx    context.Context
+			}{
+				params: &Params{
+					Client:    k8sClient,
+					LMConfig:  config.Config{},
+					Log:       logger,
+					Namespace: "default",
+					Pod: &corev1.Pod{
+						ObjectMeta: v1.ObjectMeta{Name: "test-pod", Labels: map[string]string{"app-name": "test-app", "app-namespace": "test"}},
+						Spec: corev1.PodSpec{
+							Containers: []corev1.Container{
+								{
+									Name: "my-app",
+									Env: []corev1.EnvVar{
+										{
+											Name:  "DEPARTMENT",
+											Value: "R&D",
+										},
+										{
+											Name:  "SERVICE_NAMESPACE",
+											Value: "hipster",
+										},
+										{
+											Name:  "SERVICE_NAME",
+											Value: "test",
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+				ctx: context.Background(),
+			},
+			wantErr: false,
+			wantPayload: corev1.Pod{
+				ObjectMeta: v1.ObjectMeta{Name: "test-pod", Labels: map[string]string{"app-name": "test-app", "app-namespace": "test"}},
+				Spec: corev1.PodSpec{
+					Containers: []corev1.Container{
+						{
+							Name: "my-app",
+							Env: []corev1.EnvVar{
+								{
+									Name:  LMAPMClusterName,
+									Value: os.Getenv(ClusterName),
+								},
+								{
+									Name:      LMAPMNodeName,
+									ValueFrom: &corev1.EnvVarSource{FieldRef: &corev1.ObjectFieldSelector{FieldPath: "spec.nodeName"}},
+								},
+								{
+									Name:      LMAPMPodName,
+									ValueFrom: &corev1.EnvVarSource{FieldRef: &corev1.ObjectFieldSelector{FieldPath: "metadata.name"}},
+								},
+								{
+									Name:      LMAPMPodNamespace,
+									ValueFrom: &corev1.EnvVarSource{FieldRef: &corev1.ObjectFieldSelector{FieldPath: "metadata.namespace"}},
+								},
+								{
+									Name:      LMAPMPodIP,
+									ValueFrom: &corev1.EnvVarSource{FieldRef: &corev1.ObjectFieldSelector{FieldPath: "status.podIP"}},
+								},
+								{
+									Name:      LMAPMPodUID,
+									ValueFrom: &corev1.EnvVarSource{FieldRef: &corev1.ObjectFieldSelector{FieldPath: "metadata.uid"}},
+								},
+								{
+									Name:  ServiceNamespace,
+									Value: "hipster",
+								},
+								{
+									Name:  ServiceName,
+									Value: "test",
+								},
+								{
+									Name:  "DEPARTMENT",
+									Value: "R&D",
+								},
+								{
+									Name:  "OTEL_RESOURCE_ATTRIBUTES",
+									Value: "host.name=$(LM_APM_POD_NAME),ip=$(LM_APM_POD_IP),k8s.cluster.name=$(LM_APM_CLUSTER_NAME),k8s.namespace.name=$(LM_APM_POD_NAMESPACE),k8s.node.name=$(LM_APM_NODE_NAME),k8s.pod.uid=$(LM_APM_POD_UID),resource.type=kubernetes-pod,service.namespace=$(SERVICE_NAMESPACE),service.name=$(SERVICE_NAME)",
 								},
 							},
 						},
@@ -150,36 +242,44 @@ func TestMutatePod(t *testing.T) {
 						MutationConfigProvided: true,
 						MutationConfig: config.MutationConfig{
 							LMEnvVars: config.LMEnvVars{
-								Resource: []corev1.EnvVar{
+								Resource: []config.ResourceEnv{
 									{
-										Name: "SERVICE_NAMESPACE",
-										ValueFrom: &corev1.EnvVarSource{
-											FieldRef: &corev1.ObjectFieldSelector{
-												FieldPath: "metadata.labels['app-namespace']",
+										Env: corev1.EnvVar{
+											Name: "SERVICE_NAMESPACE",
+											ValueFrom: &corev1.EnvVarSource{
+												FieldRef: &corev1.ObjectFieldSelector{
+													FieldPath: "metadata.labels['app-namespace']",
+												},
 											},
 										},
 									},
 									{
-										Name: "SERVICE_NAME",
-										ValueFrom: &corev1.EnvVarSource{
-											FieldRef: &corev1.ObjectFieldSelector{
-												FieldPath: "metadata.labels['app-name']",
+										Env: corev1.EnvVar{
+											Name: "SERVICE_NAME",
+											ValueFrom: &corev1.EnvVarSource{
+												FieldRef: &corev1.ObjectFieldSelector{
+													FieldPath: "metadata.labels['app-name']",
+												},
 											},
 										},
 									},
 									{
-										Name: "SERVICE_ACCOUNT_NAME",
-										ValueFrom: &corev1.EnvVarSource{
-											FieldRef: &corev1.ObjectFieldSelector{
-												FieldPath: "spec.serviceAccountName",
+										Env: corev1.EnvVar{
+											Name: "SERVICE_ACCOUNT_NAME",
+											ValueFrom: &corev1.EnvVarSource{
+												FieldRef: &corev1.ObjectFieldSelector{
+													FieldPath: "spec.serviceAccountName",
+												},
 											},
 										},
 									},
 								},
-								Operation: []corev1.EnvVar{
+								Operation: []config.OperationEnv{
 									{
-										Name:  "OTLP_ENDPOINT",
-										Value: "lmotel-svc:55680",
+										Env: corev1.EnvVar{
+											Name:  "OTLP_ENDPOINT",
+											Value: "lmotel-svc:4317",
+										},
 									},
 								},
 							},
@@ -253,8 +353,12 @@ func TestMutatePod(t *testing.T) {
 									Value: "R&D",
 								},
 								{
+									Name:  "OTLP_ENDPOINT",
+									Value: "lmotel-svc:4317",
+								},
+								{
 									Name:  "OTEL_RESOURCE_ATTRIBUTES",
-									Value: "resource.type=kubernetes-pod,ip=$(LM_APM_POD_IP),host.name=$(LM_APM_POD_NAME),k8s.pod.uid=$(LM_APM_POD_UID),service.namespace=$(SERVICE_NAMESPACE),k8s.namespace.name=$(LM_APM_POD_NAMESPACE),k8s.node.name=$(LM_APM_NODE_NAME),k8s.cluster.name=$(LM_APM_CLUSTER_NAME),service.name=$(SERVICE_NAME),SERVICE_ACCOUNT_NAME=$(SERVICE_ACCOUNT_NAME)",
+									Value: "host.name=$(LM_APM_POD_NAME),ip=$(LM_APM_POD_IP),k8s.cluster.name=$(LM_APM_CLUSTER_NAME),k8s.namespace.name=$(LM_APM_POD_NAMESPACE),k8s.node.name=$(LM_APM_NODE_NAME),k8s.pod.uid=$(LM_APM_POD_UID),resource.type=kubernetes-pod,service.namespace=$(SERVICE_NAMESPACE),service.name=$(SERVICE_NAME),SERVICE_ACCOUNT_NAME=$(SERVICE_ACCOUNT_NAME)",
 								},
 							},
 						},
@@ -275,32 +379,40 @@ func TestMutatePod(t *testing.T) {
 						MutationConfigProvided: true,
 						MutationConfig: config.MutationConfig{
 							LMEnvVars: config.LMEnvVars{
-								Resource: []corev1.EnvVar{
+								Resource: []config.ResourceEnv{
 									{
-										Name:  "SERVICE_NAMESPACE",
-										Value: "us-west-2-techops",
+										Env: corev1.EnvVar{
+											Name:  "SERVICE_NAMESPACE",
+											Value: "us-west-2-techops",
+										},
 									},
 									{
-										Name: "SERVICE_NAME",
-										ValueFrom: &corev1.EnvVarSource{
-											FieldRef: &corev1.ObjectFieldSelector{
-												FieldPath: "metadata.labels['app-name']",
+										Env: corev1.EnvVar{
+											Name: "SERVICE_NAME",
+											ValueFrom: &corev1.EnvVarSource{
+												FieldRef: &corev1.ObjectFieldSelector{
+													FieldPath: "metadata.labels['app-name']",
+												},
 											},
 										},
 									},
 									{
-										Name: "SERVICE_ACCOUNT_NAME",
-										ValueFrom: &corev1.EnvVarSource{
-											FieldRef: &corev1.ObjectFieldSelector{
-												FieldPath: "spec.serviceAccountName",
+										Env: corev1.EnvVar{
+											Name: "SERVICE_ACCOUNT_NAME",
+											ValueFrom: &corev1.EnvVarSource{
+												FieldRef: &corev1.ObjectFieldSelector{
+													FieldPath: "spec.serviceAccountName",
+												},
 											},
 										},
 									},
 								},
-								Operation: []corev1.EnvVar{
+								Operation: []config.OperationEnv{
 									{
-										Name:  "OTLP_ENDPOINT",
-										Value: "lmotel-svc:55680",
+										Env: corev1.EnvVar{
+											Name:  "OTLP_ENDPOINT",
+											Value: "lmotel-svc:4317",
+										},
 									},
 								},
 							},
@@ -374,8 +486,185 @@ func TestMutatePod(t *testing.T) {
 									Value: "R&D",
 								},
 								{
+									Name:  "OTLP_ENDPOINT",
+									Value: "lmotel-svc:4317",
+								},
+								{
 									Name:  "OTEL_RESOURCE_ATTRIBUTES",
-									Value: "resource.type=kubernetes-pod,ip=$(LM_APM_POD_IP),host.name=$(LM_APM_POD_NAME),k8s.pod.uid=$(LM_APM_POD_UID),service.namespace=$(SERVICE_NAMESPACE),k8s.namespace.name=$(LM_APM_POD_NAMESPACE),k8s.node.name=$(LM_APM_NODE_NAME),k8s.cluster.name=$(LM_APM_CLUSTER_NAME),service.name=$(SERVICE_NAME),SERVICE_ACCOUNT_NAME=$(SERVICE_ACCOUNT_NAME)",
+									Value: "host.name=$(LM_APM_POD_NAME),ip=$(LM_APM_POD_IP),k8s.cluster.name=$(LM_APM_CLUSTER_NAME),k8s.namespace.name=$(LM_APM_POD_NAMESPACE),k8s.node.name=$(LM_APM_NODE_NAME),k8s.pod.uid=$(LM_APM_POD_UID),resource.type=kubernetes-pod,service.namespace=$(SERVICE_NAMESPACE),service.name=$(SERVICE_NAME),SERVICE_ACCOUNT_NAME=$(SERVICE_ACCOUNT_NAME)",
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "Mutate pod with external config with overriding of the value is allowed for some env var and disabled for some env var",
+			args: struct {
+				params *Params
+				ctx    context.Context
+			}{
+				params: &Params{
+					Client: k8sClient,
+					Log:    logger,
+					LMConfig: config.Config{
+						MutationConfigProvided: true,
+						MutationConfig: config.MutationConfig{
+							LMEnvVars: config.LMEnvVars{
+								Resource: []config.ResourceEnv{
+									{
+										Env: corev1.EnvVar{
+											Name:  "SERVICE_NAMESPACE",
+											Value: "us-west-2-techops",
+										},
+									},
+									{
+										Env: corev1.EnvVar{
+											Name: "SERVICE_NAME",
+											ValueFrom: &corev1.EnvVarSource{
+												FieldRef: &corev1.ObjectFieldSelector{
+													FieldPath: "metadata.labels['app-name']",
+												},
+											},
+										},
+									},
+									{
+										Env: corev1.EnvVar{
+											Name: "SERVICE_ACCOUNT_NAME",
+											ValueFrom: &corev1.EnvVarSource{
+												FieldRef: &corev1.ObjectFieldSelector{
+													FieldPath: "spec.serviceAccountName",
+												},
+											},
+										},
+									},
+									{
+										Env: corev1.EnvVar{
+											Name:  "CLOUD_PROVIDER",
+											Value: "AWS",
+										},
+										ResAttrName:      "cloud.provider",
+										OverrideDisabled: true,
+									},
+								},
+								Operation: []config.OperationEnv{
+									{
+										Env: corev1.EnvVar{
+											Name:  "OTLP_ENDPOINT",
+											Value: "lmotel-svc:4317",
+										},
+									},
+									{
+										Env: corev1.EnvVar{
+											Name:  "COMPANY_NAME",
+											Value: "ABC Corporation",
+										},
+										OverrideDisabled: true,
+									},
+								},
+							},
+						},
+					},
+					Pod: &corev1.Pod{
+						ObjectMeta: v1.ObjectMeta{Name: "test-pod", Labels: map[string]string{"app-name": "test-app", "app-namespace": "test"}},
+						Spec: corev1.PodSpec{
+							Containers: []corev1.Container{
+								{
+									Name: "my-app",
+									Env: []corev1.EnvVar{
+										{
+											Name:  "DEPARTMENT",
+											Value: "R&D",
+										},
+										{
+											Name:  "SERVICE_NAMESPACE",
+											Value: "us-west-2-techops-prod",
+										},
+										{
+											Name:  "SERVICE_NAME",
+											Value: "test",
+										},
+										{
+											Name:  "SERVICE_ACCOUNT_NAME",
+											Value: "test",
+										},
+										{
+											Name:  "OTLP_ENDPOINT",
+											Value: "lmotel-svc:4318",
+										},
+									},
+								},
+							},
+						},
+					},
+					Namespace: "default",
+				},
+				ctx: context.Background(),
+			},
+			wantErr: false,
+			wantPayload: corev1.Pod{
+				ObjectMeta: v1.ObjectMeta{Name: "test-pod", Labels: map[string]string{"app-name": "test-app", "app-namespace": "test"}},
+				Spec: corev1.PodSpec{
+					Containers: []corev1.Container{
+						{
+							Name: "my-app",
+							Env: []corev1.EnvVar{
+								{
+									Name:  LMAPMClusterName,
+									Value: os.Getenv(ClusterName),
+								},
+								{
+									Name:      LMAPMNodeName,
+									ValueFrom: &corev1.EnvVarSource{FieldRef: &corev1.ObjectFieldSelector{FieldPath: "spec.nodeName"}},
+								},
+								{
+									Name:      LMAPMPodName,
+									ValueFrom: &corev1.EnvVarSource{FieldRef: &corev1.ObjectFieldSelector{FieldPath: "metadata.name"}},
+								},
+								{
+									Name:      LMAPMPodNamespace,
+									ValueFrom: &corev1.EnvVarSource{FieldRef: &corev1.ObjectFieldSelector{FieldPath: "metadata.namespace"}},
+								},
+								{
+									Name:      LMAPMPodIP,
+									ValueFrom: &corev1.EnvVarSource{FieldRef: &corev1.ObjectFieldSelector{FieldPath: "status.podIP"}},
+								},
+								{
+									Name:      LMAPMPodUID,
+									ValueFrom: &corev1.EnvVarSource{FieldRef: &corev1.ObjectFieldSelector{FieldPath: "metadata.uid"}},
+								},
+								{
+									Name:  ServiceNamespace,
+									Value: "us-west-2-techops-prod",
+								},
+								{
+									Name:  ServiceName,
+									Value: "test",
+								},
+								{
+									Name:  "SERVICE_ACCOUNT_NAME",
+									Value: "test",
+								},
+								{
+									Name:  "CLOUD_PROVIDER",
+									Value: "AWS",
+								},
+								{
+									Name:  "OTLP_ENDPOINT",
+									Value: "lmotel-svc:4318",
+								},
+								{
+									Name:  "DEPARTMENT",
+									Value: "R&D",
+								},
+								{
+									Name:  "COMPANY_NAME",
+									Value: "ABC Corporation",
+								},
+								{
+									Name:  "OTEL_RESOURCE_ATTRIBUTES",
+									Value: "host.name=$(LM_APM_POD_NAME),ip=$(LM_APM_POD_IP),k8s.cluster.name=$(LM_APM_CLUSTER_NAME),k8s.namespace.name=$(LM_APM_POD_NAMESPACE),k8s.node.name=$(LM_APM_NODE_NAME),k8s.pod.uid=$(LM_APM_POD_UID),resource.type=kubernetes-pod,service.namespace=$(SERVICE_NAMESPACE),service.name=$(SERVICE_NAME),SERVICE_ACCOUNT_NAME=$(SERVICE_ACCOUNT_NAME),cloud.provider=$(CLOUD_PROVIDER)",
 								},
 							},
 						},
@@ -396,36 +685,44 @@ func TestMutatePod(t *testing.T) {
 						MutationConfigProvided: true,
 						MutationConfig: config.MutationConfig{
 							LMEnvVars: config.LMEnvVars{
-								Resource: []corev1.EnvVar{
+								Resource: []config.ResourceEnv{
 									{
-										Name: "SERVICE_NAMESPACE",
-										ValueFrom: &corev1.EnvVarSource{
-											FieldRef: &corev1.ObjectFieldSelector{
-												FieldPath: "metadata.labels['app-namespace']",
+										Env: corev1.EnvVar{
+											Name: "SERVICE_NAMESPACE",
+											ValueFrom: &corev1.EnvVarSource{
+												FieldRef: &corev1.ObjectFieldSelector{
+													FieldPath: "metadata.labels['app-namespace']",
+												},
 											},
 										},
 									},
 									{
-										Name: "SERVICE_NAME",
-										ValueFrom: &corev1.EnvVarSource{
-											FieldRef: &corev1.ObjectFieldSelector{
-												FieldPath: "metadata.labels['app-name']",
+										Env: corev1.EnvVar{
+											Name: "SERVICE_NAME",
+											ValueFrom: &corev1.EnvVarSource{
+												FieldRef: &corev1.ObjectFieldSelector{
+													FieldPath: "metadata.labels['app-name']",
+												},
 											},
 										},
 									},
 									{
-										Name: "SERVICE_ACCOUNT_NAME",
-										ValueFrom: &corev1.EnvVarSource{
-											FieldRef: &corev1.ObjectFieldSelector{
-												FieldPath: "spec.serviceAccountName",
+										Env: corev1.EnvVar{
+											Name: "SERVICE_ACCOUNT_NAME",
+											ValueFrom: &corev1.EnvVarSource{
+												FieldRef: &corev1.ObjectFieldSelector{
+													FieldPath: "spec.serviceAccountName",
+												},
 											},
 										},
 									},
 								},
-								Operation: []corev1.EnvVar{
+								Operation: []config.OperationEnv{
 									{
-										Name:  "OTLP_ENDPOINT",
-										Value: "lmotel-svc:55680",
+										Env: corev1.EnvVar{
+											Name:  "OTLP_ENDPOINT",
+											Value: "lmotel-svc:4317",
+										},
 									},
 								},
 							},
@@ -500,7 +797,7 @@ func TestMutatePod(t *testing.T) {
 								},
 								{
 									Name:  "OTEL_RESOURCE_ATTRIBUTES",
-									Value: "resource.type=kubernetes-pod,ip=$(LM_APM_POD_IP),host.name=$(LM_APM_POD_NAME),k8s.pod.uid=$(LM_APM_POD_UID),service.namespace=$(SERVICE_NAMESPACE),k8s.namespace.name=$(LM_APM_POD_NAMESPACE),k8s.node.name=$(LM_APM_NODE_NAME),k8s.cluster.name=$(LM_APM_CLUSTER_NAME),service.name=$(SERVICE_NAME),SERVICE_ACCOUNT_NAME=$(SERVICE_ACCOUNT_NAME)",
+									Value: "host.name=$(LM_APM_POD_NAME),ip=$(LM_APM_POD_IP),k8s.cluster.name=$(LM_APM_CLUSTER_NAME),k8s.namespace.name=$(LM_APM_POD_NAMESPACE),k8s.node.name=$(LM_APM_NODE_NAME),k8s.pod.uid=$(LM_APM_POD_UID),resource.type=kubernetes-pod,service.namespace=$(SERVICE_NAMESPACE),service.name=$(SERVICE_NAME),SERVICE_ACCOUNT_NAME=$(SERVICE_ACCOUNT_NAME)",
 								},
 							},
 						},
@@ -521,44 +818,56 @@ func TestMutatePod(t *testing.T) {
 						MutationConfigProvided: true,
 						MutationConfig: config.MutationConfig{
 							LMEnvVars: config.LMEnvVars{
-								Resource: []corev1.EnvVar{
+								Resource: []config.ResourceEnv{
 									{
-										Name: "SERVICE_NAMESPACE",
-										ValueFrom: &corev1.EnvVarSource{
-											FieldRef: &corev1.ObjectFieldSelector{
-												FieldPath: "metadata.labels['app-namespace']",
+										Env: corev1.EnvVar{
+											Name: "SERVICE_NAMESPACE",
+											ValueFrom: &corev1.EnvVarSource{
+												FieldRef: &corev1.ObjectFieldSelector{
+													FieldPath: "metadata.labels['app-namespace']",
+												},
 											},
 										},
 									},
 									{
-										Name: "SERVICE_NAME",
-										ValueFrom: &corev1.EnvVarSource{
-											FieldRef: &corev1.ObjectFieldSelector{
-												FieldPath: "metadata.labels['app-name']",
+										Env: corev1.EnvVar{
+											Name: "SERVICE_NAME",
+											ValueFrom: &corev1.EnvVarSource{
+												FieldRef: &corev1.ObjectFieldSelector{
+													FieldPath: "metadata.labels['app-name']",
+												},
 											},
 										},
 									},
 									{
-										Name: "SERVICE_ACCOUNT_NAME",
-										ValueFrom: &corev1.EnvVarSource{
-											FieldRef: &corev1.ObjectFieldSelector{
-												FieldPath: "spec.serviceAccountName",
+										Env: corev1.EnvVar{
+											Name: "SERVICE_ACCOUNT_NAME",
+											ValueFrom: &corev1.EnvVarSource{
+												FieldRef: &corev1.ObjectFieldSelector{
+													FieldPath: "spec.serviceAccountName",
+												},
 											},
 										},
 									},
 									{
-										Name:  "LM_APM_CLUSTER_NAME",
-										Value: "default",
+										Env: corev1.EnvVar{
+											Name:  "LM_APM_CLUSTER_NAME",
+											Value: "default",
+										},
 									},
 								},
-								Operation: []corev1.EnvVar{
+								Operation: []config.OperationEnv{
 									{
-										Name:  "OTLP_ENDPOINT",
-										Value: "lmotel-svc:55680",
+										Env: corev1.EnvVar{
+											Name:  "OTLP_ENDPOINT",
+											Value: "lmotel-svc:4317",
+										},
 									},
 									{
-										Name:  "LM_APM_NODE_NAME",
-										Value: "linux-node",
+										Env: corev1.EnvVar{
+											Name:  "LM_APM_NODE_NAME",
+											Value: "linux-node",
+										},
 									},
 								},
 							},
@@ -632,7 +941,7 @@ func TestMutatePod(t *testing.T) {
 								},
 								{
 									Name:  "OTEL_RESOURCE_ATTRIBUTES",
-									Value: "resource.type=kubernetes-pod,ip=$(LM_APM_POD_IP),host.name=$(LM_APM_POD_NAME),k8s.pod.uid=$(LM_APM_POD_UID),service.namespace=$(SERVICE_NAMESPACE),k8s.namespace.name=$(LM_APM_POD_NAMESPACE),k8s.node.name=$(LM_APM_NODE_NAME),k8s.cluster.name=$(LM_APM_CLUSTER_NAME),service.name=$(SERVICE_NAME),SERVICE_ACCOUNT_NAME=$(SERVICE_ACCOUNT_NAME)",
+									Value: "host.name=$(LM_APM_POD_NAME),ip=$(LM_APM_POD_IP),k8s.cluster.name=$(LM_APM_CLUSTER_NAME),k8s.namespace.name=$(LM_APM_POD_NAMESPACE),k8s.node.name=$(LM_APM_NODE_NAME),k8s.pod.uid=$(LM_APM_POD_UID),resource.type=kubernetes-pod,service.namespace=$(SERVICE_NAMESPACE),service.name=$(SERVICE_NAME),SERVICE_ACCOUNT_NAME=$(SERVICE_ACCOUNT_NAME)",
 								},
 							},
 						},
@@ -653,34 +962,42 @@ func TestMutatePod(t *testing.T) {
 						MutationConfigProvided: true,
 						MutationConfig: config.MutationConfig{
 							LMEnvVars: config.LMEnvVars{
-								Resource: []corev1.EnvVar{
+								Resource: []config.ResourceEnv{
 									{
-										Name: "SERVICE_ACCOUNT_NAME",
-										ValueFrom: &corev1.EnvVarSource{
-											FieldRef: &corev1.ObjectFieldSelector{
-												FieldPath: "spec.serviceAccountName",
+										Env: corev1.EnvVar{
+											Name: "SERVICE_ACCOUNT_NAME",
+											ValueFrom: &corev1.EnvVarSource{
+												FieldRef: &corev1.ObjectFieldSelector{
+													FieldPath: "spec.serviceAccountName",
+												},
 											},
 										},
 									},
 								},
-								Operation: []corev1.EnvVar{
+								Operation: []config.OperationEnv{
 									{
-										Name:  "OTLP_ENDPOINT",
-										Value: "lmotel-svc:55680",
+										Env: corev1.EnvVar{
+											Name:  "OTLP_ENDPOINT",
+											Value: "lmotel-svc:4317",
+										},
 									},
 									{
-										Name: "SERVICE_NAMESPACE",
-										ValueFrom: &corev1.EnvVarSource{
-											FieldRef: &corev1.ObjectFieldSelector{
-												FieldPath: "metadata.labels['app-namespace']",
+										Env: corev1.EnvVar{
+											Name: "SERVICE_NAME",
+											ValueFrom: &corev1.EnvVarSource{
+												FieldRef: &corev1.ObjectFieldSelector{
+													FieldPath: "metadata.labels['app-name']",
+												},
 											},
 										},
 									},
 									{
-										Name: "SERVICE_NAME",
-										ValueFrom: &corev1.EnvVarSource{
-											FieldRef: &corev1.ObjectFieldSelector{
-												FieldPath: "metadata.labels['app-name']",
+										Env: corev1.EnvVar{
+											Name: "SERVICE_NAMESPACE",
+											ValueFrom: &corev1.EnvVarSource{
+												FieldRef: &corev1.ObjectFieldSelector{
+													FieldPath: "metadata.labels['app-namespace']",
+												},
 											},
 										},
 									},
@@ -757,7 +1074,7 @@ func TestMutatePod(t *testing.T) {
 								},
 								{
 									Name:  "OTEL_RESOURCE_ATTRIBUTES",
-									Value: "resource.type=kubernetes-pod,ip=$(LM_APM_POD_IP),host.name=$(LM_APM_POD_NAME),k8s.pod.uid=$(LM_APM_POD_UID),service.namespace=$(SERVICE_NAMESPACE),k8s.namespace.name=$(LM_APM_POD_NAMESPACE),k8s.node.name=$(LM_APM_NODE_NAME),k8s.cluster.name=$(LM_APM_CLUSTER_NAME),SERVICE_ACCOUNT_NAME=$(SERVICE_ACCOUNT_NAME),service.name=$(SERVICE_NAME)",
+									Value: "host.name=$(LM_APM_POD_NAME),ip=$(LM_APM_POD_IP),k8s.cluster.name=$(LM_APM_CLUSTER_NAME),k8s.namespace.name=$(LM_APM_POD_NAMESPACE),k8s.node.name=$(LM_APM_NODE_NAME),k8s.pod.uid=$(LM_APM_POD_UID),resource.type=kubernetes-pod,service.namespace=$(SERVICE_NAMESPACE),SERVICE_ACCOUNT_NAME=$(SERVICE_ACCOUNT_NAME),service.name=$(SERVICE_NAME)",
 								},
 							},
 						},
@@ -846,7 +1163,7 @@ func TestGetLmotelEnvironmentVariables(t *testing.T) {
 			},
 			{
 				Name:  "OTEL_RESOURCE_ATTRIBUTES",
-				Value: "resource.type=kubernetes-pod,ip=$(LM_APM_POD_IP),host.name=$(LM_APM_POD_NAME),k8s.pod.uid=$(LM_APM_POD_UID),service.namespace=$(SERVICE_NAMESPACE),k8s.namespace.name=$(LM_APM_POD_NAMESPACE),k8s.node.name=$(LM_APM_NODE_NAME),k8s.cluster.name=$(LM_APM_CLUSTER_NAME)",
+				Value: "host.name=$(LM_APM_POD_NAME),ip=$(LM_APM_POD_IP),k8s.cluster.name=$(LM_APM_CLUSTER_NAME),k8s.namespace.name=$(LM_APM_POD_NAMESPACE),k8s.node.name=$(LM_APM_NODE_NAME),k8s.pod.uid=$(LM_APM_POD_UID),resource.type=kubernetes-pod,service.namespace=$(SERVICE_NAMESPACE)",
 			},
 		},
 	}
@@ -986,6 +1303,10 @@ func TestMergeNewEnv(t *testing.T) {
 						Name:      ServiceNamespace,
 						ValueFrom: &corev1.EnvVarSource{FieldRef: &corev1.ObjectFieldSelector{FieldPath: "metadata.labels['app-namespace']"}},
 					},
+					{
+						Name:  OTELResourceAttributes,
+						Value: "k8s.container.name=nginx",
+					},
 				},
 				newEnvVars: []corev1.EnvVar{
 					{
@@ -1058,7 +1379,7 @@ func TestMergeNewEnv(t *testing.T) {
 				},
 				{
 					Name:      ServiceNamespace,
-					ValueFrom: &corev1.EnvVarSource{FieldRef: &corev1.ObjectFieldSelector{FieldPath: "metadata.labels['app-namespace']"}},
+					ValueFrom: &corev1.EnvVarSource{FieldRef: &corev1.ObjectFieldSelector{FieldPath: "metadata.namespace"}},
 				},
 				{
 					Name:  ServiceName,
@@ -1066,7 +1387,7 @@ func TestMergeNewEnv(t *testing.T) {
 				},
 				{
 					Name:  "OTEL_RESOURCE_ATTRIBUTES",
-					Value: "resource.type=kubernetes-pod,ip=$(LM_APM_POD_IP),host.name=$(LM_APM_POD_NAME),k8s.pod.uid=$(LM_APM_POD_UID),service.namespace=$(SERVICE_NAMESPACE),k8s.namespace.name=$(LM_APM_POD_NAMESPACE),k8s.node.name=$(LM_APM_NODE_NAME),k8s.cluster.name=$(LM_APM_CLUSTER_NAME),service.name=$(SERVICE_NAME)",
+					Value: "resource.type=kubernetes-pod,ip=$(LM_APM_POD_IP),host.name=$(LM_APM_POD_NAME),k8s.pod.uid=$(LM_APM_POD_UID),service.namespace=$(SERVICE_NAMESPACE),k8s.namespace.name=$(LM_APM_POD_NAMESPACE),k8s.node.name=$(LM_APM_NODE_NAME),k8s.cluster.name=$(LM_APM_CLUSTER_NAME),service.name=$(SERVICE_NAME),k8s.container.name=nginx",
 				},
 			},
 		},
@@ -1212,7 +1533,7 @@ func TestAddResEnvToOtelResAttribute(t *testing.T) {
 		},
 	}
 
-	newEnvVars, otelResourceAttributesIndex := addResEnvToOtelResAttribute(test.args.resourceEnvVar, test.args.newEnvVars)
+	newEnvVars, otelResourceAttributesIndex := addResEnvToOtelResAttribute(test.args.resourceEnvVar, test.args.newEnvVars, "")
 
 	for _, expectedEnvVar := range test.wantPayload.envVars {
 		for envVarIndex, envVar := range newEnvVars {
@@ -1241,7 +1562,6 @@ func TestAddResEnvToOtelResAttribute(t *testing.T) {
 }
 
 func TestGetParentWorkloadNameForPod(t *testing.T) {
-
 	k8sClient, err := getFakeK8sClient()
 	if err != nil {
 		t.Errorf("Error occured in getting fake k8s client: %v", err)
@@ -1488,20 +1808,6 @@ func TestExtractResourceWorkloadName(t *testing.T) {
 			wantPayload: "hello-deployment",
 		},
 		{
-			name: "Extract resource workload name for invalid owner type",
-			args: struct {
-				owner          client.Object
-				k8sClient      *config.K8sClient
-				namespacedName types.NamespacedName
-			}{
-				owner:          &appsv1.Deployment{},
-				k8sClient:      k8sClient,
-				namespacedName: types.NamespacedName{Namespace: "default", Name: "hello"},
-			},
-			wantErr:     true,
-			wantPayload: "",
-		},
-		{
 			name: "Extract resource workload name for invalid owner name",
 			args: struct {
 				owner          client.Object
@@ -1737,7 +2043,7 @@ func TestRunMutations(t *testing.T) {
 				ctx: context.Background(),
 				params: &Params{
 					Client:    &config.K8sClient{},
-					Pod:       &corev1.Pod{ObjectMeta: v1.ObjectMeta{Name: "demo"}},
+					Pod:       &corev1.Pod{ObjectMeta: v1.ObjectMeta{Name: "demo"}, Spec: corev1.PodSpec{Containers: []corev1.Container{{Image: "nginx", Name: "nginx"}}}},
 					LMConfig:  config.Config{},
 					Mutations: Mutations,
 					Namespace: "default",

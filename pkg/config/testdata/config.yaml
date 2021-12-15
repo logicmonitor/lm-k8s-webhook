@@ -1,21 +1,31 @@
 lmEnvVars:
   resource:
-    - name: SERVICE_ACCOUNT_NAME
-      valueFrom:
-        fieldRef:
-          fieldPath: spec.serviceAccountName
-    - name: SERVICE_NAMESPACE
-      valueFrom:
-        fieldRef:
-          fieldPath: metadata.labels['app-namespace']
-    - name: SERVICE_NAME
-      valueFrom:
-        fieldRef:
-          fieldPath: metadata.labels['app-name']
+    - env: 
+        name: SERVICE_ACCOUNT_NAME
+        valueFrom:
+          fieldRef:
+            fieldPath: spec.serviceAccountName
+      overrideDisabled: true
+    - env:
+        name: SERVICE_NAMESPACE
+        valueFrom:
+          fieldRef:
+            fieldPath: metadata.labels['app-namespace']
+    - env:
+        name: SERVICE_NAME
+        valueFrom:
+          fieldRef:
+            fieldPath: metadata.labels['app-name']
   operation:
-    - name: COMPANY_NAME
-      value: ABC Corporation
-    - name: OTLP_ENDPOINT
-      value: lmotel-svc:4317
-    - name: OTEL_JAVAAGENT_ENABLED
-      value: true
+    - env:
+        name: COMPANY_NAME
+        value: ABC Corporation
+      overrideDisabled: true 
+    - env:
+        name: OTLP_ENDPOINT
+        value: lmotel-svc:4317
+      overrideDisabled: true 
+    - env:
+        name: OTEL_JAVAAGENT_ENABLED
+        value: true
+      overrideDisabled: true
