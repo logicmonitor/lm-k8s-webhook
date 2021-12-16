@@ -272,6 +272,4 @@ So, it can take few seconds to reflect the updated configuration in the pod.
 -----
 ### License
 
- This Source Code is subject to the terms of the Mozilla Public
-  License, v. 2.0. If a copy of the MPL was not distributed with this
-  file, You can obtain one at https://mozilla.org/MPL/2.0/.
+[![license](https://img.shields.io/github/license/logicmonitor/lm-k8s-webhook.svg)](https://github.com/logicmonitor/lm-k8s-webhook/blob/main/LICENSE)
