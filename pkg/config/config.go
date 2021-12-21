@@ -23,10 +23,12 @@ type Config struct {
 	MutationConfig         MutationConfig
 }
 
+// MutationConfig holds the mutation config
 type MutationConfig struct {
 	LMEnvVars LMEnvVars `yaml:"lmEnvVars"`
 }
 
+// LMEnvVars holds the env variables for mutation
 type LMEnvVars struct {
 	/* Resource holds the resource environment variables,
 	which will be the part of OTEL_RESOURCE_ATTRIBUTES
@@ -39,15 +41,16 @@ type LMEnvVars struct {
 	Operation []OperationEnv `yaml:"operation,omitempty"`
 }
 
+// ResourceEnv represents the env variables which will be passed as a resource attributes with OTEL_RESOURCE_ATTRIBUTES env variable
 type ResourceEnv struct {
 	Env              corev1.EnvVar `yaml:"env"`
 	ResAttrName      string        `yaml:"resAttrName,omitempty"`
 	OverrideDisabled bool          `yaml:"overrideDisabled,omitempty"`
 }
 
+// OperationEnv represents the env variables that will be used by application, without passing it as a resource attribute
 type OperationEnv struct {
 	Env              corev1.EnvVar `yaml:"env"`
-	ResAttrName      string        `yaml:"resAttrName,omitempty"`
 	OverrideDisabled bool          `yaml:"overrideDisabled,omitempty"`
 }
 
@@ -81,6 +84,7 @@ func LoadConfig(configFilePath string) error {
 	return nil
 }
 
+// GetConfig returns the external config object
 func GetConfig() Config {
 	configLock.RLock()
 	defer configLock.RUnlock()

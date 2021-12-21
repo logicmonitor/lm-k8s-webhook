@@ -12,6 +12,7 @@ import (
 
 const (
 	// Resource attributes
+
 	LMAPMClusterName       = "LM_APM_CLUSTER_NAME"
 	LMAPMNodeName          = "LM_APM_NODE_NAME"
 	LMAPMPodName           = "LM_APM_POD_NAME"
@@ -24,6 +25,7 @@ const (
 	OTELResourceAttributes = "OTEL_RESOURCE_ATTRIBUTES"
 
 	// Workload resource discovery
+
 	WorkloadResourceDeployment  = "Deployment"
 	WorkloadResourceStatefulSet = "StatefulSet"
 	WorkloadResourceDaemonSet   = "DaemonSet"
@@ -32,6 +34,7 @@ const (
 	WorkloadResourceCronJob     = "CronJob"
 
 	// Mutation
+
 	MutationEnvVarInjection = "envVarInjection"
 )
 
@@ -49,13 +52,16 @@ var (
 	errEnvVarValueLabelNotFoundOnPod             = errors.New("label specified in environment variable is not found on pod or value pointed by label is empty")
 )
 
+// Mutation represents the mutation operation
 type Mutation struct {
 	Name string
 	Do   func(context.Context, *Params) error
 }
 
+// Mutations represents allowed mutations
 var Mutations = []Mutation{{Name: MutationEnvVarInjection, Do: mutateEnvVariables}}
 
+// Params holds the helper objects to perform mutation
 type Params struct {
 	Client    *config.K8sClient
 	Log       logr.Logger
@@ -65,6 +71,7 @@ type Params struct {
 	Namespace string
 }
 
+// RunMutations invokes the allowed mutations defined by Mutations
 func RunMutations(ctx context.Context, params *Params) error {
 	for _, mutation := range params.Mutations {
 		if mutationRequired(mutation, params.Pod) {

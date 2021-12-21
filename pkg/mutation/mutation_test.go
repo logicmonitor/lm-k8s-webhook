@@ -1564,7 +1564,7 @@ func TestAddResEnvToOtelResAttribute(t *testing.T) {
 func TestGetParentWorkloadNameForPod(t *testing.T) {
 	k8sClient, err := getFakeK8sClient()
 	if err != nil {
-		t.Errorf("Error occured in getting fake k8s client: %v", err)
+		t.Errorf("Error occurred in getting fake k8s client: %v", err)
 		return
 	}
 
@@ -1720,7 +1720,7 @@ func TestGetParentWorkloadNameForPod(t *testing.T) {
 func TestExtractResourceWorkloadName(t *testing.T) {
 	k8sClient, err := getFakeK8sClient()
 	if err != nil {
-		t.Errorf("Error occured in getting fake k8s client: %v", err)
+		t.Errorf("Error occurred in getting fake k8s client: %v", err)
 		return
 	}
 

@@ -5,6 +5,7 @@ import (
 	"k8s.io/client-go/rest"
 )
 
+// K8sClient represents the Kubernetes client object
 type K8sClient struct {
 	Clientset kubernetes.Interface
 }
