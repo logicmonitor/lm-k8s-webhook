@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+  
+  
+  
+  
+   <html class="no-js"> 
+
+  <head lang="en-us">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=10" />
+    <title>Getting Started - LM-K8s-Webhook</title>
+    <meta name="generator" content="Hugo 0.90.1" />
+
+    
+    <meta name="description" content="Kubernetes Mutating Admission Webhook">
+    
+    <link rel="canonical" href="https://logicmonitor.github.io/lm-k8s-webhook/getting-started/">
+    
+    <meta name="author" content="LogicMonitor, Inc.">
+    
+
+    <meta property="og:url" content="https://logicmonitor.github.io/lm-k8s-webhook/getting-started/">
+    <meta property="og:title" content="LM-K8s-Webhook">
+    <meta property="og:image" content="https://logicmonitor.github.io/lm-k8s-webhook/images/logo.png">
+    <meta name="apple-mobile-web-app-title" content="LM-K8s-Webhook">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <link rel="shortcut icon" type="image/x-icon" href="https://logicmonitor.github.io/lm-k8s-webhook/images/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="https://logicmonitor.github.io/lm-k8s-webhook/images/favicon.ico">
+
+    <style>
+      @font-face {
+        font-family: 'Icon';
+        src: url('https://logicmonitor.github.io/lm-k8s-webhook/fonts/icon.eot');
+        src: url('https://logicmonitor.github.io/lm-k8s-webhook/fonts/icon.eot')
+               format('embedded-opentype'),
+             url('https://logicmonitor.github.io/lm-k8s-webhook/fonts/icon.woff')
+               format('woff'),
+             url('https://logicmonitor.github.io/lm-k8s-webhook/fonts/icon.ttf')
+               format('truetype'),
+             url('https://logicmonitor.github.io/lm-k8s-webhook/fonts/icon.svg')
+               format('svg');
+        font-weight: normal;
+        font-style: normal;
+      }
+    </style>
+
+    <link rel="stylesheet" href="https://logicmonitor.github.io/lm-k8s-webhook/stylesheets/application.css">
+    <link rel="stylesheet" href="https://logicmonitor.github.io/lm-k8s-webhook/stylesheets/temporary.css">
+    <link rel="stylesheet" href="https://logicmonitor.github.io/lm-k8s-webhook/stylesheets/palettes.css">
+    <link rel="stylesheet" href="https://logicmonitor.github.io/lm-k8s-webhook/stylesheets/highlight/highlight.css">
+
+    
+    
+    
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Brandon%20Grotesque:400,700|Roboto&#43;Mono">
+    <style>
+      body, input {
+        font-family: 'Brandon Grotesque', Helvetica, Arial, sans-serif;
+      }
+      pre, code {
+        font-family: 'Roboto Mono', 'Courier New', 'Courier', monospace;
+      }
+    </style>
+
+    
+    <script src="https://logicmonitor.github.io/lm-k8s-webhook/javascripts/modernizr.js"></script>
+
+    
+
+  </head>
+  <body class="palette-primary-blue palette-accent-teal">
+
+
+
+	
+	
+
+
+<div class="backdrop">
+	<div class="backdrop-paper"></div>
+</div>
+
+<input class="toggle" type="checkbox" id="toggle-drawer">
+<input class="toggle" type="checkbox" id="toggle-search">
+<label class="toggle-button overlay" for="toggle-drawer"></label>
+
+<header class="header">
+	<nav aria-label="Header">
+  <div class="bar default">
+    <div class="button button-menu" role="button" aria-label="Menu">
+      <label class="toggle-button icon icon-menu" for="toggle-drawer">
+        <span></span>
+      </label>
+    </div>
+    <div class="stretch">
+      <div class="title">
+        Getting Started
+      </div>
+    </div>
+
+    
+    <div class="button button-twitter" role="button" aria-label="Twitter">
+       <a href="https://twitter.com/LogicMonitor" title="@LogicMonitor on Twitter" target="_blank" class="toggle-button icon icon-twitter"></a>
+    </div>
+    
+
+    
+    <div class="button button-github" role="button" aria-label="GitHub">
+      <a href="https://github.com/LogicMonitor" title="@LogicMonitor on GitHub" target="_blank" class="toggle-button icon icon-github"></a>
+    </div>
+    
+    
+        
+  </div>
+  <div class="bar search">
+    <div class="button button-close" role="button" aria-label="Close">
+      <label class="toggle-button icon icon-back" for="toggle-search"></label>
+    </div>
+    <div class="stretch">
+      <div class="field">
+        <input class="query" type="text" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck>
+      </div>
+    </div>
+    <div class="button button-reset" role="button" aria-label="Search">
+      <button class="toggle-button icon icon-close" id="reset-search"></button>
+    </div>
+  </div>
+</nav>
+</header>
+
+<main class="main">
+	<div class="drawer">
+		<nav aria-label="Navigation">
+  <a href="https://github.com/logicmonitor/lm-k8s-webhook" class="project">
+    <div class="banner">
+      
+        <div class="logo">
+          <img src="https://logicmonitor.github.io/lm-k8s-webhookimages/logo.png">
+        </div>
+      
+      <div class="name">
+        <strong>LM-K8s-Webhook <span class="version">1.0.0</span></strong>
+        
+          <br>
+          logicmonitor/lm-k8s-webhook
+        
+      </div>
+    </div>
+  </a>
+
+  <div class="scrollable">
+    <div class="wrapper">
+      
+        <ul class="repo">
+          <li class="repo-download">
+            <a href="https://github.com/logicmonitor/lm-k8s-webhook/archive/master.zip" target="_blank" title="Download" data-action="download">
+              <i class="icon icon-download"></i> Download
+            </a>
+          </li>
+          <li class="repo-stars">
+            <a href="https://github.com/logicmonitor/lm-k8s-webhook/stargazers" target="_blank" title="Stargazers" data-action="star">
+              <i class="icon icon-star"></i> Stars
+              <span class="count">&ndash;</span>
+            </a>
+          </li>
+        </ul>
+        <hr>
+      
+
+      <div class="toc">
+        
+        <ul>
+          
+
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="LM-K8s-Webhook" href="https://logicmonitor.github.io/lm-k8s-webhook/">
+	
+	LM-K8s-Webhook
+</a>
+
+
+
+  
+</li>
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="Getting started" href="https://logicmonitor.github.io/lm-k8s-webhook/getting-started">
+	
+	Getting started
+</a>
+
+
+
+  
+</li>
+
+
+
+<li>
+  
+    <span class="section">Docs</span>
+    <ul>
+      
+        
+        
+
+
+
+<a  title="Selectors" href="https://logicmonitor.github.io/lm-k8s-webhook/docs/selectors/">
+	
+	Selectors
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="External config" href="https://logicmonitor.github.io/lm-k8s-webhook/docs/external-config/">
+	
+	External config
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Hot-reload" href="https://logicmonitor.github.io/lm-k8s-webhook/docs/hot-reload/">
+	
+	Hot-reload
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Configuration" href="https://logicmonitor.github.io/lm-k8s-webhook/docs/configuration/">
+	
+	Configuration
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Examples" href="https://logicmonitor.github.io/lm-k8s-webhook/docs/examples/">
+	
+	Examples
+</a>
+
+
+
+      
+    </ul>
+  
+</li>
+
+
+        </ul>
+        
+
+        
+        <hr>
+        <span class="section">The author</span>
+        
+        <ul>
+          
+          <li>
+            <a href="https://twitter.com/LogicMonitor" target="_blank" title="@LogicMonitor on Twitter">
+              @LogicMonitor on Twitter
+            </a>
+          </li>
+          
+
+          
+          <li>
+            <a href="https://github.com/LogicMonitor" target="_blank" title="@LogicMonitor on GitHub">
+              @LogicMonitor on GitHub
+            </a>
+          </li>
+          
+
+          
+          <li>
+            <a href="mailto:lm-k8s-webhook@logicmonitor.com" title="Email of lm-k8s-webhook@logicmonitor.com">
+              Contact via email
+            </a>
+          </li>
+          
+        </ul>
+        
+      </div>
+    </div>
+  </div>
+</nav>
+
+	</div>
+
+	<article class="article">
+		<div class="wrapper">
+			<h1>Getting Started </h1>
+
+			<h2 id="prerequisites">Prerequisites:</h2>
+<ul>
+<li>Ensure that Kubernetes cluster is at least as new as v1.16 ( to use <code>admissionregistration.k8s.io/v1</code> ) or v1.9 ( to use <code>admissionregistration.k8s.io/v1beta1</code> )</li>
+<li>Ensure that <code>MutatingAdmissionWebhook admission controller</code> is enabled.
+You can check if it is enabled by looking at the admission plugins that are enabled by using the following command:</li>
+</ul>
+<pre tabindex="0"><code>   $ kube-apiserver -h | grep enable-admission-plugins
+</code></pre><p>If not enabled, then you can enable this plugin by running the following command in kube-apiserver:</p>
+<pre tabindex="0"><code>   $ kube-apiserver --enable-admission-plugins=MutatingAdmissionWebhook  
+</code></pre><ul>
+<li>
+<p>Ensure that the API (<code>admissionregistration.k8s.io/v1</code> or <code>admissionregistration.k8s.io/v1beta1</code> depending upon the k8s version being used) is enabled by using the following commands:</p>
+<ul>
+<li>For <code>admissionregistration.k8s.io/v1beta1</code> API:</li>
+</ul>
+</li>
+</ul>
+<pre tabindex="0"><code>  $ kubectl api-versions | grep admissionregistration.k8s.io/v1beta1
+</code></pre><p>Output should be:</p>
+<pre tabindex="0"><code>  admissionregistration.k8s.io/v1beta1
+</code></pre><ul>
+<li>For <code>admissionregistration.k8s.io/v1</code> API:</li>
+</ul>
+<pre tabindex="0"><code>   $ kubectl api-versions | grep admissionregistration.k8s.io/v1
+</code></pre><p>Output should be:</p>
+<pre tabindex="0"><code>   admissionregistration.k8s.io/v1
+</code></pre><ul>
+<li><strong>TLS Certificate Requirement:</strong></li>
+</ul>
+<p>In Kubernetes, in order for the API server to communicate with the webhook component, the webhook requires a TLS certificate that the API server is configured to trust. Following are some of the ways in which you can configure the required TLS certificate.</p>
+<p><strong>Option 1</strong>:
+The easiest and default method is to install the <a href="https://cert-manager.io/docs/installation/">cert-manager</a>. With this option, cert-manager will generate a self-signed certificate.</p>
+<p><strong>Option 2</strong>:
+If you want to use the cert-manager but want to use your own issuer to generate the certificates, then you can go with this option.</p>
+<p>For that you need to set the <code>mutatingWebhook.certManager.issuerRef.name</code> property of the lm-webhook helm chart to the name of the issuer which is deployed in your Kubernetes cluster and you also need to set the <code>mutatingWebhook.certManager.issuerRef.kind</code> property to the kind of the issuer (Issuer or ClusterIssuer).</p>
+<p>Both option 1 and option 2 need a cert-manager installed in your k8s cluster.</p>
+<p><strong>Option 3</strong>:
+If you want to generate &amp; manage tls certificates for the lm-webhook on your own, you can create the required certificate and key for the lm-webhook and manually create the tls secret in the same namespace where lm-webhook will be deployed.</p>
+<p>In this case, you need to set <code>mutatingWebhook.certManager.enabled</code> to false, so that you don&rsquo;t need to set up cert-manager.</p>
+<blockquote>
+<p>Note: By default the service name of the lm-webhook is <code>lm-webhook-svc</code>. So, the server cert must be valid for <code>&lt;svc_name&gt;.&lt;svc_namespace&gt;.svc</code></p>
+</blockquote>
+<p>If you are following option 3, then once you have the required certificate and the key files ready for lm-webhook you can follow below steps:</p>
+<ol>
+<li>Create the namespace for the lm-webhook if not exists</li>
+</ol>
+<pre tabindex="0"><code>$ kubectl create namespace lm-webhook
+</code></pre><ol start="2">
+<li>Create the tls secret in the same namespace</li>
+</ol>
+<p>Default tls secret name consumed in the lm-webhook is <code>lm-webhook-tls-cert</code>. If you are using different name, then you need to pass it by configuring the value of the <code>mutatingWebhook.tlsCertSecretName</code></p>
+<pre tabindex="0"><code> $ kubectl create secret tls lm-webhook-tls-cert \
+   --cert=path/to/cert/file \
+   --key=path/to/key/file \
+   -n lm-webhook
+</code></pre><ol start="3">
+<li>Set the base64 encoded value of the CA trust chain to the <code>mutatingWebhook.caBundle</code> which will be used by the api-server to validate the tls certificates.</li>
+</ol>
+<h2 id="deploying-the-lm-webhook-helm-chart">Deploying the lm-webhook helm-chart</h2>
+<ul>
+<li>
+<p>Depending on the certificate management you are using and the lm-webhook components like <a href="https://logicmonitor.github.io/lm-k8s-webhook/docs/selectors/">selectors</a> and <a href="https://logicmonitor.github.io/lm-k8s-webhook/docs/external-config/">external-config</a>, you need to modify the helm command for the lm-webhook deployment. You can refer the <a href="https://logicmonitor.github.io/lm-k8s-webhook/docs/examples/">examples page</a>.</p>
+</li>
+<li>
+<p>For all the possible values that can be configured with lm-webhook helm chart refer to <a href="https://logicmonitor.github.io/lm-k8s-webhook/docs/configuration/">configuration page</a></p>
+</li>
+<li>
+<p>Helm chart for the lm-webhook is available at <a href="https://github.com/logicmonitor/lm-k8s-webhook/tree/main/helm-chart/lm-webhook">https://github.com/logicmonitor/lm-k8s-webhook/tree/main/helm-chart/lm-webhook</a> path.</p>
+</li>
+<li>
+<p>The simplest lm-webhook deployment without passing any selectors and external configuration can be done by running the following command in bash terminal.</p>
+</li>
+</ul>
+<pre tabindex="0"><code>$ helm install --debug --wait -n lm-webhook \
+--create-namespace \
+--set cluster_name=&quot;&lt;cluster_name&gt;&quot; \
+lm-webhook .
+</code></pre><h2 id="deploying-the-application-pods">Deploying the application pods</h2>
+<ul>
+<li>Once the lm-webhook is up and running, you can deploy the application pods that you wanted to get mutated.</li>
+<li>If you have configured selectors i.e. Object selector, Namespace selector then you need to make sure that your pods and namespace should satisfy corresponding selectors.</li>
+<li>If everything goes well, then after the pod gets deployed, you can see that pod has the Kubernetes resource attributes as an environment variables injected into it.</li>
+</ul>
+
+		
+			<aside class="copyright" role="note">
+				
+				&copy; 2021 Released under Mozilla Public License 2.0 &ndash;
+				
+				Documentation built with
+				<a href="https://www.gohugo.io" target="_blank">Hugo</a>
+				using the
+				<a href="http://github.com/digitalcraftsman/hugo-material-docs" target="_blank">Material</a> theme.
+			</aside>
+
+			<footer class="footer">
+				
+
+<nav class="pagination" aria-label="Footer">
+  <div class="previous">
+  
+      <a href="https://logicmonitor.github.io/lm-k8s-webhook/docs/hot-reload/" title="Hot-reload">
+        <span class="direction">
+          Previous
+        </span>
+        <div class="page">
+          <div class="button button-previous" role="button" aria-label="Previous">
+            <i class="icon icon-back"></i>
+          </div>
+          <div class="stretch">
+            <div class="title">
+              Hot-reload
+            </div>
+          </div>
+        </div>
+      </a>
+  
+  </div>
+
+  <div class="next">
+  
+      <a href="https://logicmonitor.github.io/lm-k8s-webhook/docs/external-config/" title="External config">
+        <span class="direction">
+          Next
+        </span>
+        <div class="page">
+          <div class="stretch">
+            <div class="title">
+              External config
+            </div>
+          </div>
+          <div class="button button-next" role="button" aria-label="Next">
+            <i class="icon icon-forward"></i>
+          </div>
+        </div>
+      </a>
+  
+  </div>
+</nav>
+
+
+
+
+
+			</footer>
+		</div>
+	</article>
+
+	<div class="results" role="status" aria-live="polite">
+		<div class="scrollable">
+			<div class="wrapper">
+				<div class="meta"></div>
+				<div class="list"></div>
+			</div>
+		</div>
+	</div>
+</main>
+
+    <script>
+    
+      var base_url = 'https:\/\/logicmonitor.github.io\/lm-k8s-webhook';
+      var repo_id  = 'logicmonitor\/lm-k8s-webhook';
+    
+    </script>
+
+    <script src="https://logicmonitor.github.io/lm-k8s-webhook/javascripts/application.js"></script>
+    
+
+    <script>
+      /* Add headers to scrollspy */
+      var headers   = document.getElementsByTagName("h2");
+      var scrollspy = document.getElementById('scrollspy');
+
+      if(scrollspy) {
+        if(headers.length > 0) {
+          for(var i = 0; i < headers.length; i++) {
+            var li = document.createElement("li");
+            li.setAttribute("class", "anchor");
+
+            var a  = document.createElement("a");
+            a.setAttribute("href", "#" + headers[i].id);
+            a.setAttribute("title", headers[i].innerHTML);
+            a.innerHTML = headers[i].innerHTML;
+
+            li.appendChild(a)
+            scrollspy.appendChild(li);
+          }
+        } else {
+          scrollspy.parentElement.removeChild(scrollspy)
+        }
+
+
+        /* Add permanent link next to the headers */
+        var headers = document.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        for(var i = 0; i < headers.length; i++) {
+            var a = document.createElement("a");
+            a.setAttribute("class", "headerlink");
+            a.setAttribute("href", "#" + headers[i].id);
+            a.setAttribute("title", "Permanent link")
+            a.innerHTML = "#";
+            headers[i].appendChild(a);
+        }
+      }
+    </script>
+
+    
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+  </body>
+</html>
+

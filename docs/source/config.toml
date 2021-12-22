@@ -1,0 +1,85 @@
+baseurl = "https://logicmonitor.github.io/lm-k8s-webhook"
+languageCode = "en-us"
+title = "LM-K8s-Webhook"
+theme = "hugo-material-docs"
+metadataformat = "yaml"
+canonifyurls = true
+# Enable Google Analytics by entering your tracking id
+googleAnalytics = ""
+publishDir = "../../docs"
+disableKinds = ["taxonomy", "term"]
+
+
+[params]
+	# General information
+	author = "LogicMonitor, Inc."
+	description = "Kubernetes Mutating Admission Webhook"
+	copyright = "Released under Mozilla Public License 2.0"
+
+	# Repository
+	provider = "GitHub"
+	repo_url = "https://github.com/logicmonitor/lm-k8s-webhook"
+
+
+	version = "1.0.0"
+	logo = "images/logo.png"
+	favicon = ""
+
+	permalink = "#"
+
+	# Custom assets
+	custom_css = []
+	custom_js  = []
+
+	# Syntax highlighting theme
+	highlight_css  = ""
+
+	[params.palette]
+    	primary = "blue"
+    	accent  = "teal"
+
+    [params.font]
+    	text = "Brandon Grotesque"
+    	code = "Roboto Mono"
+
+
+[social]
+	twitter = "LogicMonitor"
+	github  = "LogicMonitor"
+	email   = "lm-k8s-webhook@logicmonitor.com"
+
+
+[[menu.main]]
+	name   = "LM-K8s-Webhook"
+	url    = "/"
+	weight = 1
+
+[[menu.main]]
+	name   = "Getting started"
+	url    = "getting-started"
+	weight = 2
+
+[[menu.main]]
+	name   = "Docs"
+	url    = "docs/"
+	weight = 3
+
+[blackfriday]
+	smartypants	= true
+	fractions = true
+	smartDashes = true
+	plainIDAnchors = true
+
+[markup]
+  [markup.highlight]
+    anchorLineNos = false
+    codeFences = true
+    guessSyntax = false
+    hl_Lines = ""
+    lineAnchors = ""
+    lineNoStart = 1
+    lineNos = false
+    lineNumbersInTable = true
+    noClasses = false
+    style = "monokai"
+    tabWidth = 4

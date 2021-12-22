@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>LM-K8s-Webhook</title>
+    <link>https://logicmonitor.github.io/lm-k8s-webhook/getting-started/</link>
+    <description>Recent content on LM-K8s-Webhook</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="https://logicmonitor.github.io/lm-k8s-webhook/getting-started/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Getting Started</title>
+      <link>https://logicmonitor.github.io/lm-k8s-webhook/getting-started/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://logicmonitor.github.io/lm-k8s-webhook/getting-started/</guid>
+      <description>Prerequisites:  Ensure that Kubernetes cluster is at least as new as v1.16 ( to use admissionregistration.k8s.io/v1 ) or v1.9 ( to use admissionregistration.k8s.io/v1beta1 ) Ensure that MutatingAdmissionWebhook admission controller is enabled. You can check if it is enabled by looking at the admission plugins that are enabled by using the following command:   $ kube-apiserver -h | grep enable-admission-plugins If not enabled, then you can enable this plugin by running the following command in kube-apiserver:</description>
+    </item>
+    
+  </channel>
+</rss>
