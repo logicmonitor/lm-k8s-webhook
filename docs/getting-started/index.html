@@ -365,17 +365,23 @@ You can check if it is enabled by looking at the admission plugins that are enab
 <p>In Kubernetes, in order for the API server to communicate with the webhook component, the webhook requires a TLS certificate that the API server is configured to trust. Following are some of the ways in which you can configure the required TLS certificate.</p>
 <p><strong>Option 1</strong>:
 The easiest and default method is to install the <a href="https://cert-manager.io/docs/installation/">cert-manager</a>. With this option, cert-manager will generate a self-signed certificate.</p>
+<blockquote>
+<p>Note: Please make sure that the components (pods) deployed by the cert-manager are up and running. By default cert-manager deploys its pods in the <code>cert-manager</code> namespace.</p>
+</blockquote>
 <p><strong>Option 2</strong>:
 If you want to use the cert-manager but want to use your own issuer to generate the certificates, then you can go with this option.</p>
 <p>For that you need to set the <code>mutatingWebhook.certManager.issuerRef.name</code> property of the lm-webhook helm chart to the name of the issuer which is deployed in your Kubernetes cluster and you also need to set the <code>mutatingWebhook.certManager.issuerRef.kind</code> property to the kind of the issuer (Issuer or ClusterIssuer).</p>
 <p>Both option 1 and option 2 need a cert-manager installed in your k8s cluster.</p>
+<blockquote>
+<p>Note: Please make sure that the components (pods) deployed by the cert-manager are up and running. By default cert-manager deploys its pods in the <code>cert-manager</code> namespace.</p>
+</blockquote>
 <p><strong>Option 3</strong>:
 If you want to generate &amp; manage tls certificates for the lm-webhook on your own, you can create the required certificate and key for the lm-webhook and manually create the tls secret in the same namespace where lm-webhook will be deployed.</p>
 <p>In this case, you need to set <code>mutatingWebhook.certManager.enabled</code> to false, so that you don&rsquo;t need to set up cert-manager.</p>
 <blockquote>
 <p>Note: By default the service name of the lm-webhook is <code>lm-webhook-svc</code>. So, the server cert must be valid for <code>&lt;svc_name&gt;.&lt;svc_namespace&gt;.svc</code></p>
 </blockquote>
-<p>If you are following option 3, then once you have the required certificate and the key files ready for lm-webhook you can follow below steps:</p>
+<p>If you are following <code>option 3</code>, then once you have the required certificate and the key files ready for lm-webhook you can follow below steps:</p>
 <ol>
 <li>Create the namespace for the lm-webhook if not exists</li>
 </ol>
@@ -403,7 +409,7 @@ If you want to generate &amp; manage tls certificates for the lm-webhook on your
 <p>Helm chart for the lm-webhook is available at <a href="https://github.com/logicmonitor/lm-k8s-webhook/tree/main/helm-chart/lm-webhook">https://github.com/logicmonitor/lm-k8s-webhook/tree/main/helm-chart/lm-webhook</a> path.</p>
 </li>
 <li>
-<p>The simplest lm-webhook deployment without passing any selectors and external configuration can be done by running the following command in bash terminal.</p>
+<p>The simplest lm-webhook deployment without passing any selectors and external configuration can be done by running the following command in bash terminal from the <code>helm-chart/lm-webhook</code> directory.</p>
 </li>
 </ul>
 <pre tabindex="0"><code>$ helm install --debug --wait -n lm-webhook \
