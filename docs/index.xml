@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>LM-K8s-Webhook</title>
+    <link>https://logicmonitor.github.io/lm-k8s-webhook/</link>
+    <description>Recent content on LM-K8s-Webhook</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="https://logicmonitor.github.io/lm-k8s-webhook/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Configuration</title>
+      <link>https://logicmonitor.github.io/lm-k8s-webhook/docs/configuration/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://logicmonitor.github.io/lm-k8s-webhook/docs/configuration/</guid>
+      <description>Required Values  cluster_name (default: &amp;ldquo;&amp;quot;): Name of the k8s cluster in which lm-webhook will be deployed. mutatingWebhook.caBundle (default: &amp;ldquo;&amp;quot;): Base64 encoded value of CA trust chain. Required if mutatingWebhook.certManager.enabled is set to false.  Optional Values  mutatingWebhook.objectSelector (default: &amp;ldquo;&amp;quot;): specifies the label based selectors for the objects (pod) for which the requests are required to be intercepted. mutatingWebhook.namespaceSelector (default: &amp;ldquo;&amp;quot;): specifies the label based selectors for the namespaces. mutatingWebhook.</description>
+    </item>
+    
+    <item>
+      <title>Docs</title>
+      <link>https://logicmonitor.github.io/lm-k8s-webhook/docs/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://logicmonitor.github.io/lm-k8s-webhook/docs/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Examples</title>
+      <link>https://logicmonitor.github.io/lm-k8s-webhook/docs/examples/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://logicmonitor.github.io/lm-k8s-webhook/docs/examples/</guid>
+      <description>You can refer the following example commands for different scenarios for deploying the lm-webhook with the helm-chart.
+  Using default tls certificate handling (using cert-manager)
+$ helm install --debug --wait -n lm-webhook \ --create-namespace \ --set cluster_name=&amp;quot;your-k8s-cluster-name&amp;quot; \ lm-webhook .   Using custom issuer other than self-signed issuer
+$ helm install --debug --wait -n lm-webhook \ --create-namespace \ --set cluster_name=&amp;quot;your-k8s-cluster-name&amp;quot; \ --set mutatingWebhook.certManager.issuerRef.name=private-ca-issuer \ --set mutatingWebhook.certManager.issuerRef.kind=Issuer \ lm-webhook .</description>
+    </item>
+    
+    <item>
+      <title>External config</title>
+      <link>https://logicmonitor.github.io/lm-k8s-webhook/docs/external-config/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://logicmonitor.github.io/lm-k8s-webhook/docs/external-config/</guid>
+      <description>Currently as a part of the external config, user can define the custom environment variables that are to be injected into the application pods.
+You can download the sample external config file from here: https://github.com/logicmonitor/lm-k8s-webhook/blob/main/sampleconfig.yaml
+Example:
+lmEnvVars: resource: - env: name: SERVICE_ACCOUNT_NAME valueFrom: fieldRef: fieldPath: spec.serviceAccountName resAttrName: serviceaccount.name overrideDisabled: true - env: name: SERVICE_NAMESPACE valueFrom: fieldRef: fieldPath: metadata.labels[&#39;app-namespace&#39;] - env: name: SERVICE_NAME valueFrom: fieldRef: fieldPath: metadata.labels[&#39;app-name&#39;] operation: - env: name: COMPANY_NAME value: ABC Corporation overrideDisabled: true - env: name: OTLP_ENDPOINT value: lmotel-svc:4317 overrideDisabled: true - env: name: OTEL_JAVAAGENT_ENABLED value: true overrideDisabled: true - env: name: DEPLOYMENT_ENV value: production environment variables can be of two types, i.</description>
+    </item>
+    
+    <item>
+      <title>Getting Started</title>
+      <link>https://logicmonitor.github.io/lm-k8s-webhook/getting-started/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://logicmonitor.github.io/lm-k8s-webhook/getting-started/</guid>
+      <description>Prerequisites:  Ensure that Kubernetes cluster is at least as new as v1.16 ( to use admissionregistration.k8s.io/v1 ) or v1.9 ( to use admissionregistration.k8s.io/v1beta1 ) Ensure that MutatingAdmissionWebhook admission controller is enabled. You can check if it is enabled by looking at the admission plugins that are enabled by running the following command in kube-apiserver:   $ kube-apiserver -h | grep enable-admission-plugins If not enabled, then you can enable this plugin by running the following command in kube-apiserver:</description>
+    </item>
+    
+    <item>
+      <title>Hot-reload</title>
+      <link>https://logicmonitor.github.io/lm-k8s-webhook/docs/hot-reload/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://logicmonitor.github.io/lm-k8s-webhook/docs/hot-reload/</guid>
+      <description>External config file content can be modified by updating the configmap, which causes lm-webhook to reload the external config inside the container without pod restart.   Note: lm-webhook does not support real-time config reload. As the official Kubernetes documentation says, the total delay from the moment when the ConfigMap is updated to the moment when new keys are projected to the Pod can be as long as the kubelet sync period + cache propagation delay, where the cache propagation delay depends on the chosen cache type (it equals to watch propagation delay, ttl of cache, or zero correspondingly).</description>
+    </item>
+    
+    <item>
+      <title>LM-K8s-Webhook</title>
+      <link>https://logicmonitor.github.io/lm-k8s-webhook/lm-k8s-webhook/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://logicmonitor.github.io/lm-k8s-webhook/lm-k8s-webhook/</guid>
+      <description>LM-Webhook is the implementation of the Kubernetes Mutating Admission webhook. Some of the key features of the LM-Webhook are:
+ LM-Webhook can be used to inject the kubernetes specific resource attributes like pod name, ip, pod namespace, service namespace, pod UUID in the pod as an environment variable, which avoids the need of manually updating the deployment manifests to include these resource attributes. Custom environment variables can also be injected by passing the external configuration.</description>
+    </item>
+    
+    <item>
+      <title>Selectors</title>
+      <link>https://logicmonitor.github.io/lm-k8s-webhook/docs/selectors/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://logicmonitor.github.io/lm-k8s-webhook/docs/selectors/</guid>
+      <description>Selectors can be used to limit which requests can be intercepted by the webhook based on the labels. Two types of selectors can be specified in MutatingWebhookConfiguration i.e. ObjectSelector and NamespaceSelector.
+Both ObjectSelector and NamespaceSelector can use matchLabels and matchExpressions to specify the selectors. You can check working with kubernetes objects and labels for more details.
+ ObjectSelector ObjectSelector is used to specify the label based selectors for the objects (pod) for which the requests are required to be intercepted.</description>
+    </item>
+    
+  </channel>
+</rss>
