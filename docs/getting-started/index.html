@@ -337,10 +337,10 @@
 <ul>
 <li>Ensure that Kubernetes cluster is at least as new as v1.16 ( to use <code>admissionregistration.k8s.io/v1</code> ) or v1.9 ( to use <code>admissionregistration.k8s.io/v1beta1</code> )</li>
 <li>Ensure that <code>MutatingAdmissionWebhook admission controller</code> is enabled.
-You can check if it is enabled by looking at the admission plugins that are enabled by using the following command:</li>
+You can check if it is enabled by looking at the admission plugins that are enabled by running the following command in <code>kube-apiserver</code>:</li>
 </ul>
 <pre tabindex="0"><code>   $ kube-apiserver -h | grep enable-admission-plugins
-</code></pre><p>If not enabled, then you can enable this plugin by running the following command in kube-apiserver:</p>
+</code></pre><p>If not enabled, then you can enable this plugin by running the following command in <code>kube-apiserver</code>:</p>
 <pre tabindex="0"><code>   $ kube-apiserver --enable-admission-plugins=MutatingAdmissionWebhook  
 </code></pre><ul>
 <li>
