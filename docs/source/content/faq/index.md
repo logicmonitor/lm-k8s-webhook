@@ -9,6 +9,6 @@ draft: false
 So, it can take few seconds to reflect the updated configuration in the pod.
 
 ---
-**2. Do I need to make any changes in application pods to make us of the `LM-K8s-Webhook` ?**
+**2. Do I need to make any changes in application pods to make use of the `LM-K8s-Webhook` ?**
 * If you have configured selectors i.e. `Object selector`, `Namespace selector` while deploying the LM-K8s-Webhook, then you need to make sure that your pods and namespace satisfy corresponding selectors.
 ---
