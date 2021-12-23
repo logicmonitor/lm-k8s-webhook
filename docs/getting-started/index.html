@@ -22,7 +22,7 @@
 
     <meta property="og:url" content="https://logicmonitor.github.io/lm-k8s-webhook/getting-started/">
     <meta property="og:title" content="LM-K8s-Webhook">
-    <meta property="og:image" content="https://logicmonitor.github.io/lm-k8s-webhook/images/logo.png">
+    <meta property="og:image" content="https://logicmonitor.github.io/images/logo.png">
     <meta name="apple-mobile-web-app-title" content="LM-K8s-Webhook">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -138,7 +138,7 @@
     <div class="banner">
       
         <div class="logo">
-          <img src="https://logicmonitor.github.io/lm-k8s-webhookimages/logo.png">
+          <img src="https://logicmonitor.github.io/lm-k8s-webhook/images/logo.png">
         </div>
       
       <div class="name">
@@ -184,9 +184,9 @@
 
 
 
-<a  title="LM-K8s-Webhook" href="https://logicmonitor.github.io/lm-k8s-webhook/">
+<a  title="Getting started" href="https://logicmonitor.github.io/lm-k8s-webhook/">
 	
-	LM-K8s-Webhook
+	Getting started
 </a>
 
 
@@ -202,9 +202,9 @@
 
 
 
-<a  title="Getting started" href="https://logicmonitor.github.io/lm-k8s-webhook/getting-started">
+<a  title="Prerequisites" href="https://logicmonitor.github.io/lm-k8s-webhook/prerequisites">
 	
-	Getting started
+	Prerequisites
 </a>
 
 
@@ -216,7 +216,25 @@
 
 <li>
   
-    <span class="section">Docs</span>
+    
+
+
+
+<a  title="Deployment" href="https://logicmonitor.github.io/lm-k8s-webhook/deployment">
+	
+	Deployment
+</a>
+
+
+
+  
+</li>
+
+
+
+<li>
+  
+    <span class="section">Configurations</span>
     <ul>
       
         
@@ -224,7 +242,7 @@
 
 
 
-<a  title="Selectors" href="https://logicmonitor.github.io/lm-k8s-webhook/docs/selectors/">
+<a  title="Selectors" href="https://logicmonitor.github.io/lm-k8s-webhook/configurations/selectors/">
 	
 	Selectors
 </a>
@@ -237,9 +255,9 @@
 
 
 
-<a  title="External config" href="https://logicmonitor.github.io/lm-k8s-webhook/docs/external-config/">
+<a  title="Additional attributes config" href="https://logicmonitor.github.io/lm-k8s-webhook/configurations/additional-attributes-config/">
 	
-	External config
+	Additional attributes config
 </a>
 
 
@@ -250,41 +268,69 @@
 
 
 
-<a  title="Hot-reload" href="https://logicmonitor.github.io/lm-k8s-webhook/docs/hot-reload/">
+<a  title="Helm chart configurations" href="https://logicmonitor.github.io/lm-k8s-webhook/configurations/configuration/">
 	
-	Hot-reload
-</a>
-
-
-
-      
-        
-        
-
-
-
-<a  title="Configuration" href="https://logicmonitor.github.io/lm-k8s-webhook/docs/configuration/">
-	
-	Configuration
-</a>
-
-
-
-      
-        
-        
-
-
-
-<a  title="Examples" href="https://logicmonitor.github.io/lm-k8s-webhook/docs/examples/">
-	
-	Examples
+	Helm chart configurations
 </a>
 
 
 
       
     </ul>
+  
+</li>
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="Examples" href="https://logicmonitor.github.io/lm-k8s-webhook/examples">
+	
+	Examples
+</a>
+
+
+
+  
+</li>
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="FAQ&#39;s" href="https://logicmonitor.github.io/lm-k8s-webhook/faq">
+	
+	FAQ&#39;s
+</a>
+
+
+
+  
+</li>
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="Troubleshooting guide" href="https://logicmonitor.github.io/lm-k8s-webhook/troubleshooting-guide">
+	
+	Troubleshooting guide
+</a>
+
+
+
   
 </li>
 
@@ -333,95 +379,12 @@
 		<div class="wrapper">
 			<h1>Getting Started </h1>
 
-			<h2 id="prerequisites">Prerequisites:</h2>
+			<p><strong>LM-K8s-Webhook</strong> is the implementation of the <a href="https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/">Kubernetes Mutating Admission webhook</a>. Some of the key features of the <code>LM-K8s-Webhook</code> are:</p>
 <ul>
-<li>Ensure that Kubernetes cluster is at least as new as v1.16 ( to use <code>admissionregistration.k8s.io/v1</code> ) or v1.9 ( to use <code>admissionregistration.k8s.io/v1beta1</code> )</li>
-<li>Ensure that <code>MutatingAdmissionWebhook admission controller</code> is enabled.
-You can check if it is enabled by looking at the admission plugins that are enabled by running the following command in <code>kube-apiserver</code>:</li>
+<li>LM-K8s-Webhook can be used to inject the kubernetes specific resource attributes like pod name, ip, pod namespace, service namespace, pod UUID in the pod as an environment variable, which avoids the need of manually updating the deployment manifests to include these resource attributes.</li>
+<li>Custom environment variables can also be injected by passing the external configuration.</li>
 </ul>
-<pre tabindex="0"><code>   $ kube-apiserver -h | grep enable-admission-plugins
-</code></pre><p>If not enabled, then you can enable this plugin by running the following command in <code>kube-apiserver</code>:</p>
-<pre tabindex="0"><code>   $ kube-apiserver --enable-admission-plugins=MutatingAdmissionWebhook  
-</code></pre><ul>
-<li>
-<p>Ensure that the API (<code>admissionregistration.k8s.io/v1</code> or <code>admissionregistration.k8s.io/v1beta1</code> depending upon the k8s version being used) is enabled by using the following commands:</p>
-<ul>
-<li>For <code>admissionregistration.k8s.io/v1beta1</code> API:</li>
-</ul>
-</li>
-</ul>
-<pre tabindex="0"><code>  $ kubectl api-versions | grep admissionregistration.k8s.io/v1beta1
-</code></pre><p>Output should be:</p>
-<pre tabindex="0"><code>  admissionregistration.k8s.io/v1beta1
-</code></pre><ul>
-<li>For <code>admissionregistration.k8s.io/v1</code> API:</li>
-</ul>
-<pre tabindex="0"><code>   $ kubectl api-versions | grep admissionregistration.k8s.io/v1
-</code></pre><p>Output should be:</p>
-<pre tabindex="0"><code>   admissionregistration.k8s.io/v1
-</code></pre><ul>
-<li><strong>TLS Certificate Requirement:</strong></li>
-</ul>
-<p>In Kubernetes, in order for the API server to communicate with the webhook component, the webhook requires a TLS certificate that the API server is configured to trust. Following are some of the ways in which you can configure the required TLS certificate.</p>
-<p><strong>Option 1</strong>:
-The easiest and default method is to install the <a href="https://cert-manager.io/docs/installation/">cert-manager</a>. With this option, cert-manager will generate a self-signed certificate.</p>
-<blockquote>
-<p>Note: Please make sure that the components (pods) deployed by the cert-manager are up and running. By default cert-manager deploys its pods in the <code>cert-manager</code> namespace.</p>
-</blockquote>
-<p><strong>Option 2</strong>:
-If you want to use the cert-manager but want to use your own issuer to generate the certificates, then you can go with this option.</p>
-<p>For that you need to set the <code>mutatingWebhook.certManager.issuerRef.name</code> property of the lm-webhook helm chart to the name of the issuer which is deployed in your Kubernetes cluster and you also need to set the <code>mutatingWebhook.certManager.issuerRef.kind</code> property to the kind of the issuer (Issuer or ClusterIssuer).</p>
-<p>Both option 1 and option 2 need a cert-manager installed in your k8s cluster.</p>
-<blockquote>
-<p>Note: Please make sure that the components (pods) deployed by the cert-manager are up and running. By default cert-manager deploys its pods in the <code>cert-manager</code> namespace.</p>
-</blockquote>
-<p><strong>Option 3</strong>:
-If you want to generate &amp; manage tls certificates for the lm-webhook on your own, you can create the required certificate and key for the lm-webhook and manually create the tls secret in the same namespace where lm-webhook will be deployed.</p>
-<p>In this case, you need to set <code>mutatingWebhook.certManager.enabled</code> to false, so that you don&rsquo;t need to set up cert-manager.</p>
-<blockquote>
-<p>Note: By default the service name of the lm-webhook is <code>lm-webhook-svc</code>. So, the server cert must be valid for <code>&lt;svc_name&gt;.&lt;svc_namespace&gt;.svc</code></p>
-</blockquote>
-<p>If you are following <code>option 3</code>, then once you have the required certificate and the key files ready for lm-webhook you can follow below steps:</p>
-<ol>
-<li>Create the namespace for the lm-webhook if not exists</li>
-</ol>
-<pre tabindex="0"><code>$ kubectl create namespace lm-webhook
-</code></pre><ol start="2">
-<li>Create the tls secret in the same namespace</li>
-</ol>
-<p>Default tls secret name consumed in the lm-webhook is <code>lm-webhook-tls-cert</code>. If you are using different name, then you need to pass it by configuring the value of the <code>mutatingWebhook.tlsCertSecretName</code></p>
-<pre tabindex="0"><code> $ kubectl create secret tls lm-webhook-tls-cert \
-   --cert=path/to/cert/file \
-   --key=path/to/key/file \
-   -n lm-webhook
-</code></pre><ol start="3">
-<li>Set the base64 encoded value of the CA trust chain to the <code>mutatingWebhook.caBundle</code> which will be used by the api-server to validate the tls certificates.</li>
-</ol>
-<h2 id="deploying-the-lm-webhook-helm-chart">Deploying the lm-webhook helm-chart</h2>
-<ul>
-<li>
-<p>Depending on the certificate management you are using and the lm-webhook components like <a href="https://logicmonitor.github.io/lm-k8s-webhook/docs/selectors/">selectors</a> and <a href="https://logicmonitor.github.io/lm-k8s-webhook/docs/external-config/">external-config</a>, you need to modify the helm command for the lm-webhook deployment. You can refer the <a href="https://logicmonitor.github.io/lm-k8s-webhook/docs/examples/">examples page</a>.</p>
-</li>
-<li>
-<p>For all the possible values that can be configured with lm-webhook helm chart refer to <a href="https://logicmonitor.github.io/lm-k8s-webhook/docs/configuration/">configuration page</a></p>
-</li>
-<li>
-<p>Helm chart for the lm-webhook is available at <a href="https://github.com/logicmonitor/lm-k8s-webhook/tree/main/helm-chart/lm-webhook">https://github.com/logicmonitor/lm-k8s-webhook/tree/main/helm-chart/lm-webhook</a> path.</p>
-</li>
-<li>
-<p>The simplest lm-webhook deployment without passing any selectors and external configuration can be done by running the following command in bash terminal from the <code>helm-chart/lm-webhook</code> directory.</p>
-</li>
-</ul>
-<pre tabindex="0"><code>$ helm install --debug --wait -n lm-webhook \
---create-namespace \
---set cluster_name=&quot;&lt;cluster_name&gt;&quot; \
-lm-webhook .
-</code></pre><h2 id="deploying-the-application-pods">Deploying the application pods</h2>
-<ul>
-<li>Once the lm-webhook is up and running, you can deploy the application pods that you wanted to get mutated.</li>
-<li>If you have configured selectors i.e. Object selector, Namespace selector then you need to make sure that your pods and namespace should satisfy corresponding selectors.</li>
-<li>If everything goes well, then after the pod gets deployed, you can see that pod has the Kubernetes resource attributes as an environment variables injected into it.</li>
-</ul>
+<hr>
 
 		
 			<aside class="copyright" role="note">
@@ -440,7 +403,7 @@ lm-webhook .
 <nav class="pagination" aria-label="Footer">
   <div class="previous">
   
-      <a href="https://logicmonitor.github.io/lm-k8s-webhook/docs/hot-reload/" title="Hot-reload">
+      <a href="https://logicmonitor.github.io/lm-k8s-webhook/configurations/configuration/" title="Helm chart configurations">
         <span class="direction">
           Previous
         </span>
@@ -450,7 +413,7 @@ lm-webhook .
           </div>
           <div class="stretch">
             <div class="title">
-              Hot-reload
+              Helm chart configurations
             </div>
           </div>
         </div>
@@ -460,14 +423,14 @@ lm-webhook .
 
   <div class="next">
   
-      <a href="https://logicmonitor.github.io/lm-k8s-webhook/docs/external-config/" title="External config">
+      <a href="https://logicmonitor.github.io/lm-k8s-webhook/faq/" title="FAQ&#39;s">
         <span class="direction">
           Next
         </span>
         <div class="page">
           <div class="stretch">
             <div class="title">
-              External config
+              FAQ&#39;s
             </div>
           </div>
           <div class="button button-next" role="button" aria-label="Next">

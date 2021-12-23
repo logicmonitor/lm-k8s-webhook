@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>LM-K8s-Webhook</title>
+    <link>https://logicmonitor.github.io/lm-k8s-webhook/troubleshooting-guide/</link>
+    <description>Recent content on LM-K8s-Webhook</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="https://logicmonitor.github.io/lm-k8s-webhook/troubleshooting-guide/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Troubleshooting Guide</title>
+      <link>https://logicmonitor.github.io/lm-k8s-webhook/troubleshooting-guide/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://logicmonitor.github.io/lm-k8s-webhook/troubleshooting-guide/</guid>
+      <description>If you are using zsh terminal and you are using [] notation in the helm chart deployment command, then you might encounter an error saying zsh: no matches found:. [] syntax has its meaning in zsh. So there are two simple ways to step aside.  Change to bash: switch to bash by just entering bash. And then run you helm install again. noglob: you can use noglob. $ noglob helm install --debug --wait -n lm-webhook \  --create-namespace \  --set cluster_name=&amp;#34;your-k8s-cluster-name&amp;#34; \  --set mutatingWebhook.</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -9,18 +9,18 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=10" />
-    <title>External config - LM-K8s-Webhook</title>
+    <title>Examples - LM-K8s-Webhook</title>
     <meta name="generator" content="Hugo 0.90.1" />
 
     
     <meta name="description" content="Kubernetes Mutating Admission Webhook">
     
-    <link rel="canonical" href="https://logicmonitor.github.io/lm-k8s-webhook/docs/external-config/">
+    <link rel="canonical" href="https://logicmonitor.github.io/lm-k8s-webhook/examples/">
     
     <meta name="author" content="LogicMonitor, Inc.">
     
 
-    <meta property="og:url" content="https://logicmonitor.github.io/lm-k8s-webhook/docs/external-config/">
+    <meta property="og:url" content="https://logicmonitor.github.io/lm-k8s-webhook/examples/">
     <meta property="og:title" content="LM-K8s-Webhook">
     <meta property="og:image" content="https://logicmonitor.github.io/images/logo.png">
     <meta name="apple-mobile-web-app-title" content="LM-K8s-Webhook">
@@ -97,7 +97,7 @@
     </div>
     <div class="stretch">
       <div class="title">
-        External config
+        Examples
       </div>
     </div>
 
@@ -184,9 +184,9 @@
 
 
 
-<a  title="LM-K8s-Webhook" href="https://logicmonitor.github.io/lm-k8s-webhook/">
+<a  title="Getting started" href="https://logicmonitor.github.io/lm-k8s-webhook/">
 	
-	LM-K8s-Webhook
+	Getting started
 </a>
 
 
@@ -202,9 +202,9 @@
 
 
 
-<a  title="Getting started" href="https://logicmonitor.github.io/lm-k8s-webhook/getting-started">
+<a  title="Prerequisites" href="https://logicmonitor.github.io/lm-k8s-webhook/prerequisites">
 	
-	Getting started
+	Prerequisites
 </a>
 
 
@@ -216,7 +216,25 @@
 
 <li>
   
-    <span class="section">Docs</span>
+    
+
+
+
+<a  title="Deployment" href="https://logicmonitor.github.io/lm-k8s-webhook/deployment">
+	
+	Deployment
+</a>
+
+
+
+  
+</li>
+
+
+
+<li>
+  
+    <span class="section">Configurations</span>
     <ul>
       
         
@@ -224,7 +242,7 @@
 
 
 
-<a  title="Selectors" href="https://logicmonitor.github.io/lm-k8s-webhook/docs/selectors/">
+<a  title="Selectors" href="https://logicmonitor.github.io/lm-k8s-webhook/configurations/selectors/">
 	
 	Selectors
 </a>
@@ -237,9 +255,9 @@
 
 
 
-<a  title="External config" href="https://logicmonitor.github.io/lm-k8s-webhook/docs/external-config/">
+<a  title="Additional attributes config" href="https://logicmonitor.github.io/lm-k8s-webhook/configurations/additional-attributes-config/">
 	
-	External config
+	Additional attributes config
 </a>
 
 
@@ -250,41 +268,69 @@
 
 
 
-<a  title="Hot-reload" href="https://logicmonitor.github.io/lm-k8s-webhook/docs/hot-reload/">
+<a  title="Helm chart configurations" href="https://logicmonitor.github.io/lm-k8s-webhook/configurations/configuration/">
 	
-	Hot-reload
-</a>
-
-
-
-      
-        
-        
-
-
-
-<a  title="Configuration" href="https://logicmonitor.github.io/lm-k8s-webhook/docs/configuration/">
-	
-	Configuration
-</a>
-
-
-
-      
-        
-        
-
-
-
-<a  title="Examples" href="https://logicmonitor.github.io/lm-k8s-webhook/docs/examples/">
-	
-	Examples
+	Helm chart configurations
 </a>
 
 
 
       
     </ul>
+  
+</li>
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="Examples" href="https://logicmonitor.github.io/lm-k8s-webhook/examples">
+	
+	Examples
+</a>
+
+
+
+  
+</li>
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="FAQ&#39;s" href="https://logicmonitor.github.io/lm-k8s-webhook/faq">
+	
+	FAQ&#39;s
+</a>
+
+
+
+  
+</li>
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="Troubleshooting guide" href="https://logicmonitor.github.io/lm-k8s-webhook/troubleshooting-guide">
+	
+	Troubleshooting guide
+</a>
+
+
+
   
 </li>
 
@@ -331,114 +377,97 @@
 
 	<article class="article">
 		<div class="wrapper">
-			<h1>External config </h1>
+			<h1>Examples </h1>
 
-			<p>Currently as a part of the external config, user can define the custom environment variables that are to be injected into the application pods.</p>
-<p>You can download the sample external config file from here: <a href="https://github.com/logicmonitor/lm-k8s-webhook/blob/main/sampleconfig.yaml">https://github.com/logicmonitor/lm-k8s-webhook/blob/main/sampleconfig.yaml</a></p>
-<p><strong>Example:</strong></p>
-<pre tabindex="0"><code>lmEnvVars:
-  resource:
-    - env: 
-        name: SERVICE_ACCOUNT_NAME
-        valueFrom:
-          fieldRef:
-            fieldPath: spec.serviceAccountName
-      resAttrName: serviceaccount.name
-      overrideDisabled: true
-    - env:
-        name: SERVICE_NAMESPACE
-        valueFrom:
-          fieldRef:
-            fieldPath: metadata.labels['app-namespace']
-    - env:
-        name: SERVICE_NAME
-        valueFrom:
-          fieldRef:
-            fieldPath: metadata.labels['app-name']
-  operation:
-    - env:
-        name: COMPANY_NAME
-        value: ABC Corporation
-      overrideDisabled: true 
-    - env:
-        name: OTLP_ENDPOINT
-        value: lmotel-svc:4317
-      overrideDisabled: true 
-    - env:
-        name: OTEL_JAVAAGENT_ENABLED
-        value: true
-      overrideDisabled: true
-    - env:
-        name: DEPLOYMENT_ENV
-        value: production
-</code></pre><p>environment variables can be of two types, i.e. <code>resource</code> and <code>operation</code></p>
-<ul>
-<li><code>Resource</code> holds the resource environment variables, which will be the part of <em>OTEL_RESOURCE_ATTRIBUTES</em>.</li>
-<li><code>Operation</code> holds the operation environment variables, which will not be the part of <em>OTEL_RESOURCE_ATTRIBUTES</em> but can be used in the application for custom use cases.</li>
-<li><code>resAttrName</code> field can be used only in resource section. The value assigned to resAttrName will be used as a name of the resource attribute instead of the actual env variable name while passing it through the <em>OTEL_RESOURCE_ATTRIBUTES</em>.</li>
-<li><code>overrideDisabled</code> field can be used in both, resource as well as operation sections. It decides if the value of the env variable which is defined in external config is allowed to be overriden by the same name env variable from the container definition. Default value of this field is false, which means that overriding of the value of the env variable defined in external config is allowed.</li>
-</ul>
-<ul>
-<li>LM-Webhook injects following environment variables in the application pods.</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th style="text-align:right">SR. No.</th>
-<th style="text-align:left">Environment Variable Name</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:right">1</td>
-<td style="text-align:left">LM_APM_CLUSTER_NAME</td>
-</tr>
-<tr>
-<td style="text-align:right">2</td>
-<td style="text-align:left">LM_APM_NODE_NAME</td>
-</tr>
-<tr>
-<td style="text-align:right">3</td>
-<td style="text-align:left">LM_APM_POD_NAME</td>
-</tr>
-<tr>
-<td style="text-align:right">4</td>
-<td style="text-align:left">LM_APM_POD_IP</td>
-</tr>
-<tr>
-<td style="text-align:right">5</td>
-<td style="text-align:left">LM_APM_POD_NAMESPACE</td>
-</tr>
-<tr>
-<td style="text-align:right">6</td>
-<td style="text-align:left">LM_APM_POD_UID</td>
-</tr>
-<tr>
-<td style="text-align:right">7</td>
-<td style="text-align:left">SERVICE_NAMESPACE</td>
-</tr>
-<tr>
-<td style="text-align:right">8</td>
-<td style="text-align:left">SERVICE_NAME</td>
-</tr>
-<tr>
-<td style="text-align:right">9</td>
-<td style="text-align:left">OTEL_RESOURCE_ATTRIBUTES</td>
-</tr>
-</tbody>
-</table>
-<ul>
+			<p>You can refer the following example commands for different scenarios for deploying the lm-webhook with the helm-chart.</p>
+<blockquote>
+<p>Note: You should check the <a href="https://logicmonitor.github.io/lm-k8s-webhook/troubleshooting-guide">troubleshooting guide</a> in case you face any issue in the deployment of the lm-webhook.</p>
+</blockquote>
+<ol>
 <li>
-<p>It is not recommanded to explicitely specify these environment variables except <code>SERVICE_NAMESPACE</code> &amp; <code>OTEL_RESOURCE_ATTRIBUTES</code> as a part of pod definition.
-Default value of <code>SERVICE_NAMESPACE</code> is the value of the pod namespace, which can be overriden, either by specifying it as a part of pod definition (if overriding is allowed) or in the external configuration.</p>
-</li>
+<p>Using default tls certificate handling (using cert-manager)</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ helm install --debug --wait -n lm-webhook <span class="se">\
+</span><span class="se"></span>--create-namespace <span class="se">\
+</span><span class="se"></span>--set <span class="nv">cluster_name</span><span class="o">=</span><span class="s2">&#34;your-k8s-cluster-name&#34;</span> <span class="se">\
+</span><span class="se"></span>lm-webhook .
+</code></pre></div></li>
+</ol>
+<hr>
+<ol start="2">
 <li>
-<p>You can pass the resource attributes which are not getting set by the lm-webhook by defining the <code>OTEL_RESOURCE_ATTRIBUTES</code> env variable in the pod definition, which will get merged with the ones which are defined by lm-webhook.</p>
-</li>
+<p>Using custom issuer other than self-signed issuer</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ helm install --debug --wait -n lm-webhook <span class="se">\
+</span><span class="se"></span>--create-namespace <span class="se">\
+</span><span class="se"></span>--set <span class="nv">cluster_name</span><span class="o">=</span><span class="s2">&#34;your-k8s-cluster-name&#34;</span> <span class="se">\
+</span><span class="se"></span>--set mutatingWebhook.certManager.issuerRef.name<span class="o">=</span>private-ca-issuer <span class="se">\
+</span><span class="se"></span>--set mutatingWebhook.certManager.issuerRef.kind<span class="o">=</span>Issuer <span class="se">\
+</span><span class="se"></span>lm-webhook .
+</code></pre></div></li>
+</ol>
+<hr>
+<ol start="3">
 <li>
-<p>Values for <code>SERVICE_NAME</code> and <code>SERVICE_NAMESPACE</code> can also be specified in terms of pod label as shown in above example config. So that value of the specified pod label can be used as a <code>SERVICE_NAME</code> or <code>SERVICE_NAMESPACE</code>.</p>
-</li>
+<p>Using your own tls certificates</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ helm install --debug --wait -n lm-webhook <span class="se">\
+</span><span class="se"></span>--create-namespace <span class="se">\
+</span><span class="se"></span>--set <span class="nv">cluster_name</span><span class="o">=</span><span class="s2">&#34;your-k8s-cluster-name&#34;</span> <span class="se">\
+</span><span class="se"></span>--set mutatingWebhook.certManager.enabled<span class="o">=</span><span class="nb">false</span> <span class="se">\
+</span><span class="se"></span>--set mutatingWebhook.caBundle<span class="o">=</span><span class="k">$(</span>base64 /tmp/cert/ca.pem<span class="k">)</span> <span class="se">\
+</span><span class="se"></span>lm-webhook .
+</code></pre></div></li>
+</ol>
+<hr>
+<ol start="4">
+<li>
+<p>Using ObjectSelector and NamespaceSelector</p>
+<ul>
+<li>ObjectSelector used here is:</li>
 </ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">objectSelector</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">matchLabels</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="nt">tier</span><span class="p">:</span><span class="w"> </span><span class="l">backend</span><span class="w">
+</span><span class="w">  </span><span class="nt">matchExpressions</span><span class="p">:</span><span class="w">
+</span><span class="w">   </span>- <span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l">type</span><span class="w">
+</span><span class="w">     </span><span class="nt">operator</span><span class="p">:</span><span class="w"> </span><span class="l">In</span><span class="w">
+</span><span class="w">     </span><span class="nt">values</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&#34;application&#34;</span><span class="p">,</span><span class="s2">&#34;service&#34;</span><span class="p">]</span><span class="w">
+</span></code></pre></div><ul>
+<li>NamespaceSelector used here is:</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">namespaceSelector</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">matchExpressions</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span>- <span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l">environment</span><span class="w">
+</span><span class="w">    </span><span class="nt">operator</span><span class="p">:</span><span class="w"> </span><span class="l">In</span><span class="w">
+</span><span class="w">    </span><span class="nt">values</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&#34;dev&#34;</span><span class="p">,</span><span class="s2">&#34;staging&#34;</span><span class="p">]</span><span class="w">
+</span></code></pre></div><ul>
+<li>Corresponding helm command will look like:</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ helm install --debug --wait -n lm-webhook <span class="se">\
+</span><span class="se"></span>--create-namespace <span class="se">\
+</span><span class="se"></span>--set <span class="nv">cluster_name</span><span class="o">=</span><span class="s2">&#34;your-k8s-cluster-name&#34;</span> <span class="se">\
+</span><span class="se"></span>--set mutatingWebhook.objectSelector.matchLabels.tier<span class="o">=</span><span class="s2">&#34;backend&#34;</span> <span class="se">\
+</span><span class="se"></span>--set mutatingWebhook.objectSelector.matchExpressions<span class="o">[</span>0<span class="o">]</span>.key<span class="o">=</span><span class="s2">&#34;type&#34;</span> <span class="se">\
+</span><span class="se"></span>--set mutatingWebhook.objectSelector.matchExpressions<span class="o">[</span>0<span class="o">]</span>.operator<span class="o">=</span><span class="s2">&#34;In&#34;</span> <span class="se">\
+</span><span class="se"></span>--set mutatingWebhook.objectSelector.matchExpressions<span class="o">[</span>0<span class="o">]</span>.values<span class="o">[</span>0<span class="o">]=</span>application <span class="se">\
+</span><span class="se"></span>--set mutatingWebhook.objectSelector.matchExpressions<span class="o">[</span>0<span class="o">]</span>.values<span class="o">[</span>1<span class="o">]=</span>service <span class="se">\
+</span><span class="se"></span>--set mutatingWebhook.namespaceSelector.matchExpressions<span class="o">[</span>0<span class="o">]</span>.key<span class="o">=</span><span class="s2">&#34;environment&#34;</span> <span class="se">\
+</span><span class="se"></span>--set mutatingWebhook.namespaceSelector.matchExpressions<span class="o">[</span>0<span class="o">]</span>.operator<span class="o">=</span><span class="s2">&#34;In&#34;</span> <span class="se">\
+</span><span class="se"></span>--set mutatingWebhook.namespaceSelector.matchExpressions<span class="o">[</span>0<span class="o">]</span>.values<span class="o">[</span>0<span class="o">]=</span><span class="s2">&#34;dev&#34;</span> <span class="se">\
+</span><span class="se"></span>--set mutatingWebhook.namespaceSelector.matchExpressions<span class="o">[</span>0<span class="o">]</span>.values<span class="o">[</span>1<span class="o">]=</span><span class="s2">&#34;staging&#34;</span> <span class="se">\
+</span><span class="se"></span>lm-webhook .
+</code></pre></div></li>
+</ol>
+<hr>
+<ol start="5">
+<li>
+<p>Using external configuration</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ helm install --debug --wait -n lm-webhook <span class="se">\
+</span><span class="se"></span>--create-namespace <span class="se">\
+</span><span class="se"></span>--set <span class="nv">cluster_name</span><span class="o">=</span><span class="s2">&#34;your-k8s-cluster-name&#34;</span> <span class="se">\
+</span><span class="se"></span>--set-file <span class="nv">lmconfig</span><span class="o">=</span>&lt;path_to_external_config&gt; <span class="se">\
+</span><span class="se"></span>lm-webhook .
+</code></pre></div></li>
+</ol>
+<hr>
 
 		
 			<aside class="copyright" role="note">
@@ -457,7 +486,7 @@ Default value of <code>SERVICE_NAMESPACE</code> is the value of the pod namespac
 <nav class="pagination" aria-label="Footer">
   <div class="previous">
   
-      <a href="https://logicmonitor.github.io/lm-k8s-webhook/getting-started/" title="Getting Started">
+      <a href="https://logicmonitor.github.io/lm-k8s-webhook/faq/" title="FAQ&#39;s">
         <span class="direction">
           Previous
         </span>
@@ -467,7 +496,7 @@ Default value of <code>SERVICE_NAMESPACE</code> is the value of the pod namespac
           </div>
           <div class="stretch">
             <div class="title">
-              Getting Started
+              FAQ&#39;s
             </div>
           </div>
         </div>
@@ -477,14 +506,14 @@ Default value of <code>SERVICE_NAMESPACE</code> is the value of the pod namespac
 
   <div class="next">
   
-      <a href="https://logicmonitor.github.io/lm-k8s-webhook/docs/examples/" title="Examples">
+      <a href="https://logicmonitor.github.io/lm-k8s-webhook/deployment/" title="Deployment">
         <span class="direction">
           Next
         </span>
         <div class="page">
           <div class="stretch">
             <div class="title">
-              Examples
+              Deployment
             </div>
           </div>
           <div class="button button-next" role="button" aria-label="Next">

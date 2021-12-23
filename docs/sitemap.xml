@@ -2,28 +2,49 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://logicmonitor.github.io/lm-k8s-webhook/docs/</loc>
+    <loc>https://logicmonitor.github.io/lm-k8s-webhook/configurations/</loc>
+    <priority>0</priority>
+  </url><url>
+    <loc>https://logicmonitor.github.io/lm-k8s-webhook/deployment/</loc>
+    <priority>0</priority>
+  </url><url>
+    <loc>https://logicmonitor.github.io/lm-k8s-webhook/examples/</loc>
+    <priority>0</priority>
+  </url><url>
+    <loc>https://logicmonitor.github.io/lm-k8s-webhook/faq/</loc>
     <priority>0</priority>
   </url><url>
     <loc>https://logicmonitor.github.io/lm-k8s-webhook/getting-started/</loc>
     <priority>0</priority>
   </url><url>
-    <loc>https://logicmonitor.github.io/lm-k8s-webhook/docs/configuration/</loc>
+    <loc>https://logicmonitor.github.io/lm-k8s-webhook/prerequisites/</loc>
+    <priority>0</priority>
   </url><url>
-    <loc>https://logicmonitor.github.io/lm-k8s-webhook/docs/</loc>
+    <loc>https://logicmonitor.github.io/lm-k8s-webhook/troubleshooting-guide/</loc>
+    <priority>0</priority>
   </url><url>
-    <loc>https://logicmonitor.github.io/lm-k8s-webhook/docs/examples/</loc>
+    <loc>https://logicmonitor.github.io/lm-k8s-webhook/configurations/additional-attributes-config/</loc>
   </url><url>
-    <loc>https://logicmonitor.github.io/lm-k8s-webhook/docs/external-config/</loc>
+    <loc>https://logicmonitor.github.io/lm-k8s-webhook/configurations/</loc>
+  </url><url>
+    <loc>https://logicmonitor.github.io/lm-k8s-webhook/deployment/</loc>
+  </url><url>
+    <loc>https://logicmonitor.github.io/lm-k8s-webhook/examples/</loc>
+  </url><url>
+    <loc>https://logicmonitor.github.io/lm-k8s-webhook/faq/</loc>
   </url><url>
     <loc>https://logicmonitor.github.io/lm-k8s-webhook/getting-started/</loc>
   </url><url>
-    <loc>https://logicmonitor.github.io/lm-k8s-webhook/docs/hot-reload/</loc>
+    <loc>https://logicmonitor.github.io/lm-k8s-webhook/configurations/configuration/</loc>
   </url><url>
     <loc>https://logicmonitor.github.io/lm-k8s-webhook/</loc>
   </url><url>
     <loc>https://logicmonitor.github.io/lm-k8s-webhook/lm-k8s-webhook/</loc>
   </url><url>
-    <loc>https://logicmonitor.github.io/lm-k8s-webhook/docs/selectors/</loc>
+    <loc>https://logicmonitor.github.io/lm-k8s-webhook/prerequisites/</loc>
+  </url><url>
+    <loc>https://logicmonitor.github.io/lm-k8s-webhook/configurations/selectors/</loc>
+  </url><url>
+    <loc>https://logicmonitor.github.io/lm-k8s-webhook/troubleshooting-guide/</loc>
   </url>
 </urlset>

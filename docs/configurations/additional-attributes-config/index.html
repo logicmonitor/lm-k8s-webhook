@@ -9,18 +9,18 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=10" />
-    <title>External config - LM-K8s-Webhook</title>
+    <title>Additional attributes config - LM-K8s-Webhook</title>
     <meta name="generator" content="Hugo 0.90.1" />
 
     
     <meta name="description" content="Kubernetes Mutating Admission Webhook">
     
-    <link rel="canonical" href="https://logicmonitor.github.io/lm-k8s-webhook/docs/external-config/">
+    <link rel="canonical" href="https://logicmonitor.github.io/lm-k8s-webhook/configurations/additional-attributes-config/">
     
     <meta name="author" content="LogicMonitor, Inc.">
     
 
-    <meta property="og:url" content="https://logicmonitor.github.io/lm-k8s-webhook/docs/external-config/">
+    <meta property="og:url" content="https://logicmonitor.github.io/lm-k8s-webhook/configurations/additional-attributes-config/">
     <meta property="og:title" content="LM-K8s-Webhook">
     <meta property="og:image" content="https://logicmonitor.github.io/images/logo.png">
     <meta name="apple-mobile-web-app-title" content="LM-K8s-Webhook">
@@ -97,7 +97,7 @@
     </div>
     <div class="stretch">
       <div class="title">
-        External config
+        Additional attributes config
       </div>
     </div>
 
@@ -184,9 +184,9 @@
 
 
 
-<a  title="LM-K8s-Webhook" href="https://logicmonitor.github.io/lm-k8s-webhook/">
+<a  title="Getting started" href="https://logicmonitor.github.io/lm-k8s-webhook/">
 	
-	LM-K8s-Webhook
+	Getting started
 </a>
 
 
@@ -202,9 +202,9 @@
 
 
 
-<a  title="Getting started" href="https://logicmonitor.github.io/lm-k8s-webhook/getting-started">
+<a  title="Prerequisites" href="https://logicmonitor.github.io/lm-k8s-webhook/prerequisites">
 	
-	Getting started
+	Prerequisites
 </a>
 
 
@@ -216,7 +216,25 @@
 
 <li>
   
-    <span class="section">Docs</span>
+    
+
+
+
+<a  title="Deployment" href="https://logicmonitor.github.io/lm-k8s-webhook/deployment">
+	
+	Deployment
+</a>
+
+
+
+  
+</li>
+
+
+
+<li>
+  
+    <span class="section">Configurations</span>
     <ul>
       
         
@@ -224,7 +242,7 @@
 
 
 
-<a  title="Selectors" href="https://logicmonitor.github.io/lm-k8s-webhook/docs/selectors/">
+<a  title="Selectors" href="https://logicmonitor.github.io/lm-k8s-webhook/configurations/selectors/">
 	
 	Selectors
 </a>
@@ -237,9 +255,9 @@
 
 
 
-<a  title="External config" href="https://logicmonitor.github.io/lm-k8s-webhook/docs/external-config/">
+<a  title="Additional attributes config" href="https://logicmonitor.github.io/lm-k8s-webhook/configurations/additional-attributes-config/">
 	
-	External config
+	Additional attributes config
 </a>
 
 
@@ -250,41 +268,69 @@
 
 
 
-<a  title="Hot-reload" href="https://logicmonitor.github.io/lm-k8s-webhook/docs/hot-reload/">
+<a  title="Helm chart configurations" href="https://logicmonitor.github.io/lm-k8s-webhook/configurations/configuration/">
 	
-	Hot-reload
-</a>
-
-
-
-      
-        
-        
-
-
-
-<a  title="Configuration" href="https://logicmonitor.github.io/lm-k8s-webhook/docs/configuration/">
-	
-	Configuration
-</a>
-
-
-
-      
-        
-        
-
-
-
-<a  title="Examples" href="https://logicmonitor.github.io/lm-k8s-webhook/docs/examples/">
-	
-	Examples
+	Helm chart configurations
 </a>
 
 
 
       
     </ul>
+  
+</li>
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="Examples" href="https://logicmonitor.github.io/lm-k8s-webhook/examples">
+	
+	Examples
+</a>
+
+
+
+  
+</li>
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="FAQ&#39;s" href="https://logicmonitor.github.io/lm-k8s-webhook/faq">
+	
+	FAQ&#39;s
+</a>
+
+
+
+  
+</li>
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="Troubleshooting guide" href="https://logicmonitor.github.io/lm-k8s-webhook/troubleshooting-guide">
+	
+	Troubleshooting guide
+</a>
+
+
+
   
 </li>
 
@@ -331,47 +377,47 @@
 
 	<article class="article">
 		<div class="wrapper">
-			<h1>External config </h1>
+			<h1>Additional attributes config </h1>
 
 			<p>Currently as a part of the external config, user can define the custom environment variables that are to be injected into the application pods.</p>
 <p>You can download the sample external config file from here: <a href="https://github.com/logicmonitor/lm-k8s-webhook/blob/main/sampleconfig.yaml">https://github.com/logicmonitor/lm-k8s-webhook/blob/main/sampleconfig.yaml</a></p>
 <p><strong>Example:</strong></p>
-<pre tabindex="0"><code>lmEnvVars:
-  resource:
-    - env: 
-        name: SERVICE_ACCOUNT_NAME
-        valueFrom:
-          fieldRef:
-            fieldPath: spec.serviceAccountName
-      resAttrName: serviceaccount.name
-      overrideDisabled: true
-    - env:
-        name: SERVICE_NAMESPACE
-        valueFrom:
-          fieldRef:
-            fieldPath: metadata.labels['app-namespace']
-    - env:
-        name: SERVICE_NAME
-        valueFrom:
-          fieldRef:
-            fieldPath: metadata.labels['app-name']
-  operation:
-    - env:
-        name: COMPANY_NAME
-        value: ABC Corporation
-      overrideDisabled: true 
-    - env:
-        name: OTLP_ENDPOINT
-        value: lmotel-svc:4317
-      overrideDisabled: true 
-    - env:
-        name: OTEL_JAVAAGENT_ENABLED
-        value: true
-      overrideDisabled: true
-    - env:
-        name: DEPLOYMENT_ENV
-        value: production
-</code></pre><p>environment variables can be of two types, i.e. <code>resource</code> and <code>operation</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="w">  </span><span class="nt">lmEnvVars</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span>- <span class="nt">env</span><span class="p">:</span><span class="w"> 
+</span><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">SERVICE_ACCOUNT_NAME</span><span class="w">
+</span><span class="w">          </span><span class="nt">valueFrom</span><span class="p">:</span><span class="w">
+</span><span class="w">            </span><span class="nt">fieldRef</span><span class="p">:</span><span class="w">
+</span><span class="w">              </span><span class="nt">fieldPath</span><span class="p">:</span><span class="w"> </span><span class="l">spec.serviceAccountName</span><span class="w">
+</span><span class="w">        </span><span class="nt">resAttrName</span><span class="p">:</span><span class="w"> </span><span class="l">serviceaccount.name</span><span class="w">
+</span><span class="w">        </span><span class="nt">overrideDisabled</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span><span class="w">      </span>- <span class="nt">env</span><span class="p">:</span><span class="w">
+</span><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">SERVICE_NAMESPACE</span><span class="w">
+</span><span class="w">          </span><span class="nt">valueFrom</span><span class="p">:</span><span class="w">
+</span><span class="w">            </span><span class="nt">fieldRef</span><span class="p">:</span><span class="w">
+</span><span class="w">              </span><span class="nt">fieldPath</span><span class="p">:</span><span class="w"> </span><span class="l">metadata.labels[&#39;app-namespace&#39;]</span><span class="w">
+</span><span class="w">      </span>- <span class="nt">env</span><span class="p">:</span><span class="w">
+</span><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">SERVICE_NAME</span><span class="w">
+</span><span class="w">          </span><span class="nt">valueFrom</span><span class="p">:</span><span class="w">
+</span><span class="w">            </span><span class="nt">fieldRef</span><span class="p">:</span><span class="w">
+</span><span class="w">              </span><span class="nt">fieldPath</span><span class="p">:</span><span class="w"> </span><span class="l">metadata.labels[&#39;app-name&#39;]</span><span class="w">
+</span><span class="w">    </span><span class="nt">operation</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span>- <span class="nt">env</span><span class="p">:</span><span class="w">
+</span><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">COMPANY_NAME</span><span class="w">
+</span><span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l">ABC Corporation</span><span class="w">
+</span><span class="w">        </span><span class="nt">overrideDisabled</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"> 
+</span><span class="w">      </span>- <span class="nt">env</span><span class="p">:</span><span class="w">
+</span><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">OTLP_ENDPOINT</span><span class="w">
+</span><span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l">lmotel-svc:4317</span><span class="w">
+</span><span class="w">        </span><span class="nt">overrideDisabled</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"> 
+</span><span class="w">      </span>- <span class="nt">env</span><span class="p">:</span><span class="w">
+</span><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">OTEL_JAVAAGENT_ENABLED</span><span class="w">
+</span><span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span><span class="w">        </span><span class="nt">overrideDisabled</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span><span class="w">      </span>- <span class="nt">env</span><span class="p">:</span><span class="w">
+</span><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">DEPLOYMENT_ENV</span><span class="w">
+</span><span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l">production</span><span class="w">
+</span></code></pre></div><p>environment variables can be of two types, i.e. <code>resource</code> and <code>operation</code></p>
 <ul>
 <li><code>Resource</code> holds the resource environment variables, which will be the part of <em>OTEL_RESOURCE_ATTRIBUTES</em>.</li>
 <li><code>Operation</code> holds the operation environment variables, which will not be the part of <em>OTEL_RESOURCE_ATTRIBUTES</em> but can be used in the application for custom use cases.</li>
@@ -429,7 +475,7 @@
 </table>
 <ul>
 <li>
-<p>It is not recommanded to explicitely specify these environment variables except <code>SERVICE_NAMESPACE</code> &amp; <code>OTEL_RESOURCE_ATTRIBUTES</code> as a part of pod definition.
+<p>It is not recommanded to explicitely specify these environment variables except <code>SERVICE_NAME</code>, <code>SERVICE_NAMESPACE</code> &amp; <code>OTEL_RESOURCE_ATTRIBUTES</code> as a part of pod definition.
 Default value of <code>SERVICE_NAMESPACE</code> is the value of the pod namespace, which can be overriden, either by specifying it as a part of pod definition (if overriding is allowed) or in the external configuration.</p>
 </li>
 <li>
@@ -439,6 +485,7 @@ Default value of <code>SERVICE_NAMESPACE</code> is the value of the pod namespac
 <p>Values for <code>SERVICE_NAME</code> and <code>SERVICE_NAMESPACE</code> can also be specified in terms of pod label as shown in above example config. So that value of the specified pod label can be used as a <code>SERVICE_NAME</code> or <code>SERVICE_NAMESPACE</code>.</p>
 </li>
 </ul>
+<hr>
 
 		
 			<aside class="copyright" role="note">
@@ -457,7 +504,7 @@ Default value of <code>SERVICE_NAMESPACE</code> is the value of the pod namespac
 <nav class="pagination" aria-label="Footer">
   <div class="previous">
   
-      <a href="https://logicmonitor.github.io/lm-k8s-webhook/getting-started/" title="Getting Started">
+      <a href="https://logicmonitor.github.io/lm-k8s-webhook/configurations/" title="Configurations">
         <span class="direction">
           Previous
         </span>
@@ -467,7 +514,7 @@ Default value of <code>SERVICE_NAMESPACE</code> is the value of the pod namespac
           </div>
           <div class="stretch">
             <div class="title">
-              Getting Started
+              Configurations
             </div>
           </div>
         </div>
@@ -476,22 +523,6 @@ Default value of <code>SERVICE_NAMESPACE</code> is the value of the pod namespac
   </div>
 
   <div class="next">
-  
-      <a href="https://logicmonitor.github.io/lm-k8s-webhook/docs/examples/" title="Examples">
-        <span class="direction">
-          Next
-        </span>
-        <div class="page">
-          <div class="stretch">
-            <div class="title">
-              Examples
-            </div>
-          </div>
-          <div class="button button-next" role="button" aria-label="Next">
-            <i class="icon icon-forward"></i>
-          </div>
-        </div>
-      </a>
   
   </div>
 </nav>

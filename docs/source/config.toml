@@ -22,7 +22,7 @@ disableKinds = ["taxonomy", "term"]
 
 
 	version = "1.0.0"
-	logo = "images/logo.png"
+	logo = "/images/logo.png"
 	favicon = ""
 
 	permalink = "#"
@@ -50,19 +50,39 @@ disableKinds = ["taxonomy", "term"]
 
 
 [[menu.main]]
-	name   = "LM-K8s-Webhook"
+	name   = "Getting started"
 	url    = "/"
 	weight = 1
 
 [[menu.main]]
-	name   = "Getting started"
-	url    = "getting-started"
+	name   = "Prerequisites"
+	url    = "prerequisites"
 	weight = 2
 
 [[menu.main]]
-	name   = "Docs"
-	url    = "docs/"
+	name   = "Deployment"
+	url    = "deployment"
 	weight = 3
+
+[[menu.main]]
+	name   = "Configurations"
+	url    = "configurations/"
+	weight = 4
+
+[[menu.main]]
+	name   = "Examples"
+	url    = "examples"
+	weight = 5
+
+[[menu.main]]
+	name   = "FAQ's"
+	url    = "faq"
+	weight = 6
+
+[[menu.main]]
+	name   = "Troubleshooting guide"
+	url    = "troubleshooting-guide"
+	weight = 7
 
 [blackfriday]
 	smartypants	= true

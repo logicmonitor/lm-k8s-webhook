@@ -1,27 +1,24 @@
 ---
 title: "Examples"
 draft: false
-menu:
-  main:
-    parent: Docs
-    identifier: "Examples"
-    weight: 5
 ---
 
 You can refer the following example commands for different scenarios for deploying the lm-webhook with the helm-chart.
 
-- Using default tls certificate handling (using cert-manager)
+> Note: You should check the [troubleshooting guide](https://logicmonitor.github.io/lm-k8s-webhook/troubleshooting-guide) in case you face any issue in the deployment of the lm-webhook.
 
-    ```
+1. Using default tls certificate handling (using cert-manager)
+
+    ```bash 
     $ helm install --debug --wait -n lm-webhook \
     --create-namespace \
     --set cluster_name="your-k8s-cluster-name" \
     lm-webhook .
     ```
+---
+2. Using custom issuer other than self-signed issuer
 
-- Using custom issuer other than self-signed issuer
-
-    ```
+    ```bash
     $ helm install --debug --wait -n lm-webhook \
     --create-namespace \
     --set cluster_name="your-k8s-cluster-name" \
@@ -29,10 +26,10 @@ You can refer the following example commands for different scenarios for deployi
     --set mutatingWebhook.certManager.issuerRef.kind=Issuer \
     lm-webhook .
     ```
+---
+3. Using your own tls certificates
 
-- Using your own tls certificates
-
-    ```
+    ```bash
     $ helm install --debug --wait -n lm-webhook \
     --create-namespace \
     --set cluster_name="your-k8s-cluster-name" \
@@ -40,11 +37,12 @@ You can refer the following example commands for different scenarios for deployi
     --set mutatingWebhook.caBundle=$(base64 /tmp/cert/ca.pem) \
     lm-webhook .
     ```
-- Using ObjectSelector and NamespaceSelector
+---
+4. Using ObjectSelector and NamespaceSelector
     
     * ObjectSelector used here is:
 
-    ```
+    ```yaml
     objectSelector:
       matchLabels:
         tier: backend
@@ -56,7 +54,7 @@ You can refer the following example commands for different scenarios for deployi
 
     * NamespaceSelector used here is:
 
-    ```
+    ```yaml
     namespaceSelector:
       matchExpressions:
       - key: environment
@@ -66,7 +64,7 @@ You can refer the following example commands for different scenarios for deployi
 
     * Corresponding helm command will look like:
 
-    ```
+    ```bash
     $ helm install --debug --wait -n lm-webhook \
     --create-namespace \
     --set cluster_name="your-k8s-cluster-name" \
@@ -81,13 +79,14 @@ You can refer the following example commands for different scenarios for deployi
     --set mutatingWebhook.namespaceSelector.matchExpressions[0].values[1]="staging" \
     lm-webhook .
     ```
+---
+5. Using external configuration
 
-- Using external configuration
-
-    ```
+    ```bash
     $ helm install --debug --wait -n lm-webhook \
     --create-namespace \
     --set cluster_name="your-k8s-cluster-name" \
     --set-file lmconfig=<path_to_external_config> \
     lm-webhook .
     ```
+---

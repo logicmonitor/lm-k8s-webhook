@@ -1,10 +1,10 @@
 ---
-title: "External config"
+title: "Additional attributes config"
 draft: false
 menu:
   main:
-    parent: Docs
-    identifier: "External config"
+    parent: Configurations
+    identifier: "Additional attributes config"
     weight: 2
 ---
 
@@ -13,42 +13,42 @@ Currently as a part of the external config, user can define the custom environme
 You can download the sample external config file from here: https://github.com/logicmonitor/lm-k8s-webhook/blob/main/sampleconfig.yaml
 
 **Example:**
-```
-lmEnvVars:
-  resource:
-    - env: 
-        name: SERVICE_ACCOUNT_NAME
-        valueFrom:
-          fieldRef:
-            fieldPath: spec.serviceAccountName
-      resAttrName: serviceaccount.name
-      overrideDisabled: true
-    - env:
-        name: SERVICE_NAMESPACE
-        valueFrom:
-          fieldRef:
-            fieldPath: metadata.labels['app-namespace']
-    - env:
-        name: SERVICE_NAME
-        valueFrom:
-          fieldRef:
-            fieldPath: metadata.labels['app-name']
-  operation:
-    - env:
-        name: COMPANY_NAME
-        value: ABC Corporation
-      overrideDisabled: true 
-    - env:
-        name: OTLP_ENDPOINT
-        value: lmotel-svc:4317
-      overrideDisabled: true 
-    - env:
-        name: OTEL_JAVAAGENT_ENABLED
-        value: true
-      overrideDisabled: true
-    - env:
-        name: DEPLOYMENT_ENV
-        value: production
+```yaml
+  lmEnvVars:
+    resource:
+      - env: 
+          name: SERVICE_ACCOUNT_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.serviceAccountName
+        resAttrName: serviceaccount.name
+        overrideDisabled: true
+      - env:
+          name: SERVICE_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.labels['app-namespace']
+      - env:
+          name: SERVICE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.labels['app-name']
+    operation:
+      - env:
+          name: COMPANY_NAME
+          value: ABC Corporation
+        overrideDisabled: true 
+      - env:
+          name: OTLP_ENDPOINT
+          value: lmotel-svc:4317
+        overrideDisabled: true 
+      - env:
+          name: OTEL_JAVAAGENT_ENABLED
+          value: true
+        overrideDisabled: true
+      - env:
+          name: DEPLOYMENT_ENV
+          value: production
 ```
 
 environment variables can be of two types, i.e. `resource` and `operation`
@@ -71,9 +71,10 @@ environment variables can be of two types, i.e. `resource` and `operation`
 | 8 | SERVICE_NAME |
 | 9 | OTEL_RESOURCE_ATTRIBUTES | 
 
-* It is not recommanded to explicitely specify these environment variables except `SERVICE_NAMESPACE` & `OTEL_RESOURCE_ATTRIBUTES` as a part of pod definition. 
+* It is not recommanded to explicitely specify these environment variables except `SERVICE_NAME`, `SERVICE_NAMESPACE` & `OTEL_RESOURCE_ATTRIBUTES` as a part of pod definition. 
 Default value of `SERVICE_NAMESPACE` is the value of the pod namespace, which can be overriden, either by specifying it as a part of pod definition (if overriding is allowed) or in the external configuration. 
 
 * You can pass the resource attributes which are not getting set by the lm-webhook by defining the `OTEL_RESOURCE_ATTRIBUTES` env variable in the pod definition, which will get merged with the ones which are defined by lm-webhook.
 
 * Values for `SERVICE_NAME` and `SERVICE_NAMESPACE` can also be specified in terms of pod label as shown in above example config. So that value of the specified pod label can be used as a `SERVICE_NAME` or `SERVICE_NAMESPACE`.
+---

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>LM-K8s-Webhook</title>
+    <link>https://logicmonitor.github.io/lm-k8s-webhook/faq/</link>
+    <description>Recent content on LM-K8s-Webhook</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="https://logicmonitor.github.io/lm-k8s-webhook/faq/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>FAQ&#39;s</title>
+      <link>https://logicmonitor.github.io/lm-k8s-webhook/faq/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://logicmonitor.github.io/lm-k8s-webhook/faq/</guid>
+      <description>1. Does LM-K8s-Webhook support hot-reloading of the external configuration passed to it ?
+ Yes, external config file content can be modified by updating the configmap, which causes lm-webhook to reload the external config inside the container without pod restart.   Note: lm-webhook does not support real-time config reload. As the official Kubernetes documentation says, the total delay from the moment when the ConfigMap is updated to the moment when new keys are projected to the Pod can be as long as the kubelet sync period + cache propagation delay, where the cache propagation delay depends on the chosen cache type (it equals to watch propagation delay, ttl of cache, or zero correspondingly).</description>
+    </item>
+    
+  </channel>
+</rss>
