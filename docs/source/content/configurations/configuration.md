@@ -1,18 +1,18 @@
 ---
-title: "Configuration"
+title: "Helm chart configurations"
 draft: false
 menu:
   main:
-    parent: Docs
-    identifier: "Configuration"
-    weight: 4
+    parent: Configurations
+    identifier: "Helm chart configurations"
+    weight: 3
 ---
 
 ## Required Values
 
 - **cluster_name (default: ""):** Name of the k8s cluster in which lm-webhook will be deployed.
 - **mutatingWebhook.caBundle (default: ""):** Base64 encoded value of CA trust chain. Required if `mutatingWebhook.certManager.enabled` is set to false.
-
+---
 ## Optional Values
 
 - **mutatingWebhook.objectSelector (default: ""):** specifies the label based selectors for the objects (pod) for which the requests are required to be intercepted.
@@ -31,3 +31,4 @@ menu:
 - **service.name (default: lm-webhook-svc):** Service name of the lm-k8s-webhook
 - **service.port (default: 443):** Service Port of the lm-k8s-webhook
 - **tolerations (default: []):** Tolerations are applied to pods, and allow the pods to schedule onto nodes with matching taints.
+---

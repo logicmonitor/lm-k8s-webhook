@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>LM-K8s-Webhook</title>
+    <link>https://logicmonitor.github.io/lm-k8s-webhook/deployment/</link>
+    <description>Recent content on LM-K8s-Webhook</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="https://logicmonitor.github.io/lm-k8s-webhook/deployment/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Deployment</title>
+      <link>https://logicmonitor.github.io/lm-k8s-webhook/deployment/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://logicmonitor.github.io/lm-k8s-webhook/deployment/</guid>
+      <description>TLS certificate setup Following are some of the ways in which you can configure the required TLS certificate.
+Option 1: The easiest and default method is to install the cert-manager. With this option, cert-manager will generate a self-signed certificate.
+ Note: Please make sure that the components (pods) deployed by the cert-manager are up and running. By default cert-manager deploys its pods in the cert-manager namespace.
+  Option 2: If you want to use the cert-manager but want to use your own issuer to generate the certificates, then you can go with this option.</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>LM-K8s-Webhook</title>
+    <link>https://logicmonitor.github.io/lm-k8s-webhook/configurations/</link>
+    <description>Recent content on LM-K8s-Webhook</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="https://logicmonitor.github.io/lm-k8s-webhook/configurations/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Additional attributes config</title>
+      <link>https://logicmonitor.github.io/lm-k8s-webhook/configurations/additional-attributes-config/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://logicmonitor.github.io/lm-k8s-webhook/configurations/additional-attributes-config/</guid>
+      <description>Currently as a part of the external config, user can define the custom environment variables that are to be injected into the application pods.
+You can download the sample external config file from here: https://github.com/logicmonitor/lm-k8s-webhook/blob/main/sampleconfig.yaml
+Example:
+lmEnvVars:resource:- env:name:SERVICE_ACCOUNT_NAMEvalueFrom:fieldRef:fieldPath:spec.serviceAccountNameresAttrName:serviceaccount.nameoverrideDisabled:true- env:name:SERVICE_NAMESPACEvalueFrom:fieldRef:fieldPath:metadata.labels[&amp;#39;app-namespace&amp;#39;]- env:name:SERVICE_NAMEvalueFrom:fieldRef:fieldPath:metadata.labels[&amp;#39;app-name&amp;#39;]operation:- env:name:COMPANY_NAMEvalue:ABC CorporationoverrideDisabled:true- env:name:OTLP_ENDPOINTvalue:lmotel-svc:4317overrideDisabled:true- env:name:OTEL_JAVAAGENT_ENABLEDvalue:trueoverrideDisabled:true- env:name:DEPLOYMENT_ENVvalue:productionenvironment variables can be of two types, i.e. resource and operation
+ Resource holds the resource environment variables, which will be the part of OTEL_RESOURCE_ATTRIBUTES. Operation holds the operation environment variables, which will not be the part of OTEL_RESOURCE_ATTRIBUTES but can be used in the application for custom use cases.</description>
+    </item>
+    
+    <item>
+      <title>Configurations</title>
+      <link>https://logicmonitor.github.io/lm-k8s-webhook/configurations/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://logicmonitor.github.io/lm-k8s-webhook/configurations/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Helm chart configurations</title>
+      <link>https://logicmonitor.github.io/lm-k8s-webhook/configurations/configuration/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://logicmonitor.github.io/lm-k8s-webhook/configurations/configuration/</guid>
+      <description>Required Values  cluster_name (default: &amp;ldquo;&amp;quot;): Name of the k8s cluster in which lm-webhook will be deployed. mutatingWebhook.caBundle (default: &amp;ldquo;&amp;quot;): Base64 encoded value of CA trust chain. Required if mutatingWebhook.certManager.enabled is set to false.   Optional Values  mutatingWebhook.objectSelector (default: &amp;ldquo;&amp;quot;): specifies the label based selectors for the objects (pod) for which the requests are required to be intercepted. mutatingWebhook.namespaceSelector (default: &amp;ldquo;&amp;quot;): specifies the label based selectors for the namespaces.</description>
+    </item>
+    
+    <item>
+      <title>Selectors</title>
+      <link>https://logicmonitor.github.io/lm-k8s-webhook/configurations/selectors/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://logicmonitor.github.io/lm-k8s-webhook/configurations/selectors/</guid>
+      <description>Selectors can be used to limit which requests can be intercepted by the webhook based on the labels. Two types of selectors can be specified in MutatingWebhookConfiguration i.e. ObjectSelector and NamespaceSelector.
+Both ObjectSelector and NamespaceSelector can use matchLabels and matchExpressions to specify the selectors. You can check working with kubernetes objects and labels for more details.
+ ObjectSelector ObjectSelector is used to specify the label based selectors for the objects (pod) for which the requests are required to be intercepted.</description>
+    </item>
+    
+  </channel>
+</rss>

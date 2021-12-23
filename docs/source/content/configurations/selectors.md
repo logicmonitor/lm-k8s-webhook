@@ -3,7 +3,7 @@ title: "Selectors"
 draft: false
 menu:
   main:
-    parent: Docs
+    parent: Configurations
     identifier: "Selectors"
     weight: 1
 ---
@@ -23,7 +23,7 @@ You can check [working with kubernetes objects and labels](https://kubernetes.io
 **Example:** 
 Using matchLabels, objectSelector can be specified as follows:
 
-```
+```yaml
  objectSelector:
     matchLabels:
       tier: backend
@@ -32,7 +32,7 @@ Using matchLabels, objectSelector can be specified as follows:
 With this selectors the requests for objects (pod) with label tier = backend will be intercepted.      
 Using matchExpressions, objectSelector can be specified as follows:
 
-```
+```yaml
 objectSelector:
   matchExpressions:
     - key: tier
@@ -51,7 +51,7 @@ With this selectors the requests for objects (pod) with label tier = backend or 
 **Example:** 
 Using matchLabels, namespaceSelector can be specified as follows:
 
-```
+```yaml
  namespaceSelector:
     matchLabels:
       environment: development
@@ -59,13 +59,15 @@ Using matchLabels, namespaceSelector can be specified as follows:
 With this selectors the requests for objects (pods) with label tier = backend will be intercepted.      
 Using matchExpressions, namespaceSelector can be specified as follows:
 
-```
+```yaml
 namespaceSelector:
   matchExpressions:
     - key: tier
       operator: In
       values: ["development","staging"]
 ```
------
+
+> Note: If you have configured selectors i.e. `Object selector` & `Namespace selector` while deploying the `LM-K8s-Webhook`, then you need to make sure that your pods and corresponding namespace satisfy the configured selectors.
 
 * You can check the [examples page](https://logicmonitor.github.io/lm-k8s-webhook/docs/examples/) to get an idea of using these selectors.
+---

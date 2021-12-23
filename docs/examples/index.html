@@ -9,18 +9,18 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=10" />
-    <title>Getting Started - LM-K8s-Webhook</title>
+    <title>Examples - LM-K8s-Webhook</title>
     <meta name="generator" content="Hugo 0.90.1" />
 
     
     <meta name="description" content="Kubernetes Mutating Admission Webhook">
     
-    <link rel="canonical" href="https://logicmonitor.github.io/lm-k8s-webhook/getting-started/">
+    <link rel="canonical" href="https://logicmonitor.github.io/lm-k8s-webhook/examples/">
     
     <meta name="author" content="LogicMonitor, Inc.">
     
 
-    <meta property="og:url" content="https://logicmonitor.github.io/lm-k8s-webhook/getting-started/">
+    <meta property="og:url" content="https://logicmonitor.github.io/lm-k8s-webhook/examples/">
     <meta property="og:title" content="LM-K8s-Webhook">
     <meta property="og:image" content="https://logicmonitor.github.io/images/logo.png">
     <meta name="apple-mobile-web-app-title" content="LM-K8s-Webhook">
@@ -97,7 +97,7 @@
     </div>
     <div class="stretch">
       <div class="title">
-        Getting Started
+        Examples
       </div>
     </div>
 
@@ -377,13 +377,96 @@
 
 	<article class="article">
 		<div class="wrapper">
-			<h1>Getting Started </h1>
+			<h1>Examples </h1>
 
-			<p><strong>LM-K8s-Webhook</strong> is the implementation of the <a href="https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/">Kubernetes Mutating Admission webhook</a>. Some of the key features of the <code>LM-K8s-Webhook</code> are:</p>
+			<p>You can refer the following example commands for different scenarios for deploying the lm-webhook with the helm-chart.</p>
+<blockquote>
+<p>Note: You should check the <a href="https://logicmonitor.github.io/lm-k8s-webhook/troubleshooting-guide">troubleshooting guide</a> in case you face any issue in the deployment of the lm-webhook.</p>
+</blockquote>
+<ol>
+<li>
+<p>Using default tls certificate handling (using cert-manager)</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ helm install --debug --wait -n lm-webhook <span class="se">\
+</span><span class="se"></span>--create-namespace <span class="se">\
+</span><span class="se"></span>--set <span class="nv">cluster_name</span><span class="o">=</span><span class="s2">&#34;your-k8s-cluster-name&#34;</span> <span class="se">\
+</span><span class="se"></span>lm-webhook .
+</code></pre></div></li>
+</ol>
+<hr>
+<ol start="2">
+<li>
+<p>Using custom issuer other than self-signed issuer</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ helm install --debug --wait -n lm-webhook <span class="se">\
+</span><span class="se"></span>--create-namespace <span class="se">\
+</span><span class="se"></span>--set <span class="nv">cluster_name</span><span class="o">=</span><span class="s2">&#34;your-k8s-cluster-name&#34;</span> <span class="se">\
+</span><span class="se"></span>--set mutatingWebhook.certManager.issuerRef.name<span class="o">=</span>private-ca-issuer <span class="se">\
+</span><span class="se"></span>--set mutatingWebhook.certManager.issuerRef.kind<span class="o">=</span>Issuer <span class="se">\
+</span><span class="se"></span>lm-webhook .
+</code></pre></div></li>
+</ol>
+<hr>
+<ol start="3">
+<li>
+<p>Using your own tls certificates</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ helm install --debug --wait -n lm-webhook <span class="se">\
+</span><span class="se"></span>--create-namespace <span class="se">\
+</span><span class="se"></span>--set <span class="nv">cluster_name</span><span class="o">=</span><span class="s2">&#34;your-k8s-cluster-name&#34;</span> <span class="se">\
+</span><span class="se"></span>--set mutatingWebhook.certManager.enabled<span class="o">=</span><span class="nb">false</span> <span class="se">\
+</span><span class="se"></span>--set mutatingWebhook.caBundle<span class="o">=</span><span class="k">$(</span>base64 /tmp/cert/ca.pem<span class="k">)</span> <span class="se">\
+</span><span class="se"></span>lm-webhook .
+</code></pre></div></li>
+</ol>
+<hr>
+<ol start="4">
+<li>
+<p>Using ObjectSelector and NamespaceSelector</p>
 <ul>
-<li>LM-K8s-Webhook can be used to inject the kubernetes specific resource attributes like pod name, ip, pod namespace, service namespace, pod UUID in the pod as an environment variable, which avoids the need of manually updating the deployment manifests to include these resource attributes.</li>
-<li>Custom environment variables can also be injected by passing the external configuration.</li>
+<li>ObjectSelector used here is:</li>
 </ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">objectSelector</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">matchLabels</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="nt">tier</span><span class="p">:</span><span class="w"> </span><span class="l">backend</span><span class="w">
+</span><span class="w">  </span><span class="nt">matchExpressions</span><span class="p">:</span><span class="w">
+</span><span class="w">   </span>- <span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l">type</span><span class="w">
+</span><span class="w">     </span><span class="nt">operator</span><span class="p">:</span><span class="w"> </span><span class="l">In</span><span class="w">
+</span><span class="w">     </span><span class="nt">values</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&#34;application&#34;</span><span class="p">,</span><span class="s2">&#34;service&#34;</span><span class="p">]</span><span class="w">
+</span></code></pre></div><ul>
+<li>NamespaceSelector used here is:</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">namespaceSelector</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">matchExpressions</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span>- <span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l">environment</span><span class="w">
+</span><span class="w">    </span><span class="nt">operator</span><span class="p">:</span><span class="w"> </span><span class="l">In</span><span class="w">
+</span><span class="w">    </span><span class="nt">values</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&#34;dev&#34;</span><span class="p">,</span><span class="s2">&#34;staging&#34;</span><span class="p">]</span><span class="w">
+</span></code></pre></div><ul>
+<li>Corresponding helm command will look like:</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ helm install --debug --wait -n lm-webhook <span class="se">\
+</span><span class="se"></span>--create-namespace <span class="se">\
+</span><span class="se"></span>--set <span class="nv">cluster_name</span><span class="o">=</span><span class="s2">&#34;your-k8s-cluster-name&#34;</span> <span class="se">\
+</span><span class="se"></span>--set mutatingWebhook.objectSelector.matchLabels.tier<span class="o">=</span><span class="s2">&#34;backend&#34;</span> <span class="se">\
+</span><span class="se"></span>--set mutatingWebhook.objectSelector.matchExpressions<span class="o">[</span>0<span class="o">]</span>.key<span class="o">=</span><span class="s2">&#34;type&#34;</span> <span class="se">\
+</span><span class="se"></span>--set mutatingWebhook.objectSelector.matchExpressions<span class="o">[</span>0<span class="o">]</span>.operator<span class="o">=</span><span class="s2">&#34;In&#34;</span> <span class="se">\
+</span><span class="se"></span>--set mutatingWebhook.objectSelector.matchExpressions<span class="o">[</span>0<span class="o">]</span>.values<span class="o">[</span>0<span class="o">]=</span>application <span class="se">\
+</span><span class="se"></span>--set mutatingWebhook.objectSelector.matchExpressions<span class="o">[</span>0<span class="o">]</span>.values<span class="o">[</span>1<span class="o">]=</span>service <span class="se">\
+</span><span class="se"></span>--set mutatingWebhook.namespaceSelector.matchExpressions<span class="o">[</span>0<span class="o">]</span>.key<span class="o">=</span><span class="s2">&#34;environment&#34;</span> <span class="se">\
+</span><span class="se"></span>--set mutatingWebhook.namespaceSelector.matchExpressions<span class="o">[</span>0<span class="o">]</span>.operator<span class="o">=</span><span class="s2">&#34;In&#34;</span> <span class="se">\
+</span><span class="se"></span>--set mutatingWebhook.namespaceSelector.matchExpressions<span class="o">[</span>0<span class="o">]</span>.values<span class="o">[</span>0<span class="o">]=</span><span class="s2">&#34;dev&#34;</span> <span class="se">\
+</span><span class="se"></span>--set mutatingWebhook.namespaceSelector.matchExpressions<span class="o">[</span>0<span class="o">]</span>.values<span class="o">[</span>1<span class="o">]=</span><span class="s2">&#34;staging&#34;</span> <span class="se">\
+</span><span class="se"></span>lm-webhook .
+</code></pre></div></li>
+</ol>
+<hr>
+<ol start="5">
+<li>
+<p>Using external configuration</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ helm install --debug --wait -n lm-webhook <span class="se">\
+</span><span class="se"></span>--create-namespace <span class="se">\
+</span><span class="se"></span>--set <span class="nv">cluster_name</span><span class="o">=</span><span class="s2">&#34;your-k8s-cluster-name&#34;</span> <span class="se">\
+</span><span class="se"></span>--set-file <span class="nv">lmconfig</span><span class="o">=</span>&lt;path_to_external_config&gt; <span class="se">\
+</span><span class="se"></span>lm-webhook .
+</code></pre></div></li>
+</ol>
 <hr>
 
 		
@@ -403,7 +486,7 @@
 <nav class="pagination" aria-label="Footer">
   <div class="previous">
   
-      <a href="https://logicmonitor.github.io/lm-k8s-webhook/configurations/configuration/" title="Helm chart configurations">
+      <a href="https://logicmonitor.github.io/lm-k8s-webhook/faq/" title="FAQ&#39;s">
         <span class="direction">
           Previous
         </span>
@@ -413,7 +496,7 @@
           </div>
           <div class="stretch">
             <div class="title">
-              Helm chart configurations
+              FAQ&#39;s
             </div>
           </div>
         </div>
@@ -423,14 +506,14 @@
 
   <div class="next">
   
-      <a href="https://logicmonitor.github.io/lm-k8s-webhook/faq/" title="FAQ&#39;s">
+      <a href="https://logicmonitor.github.io/lm-k8s-webhook/deployment/" title="Deployment">
         <span class="direction">
           Next
         </span>
         <div class="page">
           <div class="stretch">
             <div class="title">
-              FAQ&#39;s
+              Deployment
             </div>
           </div>
           <div class="button button-next" role="button" aria-label="Next">

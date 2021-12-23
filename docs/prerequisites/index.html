@@ -9,18 +9,18 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=10" />
-    <title>Getting Started - LM-K8s-Webhook</title>
+    <title>Prerequisites - LM-K8s-Webhook</title>
     <meta name="generator" content="Hugo 0.90.1" />
 
     
     <meta name="description" content="Kubernetes Mutating Admission Webhook">
     
-    <link rel="canonical" href="https://logicmonitor.github.io/lm-k8s-webhook/getting-started/">
+    <link rel="canonical" href="https://logicmonitor.github.io/lm-k8s-webhook/prerequisites/">
     
     <meta name="author" content="LogicMonitor, Inc.">
     
 
-    <meta property="og:url" content="https://logicmonitor.github.io/lm-k8s-webhook/getting-started/">
+    <meta property="og:url" content="https://logicmonitor.github.io/lm-k8s-webhook/prerequisites/">
     <meta property="og:title" content="LM-K8s-Webhook">
     <meta property="og:image" content="https://logicmonitor.github.io/images/logo.png">
     <meta name="apple-mobile-web-app-title" content="LM-K8s-Webhook">
@@ -97,7 +97,7 @@
     </div>
     <div class="stretch">
       <div class="title">
-        Getting Started
+        Prerequisites
       </div>
     </div>
 
@@ -377,13 +377,43 @@
 
 	<article class="article">
 		<div class="wrapper">
-			<h1>Getting Started </h1>
+			<h1>Prerequisites </h1>
 
-			<p><strong>LM-K8s-Webhook</strong> is the implementation of the <a href="https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/">Kubernetes Mutating Admission webhook</a>. Some of the key features of the <code>LM-K8s-Webhook</code> are:</p>
+			<ol>
+<li>Ensure that Kubernetes cluster is at least as new as v1.16 ( to use <code>admissionregistration.k8s.io/v1</code> ) or v1.9 ( to use <code>admissionregistration.k8s.io/v1beta1</code> )</li>
+</ol>
+<hr>
+<ol start="2">
+<li>Ensure that <code>MutatingAdmissionWebhook admission controller</code> is enabled.
+You can check if it is enabled by looking at the admission plugins that are enabled by running the following command in <code>kube-apiserver</code>:
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">  $ kube-apiserver -h <span class="p">|</span> grep enable-admission-plugins
+</code></pre></div>If not enabled, then you can enable this plugin by running the following command in <code>kube-apiserver</code>:
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">  $ kube-apiserver --enable-admission-plugins<span class="o">=</span>MutatingAdmissionWebhook  
+</code></pre></div></li>
+</ol>
+<hr>
+<ol start="3">
+<li>
+<p>Ensure that the API (<code>admissionregistration.k8s.io/v1</code> or <code>admissionregistration.k8s.io/v1beta1</code> depending upon the k8s version being used) is enabled by using the following commands:</p>
 <ul>
-<li>LM-K8s-Webhook can be used to inject the kubernetes specific resource attributes like pod name, ip, pod namespace, service namespace, pod UUID in the pod as an environment variable, which avoids the need of manually updating the deployment manifests to include these resource attributes.</li>
-<li>Custom environment variables can also be injected by passing the external configuration.</li>
+<li>For <code>admissionregistration.k8s.io/v1beta1</code> API:</li>
 </ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ kubectl api-versions <span class="p">|</span> grep admissionregistration.k8s.io/v1beta1
+</code></pre></div><p>Output should be:</p>
+<pre tabindex="0"><code>  admissionregistration.k8s.io/v1beta1
+</code></pre><ul>
+<li>For <code>admissionregistration.k8s.io/v1</code> API:</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">  $ kubectl api-versions <span class="p">|</span> grep admissionregistration.k8s.io/v1
+</code></pre></div><p>Output should be:</p>
+<pre tabindex="0"><code>  admissionregistration.k8s.io/v1
+</code></pre></li>
+</ol>
+<hr>
+<ol start="4">
+<li>TLS Certificate Requirement:</li>
+</ol>
+<p>In Kubernetes, in order for the API server to communicate with the webhook component, the webhook requires a TLS certificate that the API server is configured to trust. You can refer to the <a href="https://logicmonitor.github.io/lm-k8s-webhook/deployment">deployment section</a> to understand more about it.</p>
 <hr>
 
 		
@@ -403,7 +433,7 @@
 <nav class="pagination" aria-label="Footer">
   <div class="previous">
   
-      <a href="https://logicmonitor.github.io/lm-k8s-webhook/configurations/configuration/" title="Helm chart configurations">
+      <a href="https://logicmonitor.github.io/lm-k8s-webhook/configurations/selectors/" title="Selectors">
         <span class="direction">
           Previous
         </span>
@@ -413,7 +443,7 @@
           </div>
           <div class="stretch">
             <div class="title">
-              Helm chart configurations
+              Selectors
             </div>
           </div>
         </div>
@@ -423,14 +453,14 @@
 
   <div class="next">
   
-      <a href="https://logicmonitor.github.io/lm-k8s-webhook/faq/" title="FAQ&#39;s">
+      <a href="https://logicmonitor.github.io/lm-k8s-webhook/configurations/configuration/" title="Helm chart configurations">
         <span class="direction">
           Next
         </span>
         <div class="page">
           <div class="stretch">
             <div class="title">
-              FAQ&#39;s
+              Helm chart configurations
             </div>
           </div>
           <div class="button button-next" role="button" aria-label="Next">

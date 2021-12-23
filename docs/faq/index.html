@@ -9,18 +9,18 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=10" />
-    <title>Getting Started - LM-K8s-Webhook</title>
+    <title>FAQ&#39;s - LM-K8s-Webhook</title>
     <meta name="generator" content="Hugo 0.90.1" />
 
     
     <meta name="description" content="Kubernetes Mutating Admission Webhook">
     
-    <link rel="canonical" href="https://logicmonitor.github.io/lm-k8s-webhook/getting-started/">
+    <link rel="canonical" href="https://logicmonitor.github.io/lm-k8s-webhook/faq/">
     
     <meta name="author" content="LogicMonitor, Inc.">
     
 
-    <meta property="og:url" content="https://logicmonitor.github.io/lm-k8s-webhook/getting-started/">
+    <meta property="og:url" content="https://logicmonitor.github.io/lm-k8s-webhook/faq/">
     <meta property="og:title" content="LM-K8s-Webhook">
     <meta property="og:image" content="https://logicmonitor.github.io/images/logo.png">
     <meta name="apple-mobile-web-app-title" content="LM-K8s-Webhook">
@@ -97,7 +97,7 @@
     </div>
     <div class="stretch">
       <div class="title">
-        Getting Started
+        FAQ&#39;s
       </div>
     </div>
 
@@ -377,12 +377,20 @@
 
 	<article class="article">
 		<div class="wrapper">
-			<h1>Getting Started </h1>
+			<h1>FAQ&#39;s </h1>
 
-			<p><strong>LM-K8s-Webhook</strong> is the implementation of the <a href="https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/">Kubernetes Mutating Admission webhook</a>. Some of the key features of the <code>LM-K8s-Webhook</code> are:</p>
+			<p><strong>1. Does <code>LM-K8s-Webhook</code> support hot-reloading of the external configuration passed to it ?</strong></p>
 <ul>
-<li>LM-K8s-Webhook can be used to inject the kubernetes specific resource attributes like pod name, ip, pod namespace, service namespace, pod UUID in the pod as an environment variable, which avoids the need of manually updating the deployment manifests to include these resource attributes.</li>
-<li>Custom environment variables can also be injected by passing the external configuration.</li>
+<li>Yes, external config file content can be modified by updating the configmap, which causes lm-webhook to reload the external config inside the container without pod restart.</li>
+</ul>
+<blockquote>
+<p><strong>Note:</strong> lm-webhook does not support real-time config reload. As the official Kubernetes documentation says, the total delay from the moment when the ConfigMap is updated to the moment when new keys are projected to the Pod can be as long as the kubelet sync period + cache propagation delay, where the cache propagation delay depends on the chosen cache type (it equals to watch propagation delay, ttl of cache, or zero correspondingly).
+So, it can take few seconds to reflect the updated configuration in the pod.</p>
+</blockquote>
+<hr>
+<p><strong>2. Do I need to make any changes in application pods to make us of the <code>LM-K8s-Webhook</code> ?</strong></p>
+<ul>
+<li>If you have configured selectors i.e. <code>Object selector</code>, <code>Namespace selector</code> while deploying the LM-K8s-Webhook, then you need to make sure that your pods and namespace satisfy corresponding selectors.</li>
 </ul>
 <hr>
 
@@ -403,7 +411,7 @@
 <nav class="pagination" aria-label="Footer">
   <div class="previous">
   
-      <a href="https://logicmonitor.github.io/lm-k8s-webhook/configurations/configuration/" title="Helm chart configurations">
+      <a href="https://logicmonitor.github.io/lm-k8s-webhook/getting-started/" title="Getting Started">
         <span class="direction">
           Previous
         </span>
@@ -413,7 +421,7 @@
           </div>
           <div class="stretch">
             <div class="title">
-              Helm chart configurations
+              Getting Started
             </div>
           </div>
         </div>
@@ -423,14 +431,14 @@
 
   <div class="next">
   
-      <a href="https://logicmonitor.github.io/lm-k8s-webhook/faq/" title="FAQ&#39;s">
+      <a href="https://logicmonitor.github.io/lm-k8s-webhook/examples/" title="Examples">
         <span class="direction">
           Next
         </span>
         <div class="page">
           <div class="stretch">
             <div class="title">
-              FAQ&#39;s
+              Examples
             </div>
           </div>
           <div class="button button-next" role="button" aria-label="Next">

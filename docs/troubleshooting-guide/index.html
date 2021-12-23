@@ -9,18 +9,18 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=10" />
-    <title>Getting Started - LM-K8s-Webhook</title>
+    <title>Troubleshooting Guide - LM-K8s-Webhook</title>
     <meta name="generator" content="Hugo 0.90.1" />
 
     
     <meta name="description" content="Kubernetes Mutating Admission Webhook">
     
-    <link rel="canonical" href="https://logicmonitor.github.io/lm-k8s-webhook/getting-started/">
+    <link rel="canonical" href="https://logicmonitor.github.io/lm-k8s-webhook/troubleshooting-guide/">
     
     <meta name="author" content="LogicMonitor, Inc.">
     
 
-    <meta property="og:url" content="https://logicmonitor.github.io/lm-k8s-webhook/getting-started/">
+    <meta property="og:url" content="https://logicmonitor.github.io/lm-k8s-webhook/troubleshooting-guide/">
     <meta property="og:title" content="LM-K8s-Webhook">
     <meta property="og:image" content="https://logicmonitor.github.io/images/logo.png">
     <meta name="apple-mobile-web-app-title" content="LM-K8s-Webhook">
@@ -97,7 +97,7 @@
     </div>
     <div class="stretch">
       <div class="title">
-        Getting Started
+        Troubleshooting Guide
       </div>
     </div>
 
@@ -377,13 +377,31 @@
 
 	<article class="article">
 		<div class="wrapper">
-			<h1>Getting Started </h1>
+			<h1>Troubleshooting Guide </h1>
 
-			<p><strong>LM-K8s-Webhook</strong> is the implementation of the <a href="https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/">Kubernetes Mutating Admission webhook</a>. Some of the key features of the <code>LM-K8s-Webhook</code> are:</p>
+			<ol>
+<li>If you are using <code>zsh terminal</code> and you are using [] notation in the helm chart deployment command, then you might encounter an error saying <code>zsh: no matches found:</code>. [] syntax has its meaning in zsh.
+So there are two simple ways to step aside.
 <ul>
-<li>LM-K8s-Webhook can be used to inject the kubernetes specific resource attributes like pod name, ip, pod namespace, service namespace, pod UUID in the pod as an environment variable, which avoids the need of manually updating the deployment manifests to include these resource attributes.</li>
-<li>Custom environment variables can also be injected by passing the external configuration.</li>
+<li><strong>Change to bash:</strong> switch to bash by just entering <code>bash</code>. And then run you helm install again.</li>
+<li><strong>noglob:</strong> you can use noglob.
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">    $ noglob helm install --debug --wait -n lm-webhook <span class="se">\
+</span><span class="se"></span>    --create-namespace <span class="se">\
+</span><span class="se"></span>    --set <span class="nv">cluster_name</span><span class="o">=</span><span class="s2">&#34;your-k8s-cluster-name&#34;</span> <span class="se">\
+</span><span class="se"></span>    --set mutatingWebhook.objectSelector.matchLabels.tier<span class="o">=</span><span class="s2">&#34;backend&#34;</span> <span class="se">\
+</span><span class="se"></span>    --set mutatingWebhook.objectSelector.matchExpressions<span class="o">[</span>0<span class="o">]</span>.key<span class="o">=</span><span class="s2">&#34;type&#34;</span> <span class="se">\
+</span><span class="se"></span>    --set mutatingWebhook.objectSelector.matchExpressions<span class="o">[</span>0<span class="o">]</span>.operator<span class="o">=</span><span class="s2">&#34;In&#34;</span> <span class="se">\
+</span><span class="se"></span>    --set mutatingWebhook.objectSelector.matchExpressions<span class="o">[</span>0<span class="o">]</span>.values<span class="o">[</span>0<span class="o">]=</span>application <span class="se">\
+</span><span class="se"></span>    --set mutatingWebhook.objectSelector.matchExpressions<span class="o">[</span>0<span class="o">]</span>.values<span class="o">[</span>1<span class="o">]=</span>service <span class="se">\
+</span><span class="se"></span>    --set mutatingWebhook.namespaceSelector.matchExpressions<span class="o">[</span>0<span class="o">]</span>.key<span class="o">=</span><span class="s2">&#34;environment&#34;</span> <span class="se">\
+</span><span class="se"></span>    --set mutatingWebhook.namespaceSelector.matchExpressions<span class="o">[</span>0<span class="o">]</span>.operator<span class="o">=</span><span class="s2">&#34;In&#34;</span> <span class="se">\
+</span><span class="se"></span>    --set mutatingWebhook.namespaceSelector.matchExpressions<span class="o">[</span>0<span class="o">]</span>.values<span class="o">[</span>0<span class="o">]=</span><span class="s2">&#34;dev&#34;</span> <span class="se">\
+</span><span class="se"></span>    --set mutatingWebhook.namespaceSelector.matchExpressions<span class="o">[</span>0<span class="o">]</span>.values<span class="o">[</span>1<span class="o">]=</span><span class="s2">&#34;staging&#34;</span> <span class="se">\
+</span><span class="se"></span>    lm-webhook .
+</code></pre></div></li>
 </ul>
+</li>
+</ol>
 <hr>
 
 		
@@ -403,34 +421,18 @@
 <nav class="pagination" aria-label="Footer">
   <div class="previous">
   
-      <a href="https://logicmonitor.github.io/lm-k8s-webhook/configurations/configuration/" title="Helm chart configurations">
-        <span class="direction">
-          Previous
-        </span>
-        <div class="page">
-          <div class="button button-previous" role="button" aria-label="Previous">
-            <i class="icon icon-back"></i>
-          </div>
-          <div class="stretch">
-            <div class="title">
-              Helm chart configurations
-            </div>
-          </div>
-        </div>
-      </a>
-  
   </div>
 
   <div class="next">
   
-      <a href="https://logicmonitor.github.io/lm-k8s-webhook/faq/" title="FAQ&#39;s">
+      <a href="https://logicmonitor.github.io/lm-k8s-webhook/configurations/selectors/" title="Selectors">
         <span class="direction">
           Next
         </span>
         <div class="page">
           <div class="stretch">
             <div class="title">
-              FAQ&#39;s
+              Selectors
             </div>
           </div>
           <div class="button button-next" role="button" aria-label="Next">
