@@ -25,7 +25,6 @@ func mutateEnvVariables(ctx context.Context, params *Params) error {
 
 	var isServiceNameEnvProcessed bool
 	var isServiceNamespaceEnvProcessed bool
-	var otelResourceAttributesIndex int
 
 	logger := log.Log.WithValues("mutate-pod", fmt.Sprintf("%s/%s", params.Namespace, params.Pod.GetName()))
 
@@ -37,9 +36,6 @@ func mutateEnvVariables(ctx context.Context, params *Params) error {
 	// If external config is provided then only perform this operation
 	if params.LMConfig.MutationConfigProvided {
 		logger.Info("As external config present, checking for new env vars")
-		// var isEnvVarToBeSkipped bool
-
-		otelResourceAttributesIndex = len(newEnvVars) - 1
 
 		for _, resourceEnvVar := range params.LMConfig.MutationConfig.LMEnvVars.Resource {
 
@@ -49,7 +45,6 @@ func mutateEnvVariables(ctx context.Context, params *Params) error {
 
 				// If resourceEnvVar is SERVICE_NAMESPACE
 				if resourceEnvVar.Env.Name == ServiceNamespace {
-					// isServiceNamespaceEnvFound = true
 					// If override is allowed
 					if !resourceEnvVar.OverrideDisabled {
 						if idx := getIndexOfEnv(container.Env, ServiceNamespace); idx > -1 {
@@ -94,7 +89,7 @@ func mutateEnvVariables(ctx context.Context, params *Params) error {
 							newEnvVars = append(newEnvVars, svcNameEnv)
 
 							// Add it to the OTELResourceAttributes
-							newEnvVars, otelResourceAttributesIndex = addResEnvToOtelResAttribute(svcNameEnv, newEnvVars, resourceEnvVar.ResAttrName)
+							newEnvVars = addResEnvToOtelResAttribute(svcNameEnv, newEnvVars, resourceEnvVar.ResAttrName)
 							isServiceNameEnvProcessed = true
 							logger.Info("resourceEnvVar is SERVICE_NAME, using value of the SERVICE_NAME from container", "SERVICE_NAME env:", svcNameEnv)
 							continue
@@ -109,7 +104,7 @@ func mutateEnvVariables(ctx context.Context, params *Params) error {
 							newEnvVars = append(newEnvVars, resourceEnvVar.Env)
 
 							// Add it to the OTELResourceAttributes
-							newEnvVars, otelResourceAttributesIndex = addResEnvToOtelResAttribute(resourceEnvVar.Env, newEnvVars, resourceEnvVar.ResAttrName)
+							newEnvVars = addResEnvToOtelResAttribute(resourceEnvVar.Env, newEnvVars, resourceEnvVar.ResAttrName)
 							isServiceNameEnvProcessed = true
 							logger.Info("resourceEnvVar is SERVICE_NAME", "SERVICE_NAME env:", resourceEnvVar.Env)
 							continue
@@ -122,7 +117,7 @@ func mutateEnvVariables(ctx context.Context, params *Params) error {
 							newEnvVars = append(newEnvVars, svcNameEnv)
 
 							// Add it to the OTELResourceAttributes
-							newEnvVars, otelResourceAttributesIndex = addResEnvToOtelResAttribute(svcNameEnv, newEnvVars, resourceEnvVar.ResAttrName)
+							newEnvVars = addResEnvToOtelResAttribute(svcNameEnv, newEnvVars, resourceEnvVar.ResAttrName)
 							isServiceNameEnvProcessed = true
 							logger.Info("resourceEnvVar is SERVICE_NAME, using value of the SERVICE_NAME from workload resource", "SERVICE_NAME env:", svcNameEnv)
 							continue
@@ -145,7 +140,7 @@ func mutateEnvVariables(ctx context.Context, params *Params) error {
 				newEnvVars = append(newEnvVars, envToBeAdded)
 
 				// Add it to the OTELResourceAttributes
-				newEnvVars, otelResourceAttributesIndex = addResEnvToOtelResAttribute(envToBeAdded, newEnvVars, resourceEnvVar.ResAttrName)
+				newEnvVars = addResEnvToOtelResAttribute(envToBeAdded, newEnvVars, resourceEnvVar.ResAttrName)
 				logger.Info("Adding new resource env variable", "Name: ", envToBeAdded.Name, "env value", envToBeAdded.Value, "env valueFrom", envToBeAdded.ValueFrom)
 			}
 		}
@@ -193,33 +188,17 @@ func mutateEnvVariables(ctx context.Context, params *Params) error {
 			svcNameEnv := corev1.EnvVar{Name: ServiceName, Value: container.Env[idx].Value, ValueFrom: container.Env[idx].ValueFrom}
 			newEnvVars = append(newEnvVars, svcNameEnv)
 			// Add it to the OTELResourceAttributes
-			newEnvVars, otelResourceAttributesIndex = addResEnvToOtelResAttribute(svcNameEnv, newEnvVars, "")
+			newEnvVars = addResEnvToOtelResAttribute(svcNameEnv, newEnvVars, "")
 			logger.Info("resourceEnvVar is SERVICE_NAME, using value from container", "env value", svcNameEnv)
 		} else {
 			workloadResource, _ := getParentWorkloadNameForPod(params.Pod, params.Client, params.Namespace)
 			svcNameEnv := corev1.EnvVar{Name: ServiceName, Value: workloadResource}
 			newEnvVars = append(newEnvVars, svcNameEnv)
 			// Add it to the OTELResourceAttributes
-			newEnvVars, otelResourceAttributesIndex = addResEnvToOtelResAttribute(svcNameEnv, newEnvVars, "")
+			newEnvVars = addResEnvToOtelResAttribute(svcNameEnv, newEnvVars, "")
 			logger.Info("resourceEnvVar is SERVICE_NAME, derived value from workload", "env value", svcNameEnv)
 		}
 	}
-
-	// Check if OTEL_RESOURCE_ATTRIBUTES is not the last element already, then no need to move it
-	if otelResourceAttributesIndex != len(newEnvVars)-1 {
-
-		// Move the OTELResourceAttributes to the last index of the newEnvVar list to satisfy environment variable dependency
-
-		// Copy last env var in the list
-		currentLastEnvVar := newEnvVars[len(newEnvVars)-1]
-
-		// Move OTELResourceAttributes env variable to the last
-		newEnvVars[len(newEnvVars)-1] = newEnvVars[otelResourceAttributesIndex]
-
-		// Move previously copied last element to the OTELResourceAttributes's old position
-		newEnvVars[otelResourceAttributesIndex] = currentLastEnvVar
-	}
-
 	return mutateContainerEnvVariables(container, newEnvVars, params, logger)
 }
 
@@ -228,6 +207,18 @@ func mutateContainerEnvVariables(container corev1.Container, newEnvVars []corev1
 	if err != nil {
 		return err
 	}
+	// Move the OTELResourceAttributes to the last index of the newEnvVar list to satisfy environment variable dependency
+	if otelResourceAttributesIndex := getIndexOfEnv(envVars, OTELResourceAttributes); otelResourceAttributesIndex > -1 {
+		// Copy last env var in the list
+		currentLastEnvVar := envVars[len(envVars)-1]
+
+		// Move OTELResourceAttributes env variable to the last
+		envVars[len(envVars)-1] = envVars[otelResourceAttributesIndex]
+
+		// Move previously copied last element to the OTELResourceAttributes's old position
+		envVars[otelResourceAttributesIndex] = currentLastEnvVar
+	}
+
 	logger.Info("Final list of env variables after merge", "env vars:", envVars)
 	for idx, ctr := range params.Pod.Spec.Containers {
 		if ctr.Name == container.Name {
@@ -431,7 +422,7 @@ func extractResourceWorkloadName(namespacedName types.NamespacedName, k8sClient 
 }
 
 // addResEnvToOtelResAttribute adds resource env variable to the OTELResourceAttributes
-func addResEnvToOtelResAttribute(resourceEnvVar corev1.EnvVar, newEnvVars []corev1.EnvVar, resAttrName string) ([]corev1.EnvVar, int) {
+func addResEnvToOtelResAttribute(resourceEnvVar corev1.EnvVar, newEnvVars []corev1.EnvVar, resAttrName string) []corev1.EnvVar {
 	var otelResourceAttributesIndex int
 	var newEnvStr string
 	// Find the location of OTELResourceAttributes in the list
@@ -450,7 +441,7 @@ func addResEnvToOtelResAttribute(resourceEnvVar corev1.EnvVar, newEnvVars []core
 		// Update the OTELResourceAttributes value with the updated one
 		newEnvVars[otelResourceAttributesIndex].Value = fmt.Sprintf("%s,%s", newEnvVars[otelResourceAttributesIndex].Value, newEnvStr)
 	}
-	return newEnvVars, otelResourceAttributesIndex
+	return newEnvVars
 }
 
 // checkIfPodHasLabel checks if label specified in a env value is present on the pod
