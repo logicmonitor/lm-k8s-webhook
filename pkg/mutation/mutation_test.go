@@ -1442,8 +1442,7 @@ func TestAddResEnvToOtelResAttribute(t *testing.T) {
 			newEnvVars     []corev1.EnvVar
 		}
 		wantPayload struct {
-			envVars                     []corev1.EnvVar
-			otelResourceAttributesIndex int
+			envVars []corev1.EnvVar
 		}
 	}{
 		name: "Add resource env variable to the OTEL_RESOURCE_ATTRIBUTE environment variable",
@@ -1491,8 +1490,7 @@ func TestAddResEnvToOtelResAttribute(t *testing.T) {
 			},
 		},
 		wantPayload: struct {
-			envVars                     []corev1.EnvVar
-			otelResourceAttributesIndex int
+			envVars []corev1.EnvVar
 		}{
 
 			envVars: []corev1.EnvVar{
@@ -1529,21 +1527,15 @@ func TestAddResEnvToOtelResAttribute(t *testing.T) {
 					Value: "resource.type=kubernetes-pod,ip=$(LM_APM_POD_IP),host.name=$(LM_APM_POD_NAME),k8s.pod.uid=$(LM_APM_POD_UID),service.namespace=$(SERVICE_NAMESPACE),k8s.namespace.name=$(LM_APM_POD_NAMESPACE),k8s.node.name=$(LM_APM_NODE_NAME),k8s.cluster.name=$(LM_APM_CLUSTER_NAME),service.name=$(SERVICE_NAME)",
 				},
 			},
-			otelResourceAttributesIndex: 7,
 		},
 	}
 
-	newEnvVars, otelResourceAttributesIndex := addResEnvToOtelResAttribute(test.args.resourceEnvVar, test.args.newEnvVars, "")
+	newEnvVars := addResEnvToOtelResAttribute(test.args.resourceEnvVar, test.args.newEnvVars, "")
 
 	for _, expectedEnvVar := range test.wantPayload.envVars {
-		for envVarIndex, envVar := range newEnvVars {
+		for _, envVar := range newEnvVars {
 			if expectedEnvVar.Name == envVar.Name {
-				if envVar.Name == OTELResourceAttributes {
-					if envVarIndex != otelResourceAttributesIndex {
-						t.Errorf("AddResEnvToOtelResAttribute() for environment variable %s, expected position index is %d, but found %d", envVar.Name, test.wantPayload.otelResourceAttributesIndex, otelResourceAttributesIndex)
-						return
-					}
-				}
+
 				if expectedEnvVar.Value != "" {
 					if !cmp.Equal(expectedEnvVar.Value, envVar.Value, cmpOpt) {
 						t.Errorf("AddResEnvToOtelResAttribute() for environment variable %s, expected value is %s, but found %s", expectedEnvVar.Name, expectedEnvVar.Value, envVar.Value)
