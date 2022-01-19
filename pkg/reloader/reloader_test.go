@@ -99,28 +99,30 @@ func TestSetupConfigReloader(t *testing.T) {
 			return
 		}
 
-		file, err := os.OpenFile(tt.args.lmconfigFilePath, os.O_RDWR|os.O_TRUNC, 0755)
-		if err != nil {
-			logger.Error(err, "error opening a config file", "path", tt.args.lmconfigFilePath)
-			return
-		}
-		defer file.Close()
+		if err == nil {
+			file, err := os.OpenFile(tt.args.lmconfigFilePath, os.O_RDWR|os.O_TRUNC, 0755)
+			if err != nil {
+				logger.Error(err, "error opening a config file", "path", tt.args.lmconfigFilePath)
+				return
+			}
+			defer file.Close()
 
-		configBytes, err := yaml.Marshal(tt.wantPayload.MutationConfig)
-		if err != nil {
-			logger.Error(err, "error in marshalling", "path", tt.args.lmconfigFilePath)
-			return
-		}
-		_, err = file.Write(configBytes)
-		if err != nil {
-			logger.Error(err, "error writing a config file", "path", tt.args.lmconfigFilePath)
-			return
-		}
-		time.Sleep(5 * time.Second)
+			configBytes, err := yaml.Marshal(tt.wantPayload.MutationConfig)
+			if err != nil {
+				logger.Error(err, "error in marshalling", "path", tt.args.lmconfigFilePath)
+				return
+			}
+			_, err = file.Write(configBytes)
+			if err != nil {
+				logger.Error(err, "error writing a config file", "path", tt.args.lmconfigFilePath)
+				return
+			}
+			time.Sleep(5 * time.Second)
 
-		if !cmp.Equal(config.GetConfig(), tt.wantPayload, cmpOpt) {
-			t.Errorf("updated config = %v, but expected config = %v", config.GetConfig(), tt.wantPayload)
-			return
+			if !cmp.Equal(config.GetConfig(), tt.wantPayload, cmpOpt) {
+				t.Errorf("updated config = %v, but expected config = %v", config.GetConfig(), tt.wantPayload)
+				return
+			}
 		}
 	}
 }

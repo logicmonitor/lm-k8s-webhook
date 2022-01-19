@@ -22,8 +22,8 @@ lmEnvVars:
         value: ABC Corporation
       overrideDisabled: true 
     - env:
-        name: OTLP_ENDPOINT
-        value: lmotel-svc:4317
+        name: EXPORTER_ENDPOINT
+        value: lmotel-svc.logicmonitor.svc.cluster.local:4317
       overrideDisabled: true 
     - env:
         name: OTEL_JAVAAGENT_ENABLED

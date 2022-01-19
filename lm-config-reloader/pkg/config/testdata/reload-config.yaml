@@ -1,0 +1,28 @@
+reloaders:
+- configProvider:
+    git:
+      owner: "test-owner"
+      repo: "test-repo"
+      ref: "test-ref"
+      filePath: "test-file-path"
+      authRequired: true
+      accessToken: "test-access-token"
+      pullInterval: 5s
+  resource:
+    kind: ConfigMap
+    name: test-configmap
+    fileName: test-configMap-file-path
+  # reloadEndpoint: "http://127.0.0.1:3032/reload"
+
+- configProvider:
+    git:
+      owner: "test-owner"
+      repo: "test-repo"
+      ref: "test-ref"
+      filePath: "test-file-path"
+      authRequired: true
+      accessToken: "test-access-token"
+      pullInterval: 5s
+  resource:
+    kind: MutatingWebhookConfiguration
+    name: test-mutating-webhook-configuration
