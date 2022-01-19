@@ -69,5 +69,5 @@ namespaceSelector:
 
 > Note: If you have configured selectors i.e. `Object selector` & `Namespace selector` while deploying the `LM-K8s-Webhook`, then you need to make sure that your pods and corresponding namespace satisfy the configured selectors.
 
-* You can check the [examples page](https://logicmonitor.github.io/lm-k8s-webhook/docs/examples/) to get an idea of using these selectors.
+* You can check the [examples page](https://logicmonitor.github.io/lm-k8s-webhook/examples/) to get an idea of using these selectors.
 ---
