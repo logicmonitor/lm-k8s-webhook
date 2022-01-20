@@ -1,12 +1,12 @@
 reloaders:
 - configProvider:
     git:
-      owner: "avadhut123pisal"
-      repo: "github-actions"
+      owner: "test-owner"
+      repo: "test-repo"
       ref: "main"
       filePath: "lmconfig.yaml"
       authRequired: true
-      accessToken: "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"
+      accessToken: "abcd"
       pullInterval: 20s
   resource:
     kind: ConfigMap
@@ -15,12 +15,12 @@ reloaders:
 
 - configProvider:
     git:
-      owner: "avadhut123pisal"
-      repo: "github-actions"
+      owner: "test-owner"
+      repo: "test-repo"
       ref: "main"
       filePath: "lm-webhook-selectors.yaml"
       authRequired: true
-      accessToken: "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"
+      accessToken: "abcd"
       pullInterval: 20s
   resource:
     kind: MutatingWebhookConfiguration
