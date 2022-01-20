@@ -1,5 +1,5 @@
-# Build the manager binary
-FROM golang:1.16 as builder
+# Build the webhook binary
+FROM golang:1.17 as builder
 
 WORKDIR /workspace
 # Copy the Go Modules manifests
@@ -12,6 +12,7 @@ RUN go mod download
 # Copy the go source
 COPY main.go main.go
 COPY pkg/ pkg/
+COPY internal/ internal/
 
 # Build
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GO111MODULE=on go build -a -o lmwebhook main.go

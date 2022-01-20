@@ -4,7 +4,7 @@ GOCOVMERGE=gocovmerge
 TOOLS_MODULE_DIR=./internal/tools
 ALL_MODULES := $(shell find . -type f -name "go.mod" -exec dirname {} \; | sort | egrep  '^./' )
 
-LM_K8s_WEBHOOK_IMG_PREFIX ?= avadhutp123
+LM_K8s_WEBHOOK_IMG_PREFIX ?= docker-registry.logicmonitor.net/development
 LM_K8s_WEBHOOK_IMG_REPO ?= lm-webhook
 LM_K8s_WEBHOOK_IMG_TAG ?= dev
 LM_K8s_WEBHOOK_IMG ?= ${LM_K8s_WEBHOOK_IMG_PREFIX}/${LM_K8s_WEBHOOK_IMG_REPO}:${LM_K8s_WEBHOOK_IMG_TAG}

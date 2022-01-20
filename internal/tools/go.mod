@@ -3,7 +3,6 @@ module github.com/logicmonitor/lm-k8s-webhook/internal/tools
 go 1.17
 
 require (
-	github.com/client9/misspell v0.3.4
 	github.com/golangci/golangci-lint v1.43.0
 	github.com/wadey/gocovmerge v0.0.0-20160331181800-b5bfa59ec0ad
 )

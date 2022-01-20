@@ -5,6 +5,7 @@ lmEnvVars:
         valueFrom:
           fieldRef:
             fieldPath: spec.serviceAccountName
+      resAttrName: serviceaccount.name
       overrideDisabled: true
     - env:
         name: SERVICE_NAMESPACE
@@ -22,7 +23,7 @@ lmEnvVars:
         value: ABC Corporation
       overrideDisabled: true 
     - env:
-        name: EXPORTER_ENDPOINT
+        name: OTLP_ENDPOINT
         value: lmotel-svc.logicmonitor.svc.cluster.local:4317
       overrideDisabled: true 
     - env:
