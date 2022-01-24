@@ -41,6 +41,28 @@ spec:
       {{- end }}
       serviceAccountName: {{ template "lm-webhook.name" . }}
       containers:
+        {{- if .Values.lmreloader.config }}
+        - name: lm-reloader
+          image: "{{ .Values.lmreloader.image.repository }}:{{ .Values.lmreloader.image.tag | default "latest" }}"
+          imagePullPolicy: {{ .Values.lmreloader.image.pullPolicy }}
+          args:
+            - "--lmreloader-file-path=/etc/lmreloader/config/lmreloaderconfig.yaml"
+            - "--log-level={{ .Values.loglevel }}"
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace 
+          volumeMounts:
+            - name: {{ template "lm-webhook.name" . }}-lmreloader
+              mountPath: /etc/lmreloader/config/lmreloaderconfig.yaml
+              subPath: lmreloaderconfig.yaml
+        {{- end }}
+
         - name: lm-webhook
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default "latest" }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -90,6 +112,15 @@ spec:
             items:
               - key: lmconfig.yaml
                 path: lmconfig.yaml
+      {{- end }}
+
+      {{- if .Values.lmreloader.config }}
+        - name: {{ template "lm-webhook.name" . }}-lmreloader
+          configMap:
+            name: {{ template "lm-webhook.name" . }}-lmreloader
+            items:
+              - key: lmreloaderconfig.yaml
+                path: lmreloaderconfig.yaml  
       {{- end }}
 
       {{- with .Values.nodeSelector }}

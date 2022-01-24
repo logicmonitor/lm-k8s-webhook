@@ -1,4 +1,4 @@
-# Build the webhook binary
+# Build the reloader binary
 FROM golang:1.17 as builder
 
 WORKDIR /workspace
@@ -12,17 +12,16 @@ RUN go mod download
 # Copy the go source
 COPY main.go main.go
 COPY pkg/ pkg/
-COPY internal/ internal/
 
 # Build
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GO111MODULE=on go build -a -o lmwebhook main.go
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GO111MODULE=on go build -a -o lmreloader main.go
 
 FROM alpine:3.14.2
 RUN apk --no-cache add ca-certificates
 RUN addgroup -S -g 1001 lmuser && adduser -S lmuser -u 1001 -G lmuser
-COPY --from=builder /workspace/lmwebhook /usr/local/bin/webhook/
-WORKDIR /usr/local/bin/webhook
+COPY --from=builder /workspace/lmreloader /usr/local/bin/lmreloader/
+WORKDIR /usr/local/bin/lmreloader
 RUN chown -R lmuser:lmuser .
-RUN chmod +x lmwebhook
+RUN chmod +x lmreloader
 USER lmuser
-ENTRYPOINT ["./lmwebhook"]
+ENTRYPOINT ["./lmreloader"]

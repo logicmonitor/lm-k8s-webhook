@@ -294,7 +294,9 @@ func mergeNewEnv(originalEnvVars []corev1.EnvVar, newEnvVars []corev1.EnvVar) ([
 		origEnvVarMap[v.Name] = v
 	}
 	mergedEnv := make([]corev1.EnvVar, len(originalEnvVars))
+	logger.Info("originalEnvVars", "originalEnvVars", originalEnvVars)
 	copy(mergedEnv, originalEnvVars)
+	logger.Info("mergedEnv", "mergedEnv", mergedEnv)
 
 	// Check if new env var is already there in the pod definition
 	for _, newEnvVar := range newEnvVars {

@@ -119,17 +119,19 @@ func TestHandle(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		resp := tt.LMPodMutationHandler.Handle(context.Background(), tt.args.req)
+		t.Run(tt.name, func(t *testing.T) {
+			resp := tt.LMPodMutationHandler.Handle(context.Background(), tt.args.req)
 
-		if resp.AdmissionResponse.Allowed != tt.wantPayload.Response.Allowed {
-			t.Errorf("Handle() returned AdmissionResponse.Allowed = %v, but expected AdmissionResponse.Allowed = %v", resp.AdmissionResponse.Allowed, tt.wantPayload.Response.Allowed)
-			return
-		}
+			if resp.AdmissionResponse.Allowed != tt.wantPayload.Response.Allowed {
+				t.Errorf("Handle() returned AdmissionResponse.Allowed = %v, but expected AdmissionResponse.Allowed = %v", resp.AdmissionResponse.Allowed, tt.wantPayload.Response.Allowed)
+				return
+			}
 
-		if len(resp.Patches) != 0 && (resp.Patches[0].Operation != tt.wantPayload.Response.Patches[0].Operation) {
-			t.Errorf("Handle() returned Patch with operation = %v, but expected operation = %v", resp.Patches[0].Operation, tt.wantPayload.Response.Patches[0].Operation)
-			return
-		}
+			if len(resp.Patches) != 0 && (resp.Patches[0].Operation != tt.wantPayload.Response.Patches[0].Operation) {
+				t.Errorf("Handle() returned Patch with operation = %v, but expected operation = %v", resp.Patches[0].Operation, tt.wantPayload.Response.Patches[0].Operation)
+				return
+			}
+		})
 	}
 }
 
@@ -174,12 +176,15 @@ func TestInjectDecoder(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		err := tt.LMPodMutationHandler.InjectDecoder(tt.args.decoder)
-
-		if (err != nil) != tt.wantErr {
-			t.Errorf("InjectDecoder() error = %v, wantErr %v", err, tt.wantErr)
-			return
-		}
+		t.Run(tt.name, func(t *testing.T) {
+			err := tt.LMPodMutationHandler.InjectDecoder(tt.args.decoder)
+			if err == nil && tt.wantErr {
+				t.Errorf("InjectDecoder() returned nil, instead of error")
+			}
+			if err != nil && !tt.wantErr {
+				t.Errorf("InjectDecoder() returned an unexpected error: %+v", err)
+			}
+		})
 	}
 }
 

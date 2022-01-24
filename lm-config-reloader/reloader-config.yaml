@@ -1,0 +1,27 @@
+reloaders:
+- configProvider:
+    git:
+      owner: "test-owner"
+      repo: "test-repo"
+      ref: "main"
+      filePath: "lmconfig.yaml"
+      authRequired: true
+      accessToken: "abcd"
+      pullInterval: 20s
+  resource:
+    kind: ConfigMap
+    name: lm-webhook
+    fileName: lmconfig.yaml
+
+- configProvider:
+    git:
+      owner: "test-owner"
+      repo: "test-repo"
+      ref: "main"
+      filePath: "lm-webhook-selectors.yaml"
+      authRequired: true
+      accessToken: "abcd"
+      pullInterval: 20s
+  resource:
+    kind: MutatingWebhookConfiguration
+    name: lm-webhook-mutating-webhook-configuration

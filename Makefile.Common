@@ -1,0 +1,27 @@
+GOTEST = go test
+GOTEST_OPT?= -v -p 1 -race
+LINT=golangci-lint
+GOSEC=gosec
+
+
+ifeq (,$(shell go env GOBIN))
+GOBIN=$(shell go env GOPATH)/bin
+else
+GOBIN=$(shell go env GOBIN)
+endif
+
+.PHONY: test
+test:
+	$(GOTEST) $(GOTEST_OPT) ./...
+
+.PHONY: test-with-cover
+test-with-cover:
+	$(GOTEST) -coverprofile cover.out ./...
+
+.PHONY: lint
+lint:
+	$(GOBIN)/$(LINT) run --allow-parallel-runners
+
+.PHONY: gosec-scan
+gosec-scan:
+	$(GOBIN)/$(GOSEC) ./...

@@ -5,6 +5,7 @@ lmEnvVars:
         valueFrom:
           fieldRef:
             fieldPath: spec.serviceAccountName
+      resAttrName: serviceaccount.name
       overrideDisabled: true
     - env:
         name: SERVICE_NAMESPACE
@@ -23,7 +24,7 @@ lmEnvVars:
       overrideDisabled: true 
     - env:
         name: OTLP_ENDPOINT
-        value: lmotel-svc:4317
+        value: lmotel-svc.logicmonitor.svc.cluster.local:4317
       overrideDisabled: true 
     - env:
         name: OTEL_JAVAAGENT_ENABLED

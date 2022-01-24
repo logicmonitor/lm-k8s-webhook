@@ -93,18 +93,21 @@ func TestLoadConfig(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		cfg = Config{}
-		err := LoadConfig(tt.args.configFilePath)
+		t.Run(tt.name, func(t *testing.T) {
+			cfg = Config{}
+			err := LoadConfig(tt.args.configFilePath)
 
-		if (err != nil) != tt.wantErr {
-			t.Errorf("LoadConfig() error = %+v, wantErr %+v", err, tt.wantErr)
-			return
-		}
-
-		if !cmp.Equal(cfg, tt.wantPayload, cmpOpt) {
-			t.Errorf("LoadConfig() returned config = %+v, but expected config = %+v", cfg, tt.wantPayload)
-			return
-		}
+			if err == nil && tt.wantErr {
+				t.Errorf("LoadConfig() returned nil, instead of error")
+			}
+			if err != nil && !tt.wantErr {
+				t.Errorf("LoadConfig() returned an unexpected error: %+v", err)
+			}
+			if !cmp.Equal(cfg, tt.wantPayload, cmpOpt) {
+				t.Errorf("LoadConfig() returned config = %+v, but expected config = %+v", cfg, tt.wantPayload)
+				return
+			}
+		})
 	}
 }
 
@@ -175,18 +178,22 @@ func TestGetConfig(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		cfg = Config{}
-		err := LoadConfig(tt.args.configFilePath)
+		t.Run(tt.name, func(t *testing.T) {
+			cfg = Config{}
+			err := LoadConfig(tt.args.configFilePath)
 
-		if (err != nil) != tt.wantErr {
-			t.Errorf("GetConfig() error = %v, wantErr %v", err, tt.wantErr)
-			return
-		}
+			if err == nil && tt.wantErr {
+				t.Errorf("GetConfig() returned nil, instead of error")
+			}
+			if err != nil && !tt.wantErr {
+				t.Errorf("GetConfig() returned an unexpected error: %+v", err)
+			}
 
-		if !cmp.Equal(GetConfig(), tt.wantPayload, cmpOpt) {
-			t.Errorf("GetConfig() returned config = %v, but expected config = %v", cfg, tt.wantPayload)
-			return
-		}
+			if !cmp.Equal(GetConfig(), tt.wantPayload, cmpOpt) {
+				t.Errorf("GetConfig() returned config = %v, but expected config = %v", cfg, tt.wantPayload)
+				return
+			}
+		})
 	}
 }
 
@@ -228,11 +235,15 @@ func TestNewK8sClient(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		_, err := NewK8sClient(tt.args.k8sRestConfig, tt.args.k8sClientSet)
+		t.Run(tt.name, func(t *testing.T) {
+			_, err := NewK8sClient(tt.args.k8sRestConfig, tt.args.k8sClientSet)
 
-		if (err != nil) != tt.wantErr {
-			t.Errorf("NewK8sClient() error = %v, wantErr %v", err, tt.wantErr)
-			return
-		}
+			if err == nil && tt.wantErr {
+				t.Errorf("NewK8sClient() returned nil, instead of error")
+			}
+			if err != nil && !tt.wantErr {
+				t.Errorf("NewK8sClient() returned an unexpected error: %+v", err)
+			}
+		})
 	}
 }

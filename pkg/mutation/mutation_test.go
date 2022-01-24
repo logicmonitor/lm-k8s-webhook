@@ -25,9 +25,6 @@ var logger = logf.Log.WithName("unit-tests")
 func getFakeK8sClient() (*config.K8sClient, error) {
 	return config.NewK8sClient(nil, func(r *rest.Config) (kubernetes.Interface, error) {
 		return testclient.NewSimpleClientset(
-			//	&batchv1.Job{ObjectMeta: v1.ObjectMeta{Name: "hello-job", Namespace: "default"}},
-			//	&appsv1.DaemonSet{ObjectMeta: v1.ObjectMeta{Name: "hello-daemonSet", Namespace: "default"}},
-			//	&appsv1.StatefulSet{ObjectMeta: v1.ObjectMeta{Name: "hello-statefulSet", Namespace: "default"}},
 			&appsv1.ReplicaSet{ObjectMeta: v1.ObjectMeta{Name: "hello-replicaSet", Namespace: "default"}},
 			&appsv1.ReplicaSet{ObjectMeta: v1.ObjectMeta{Name: "hello-replicaSetManagedByDeployment", Namespace: "default", OwnerReferences: []v1.OwnerReference{{Name: "hello-deployment", Kind: "Deployment"}}}},
 		), nil
@@ -1087,10 +1084,11 @@ func TestMutatePod(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			err := mutateEnvVariables(context.Background(), tt.args.params)
-			// t.Logf("%+v", tt.args.pod.Spec.Containers[0].Env)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("MutatePod() error = %v, wantErr %v", err, tt.wantErr)
-				return
+			if err == nil && tt.wantErr {
+				t.Errorf("mutateEnvVariables() returned nil, instead of error")
+			}
+			if err != nil && !tt.wantErr {
+				t.Errorf("mutateEnvVariables() returned an unexpected error: %+v", err)
 			}
 
 			for _, cont := range tt.args.params.Pod.Spec.Containers {
@@ -1394,36 +1392,40 @@ func TestMergeNewEnv(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		mergedEnvVars, err := mergeNewEnv(tt.args.originalEnvVars, tt.args.newEnvVars)
+		t.Run(tt.name, func(t *testing.T) {
+			mergedEnvVars, err := mergeNewEnv(tt.args.originalEnvVars, tt.args.newEnvVars)
 
-		if (err != nil) != tt.wantErr {
-			t.Errorf("mergeNewEnv() return error = %v, but expected error = %v", err, tt.wantErr)
-			return
-		}
+			if err == nil && tt.wantErr {
+				t.Errorf("mergeNewEnv() returned nil, instead of error")
+			}
+			if err != nil && !tt.wantErr {
+				t.Errorf("mergeNewEnv() returned an unexpected error: %+v", err)
+			}
 
-		if len(mergedEnvVars) != len(tt.wantPayload) {
-			t.Errorf("mergeNewEnv() returned %d number of env variables, but expected env number of env variables = %d", len(mergedEnvVars), len(tt.wantPayload))
-			return
-		}
+			if len(mergedEnvVars) != len(tt.wantPayload) {
+				t.Errorf("mergeNewEnv() returned %d number of env variables, but expected env number of env variables = %d", len(mergedEnvVars), len(tt.wantPayload))
+				return
+			}
 
-		for _, expectedEnvVar := range tt.wantPayload {
-			for _, mergedEnvVar := range mergedEnvVars {
-				if expectedEnvVar.Name == mergedEnvVar.Name {
-					if expectedEnvVar.Value != "" {
-						if !cmp.Equal(expectedEnvVar.Value, mergedEnvVar.Value, cmpOpt) {
-							t.Errorf("MutatePod() for environment variable %s, expected value is %s, but found %s", expectedEnvVar.Name, expectedEnvVar.Value, mergedEnvVar.Value)
-							return
+			for _, expectedEnvVar := range tt.wantPayload {
+				for _, mergedEnvVar := range mergedEnvVars {
+					if expectedEnvVar.Name == mergedEnvVar.Name {
+						if expectedEnvVar.Value != "" {
+							if !cmp.Equal(expectedEnvVar.Value, mergedEnvVar.Value, cmpOpt) {
+								t.Errorf("MutatePod() for environment variable %s, expected value is %s, but found %s", expectedEnvVar.Name, expectedEnvVar.Value, mergedEnvVar.Value)
+								return
+							}
 						}
-					}
-					if expectedEnvVar.ValueFrom != nil {
-						if !cmp.Equal(expectedEnvVar.ValueFrom, mergedEnvVar.ValueFrom, cmpOpt) {
-							t.Errorf("MutatePod() for environment variable %s, expected value is %s, but found %s", expectedEnvVar.Name, *expectedEnvVar.ValueFrom, *mergedEnvVar.ValueFrom)
-							return
+						if expectedEnvVar.ValueFrom != nil {
+							if !cmp.Equal(expectedEnvVar.ValueFrom, mergedEnvVar.ValueFrom, cmpOpt) {
+								t.Errorf("MutatePod() for environment variable %s, expected value is %s, but found %s", expectedEnvVar.Name, *expectedEnvVar.ValueFrom, *mergedEnvVar.ValueFrom)
+								return
+							}
 						}
 					}
 				}
 			}
-		}
+		})
 	}
 }
 
@@ -1695,17 +1697,21 @@ func TestGetParentWorkloadNameForPod(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		workloadName, err := getParentWorkloadNameForPod(tt.args.pod, tt.args.k8sClient, tt.args.namespace)
+		t.Run(tt.name, func(t *testing.T) {
+			workloadName, err := getParentWorkloadNameForPod(tt.args.pod, tt.args.k8sClient, tt.args.namespace)
 
-		if (err != nil) != tt.wantErr {
-			t.Errorf("getParentWorkloadNameForPod() error = %v, but expected is error = %v", err, tt.wantErr)
-			return
-		}
+			if err == nil && tt.wantErr {
+				t.Errorf("getParentWorkloadNameForPod() returned nil, instead of error")
+			}
+			if err != nil && !tt.wantErr {
+				t.Errorf("getParentWorkloadNameForPod() returned an unexpected error: %+v", err)
+			}
 
-		if workloadName != tt.wantPayload {
-			t.Errorf("getParentWorkloadNameForPod() returned workloadName = %v, but expected is workloadName = %v", workloadName, tt.wantPayload)
-			return
-		}
+			if workloadName != tt.wantPayload {
+				t.Errorf("getParentWorkloadNameForPod() returned workloadName = %v, but expected is workloadName = %v", workloadName, tt.wantPayload)
+				return
+			}
+		})
 	}
 }
 
@@ -1816,17 +1822,21 @@ func TestExtractResourceWorkloadName(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		workloadName, err := extractResourceWorkloadName(tt.args.namespacedName, tt.args.k8sClient, tt.args.owner)
+		t.Run(tt.name, func(t *testing.T) {
+			workloadName, err := extractResourceWorkloadName(tt.args.namespacedName, tt.args.k8sClient, tt.args.owner)
 
-		if (err != nil) != tt.wantErr {
-			t.Errorf("extractResourceWorkloadName() error = %v, but expected is error = %v", err, tt.wantErr)
-			return
-		}
+			if err == nil && tt.wantErr {
+				t.Errorf("extractResourceWorkloadName() returned nil, instead of error")
+			}
+			if err != nil && !tt.wantErr {
+				t.Errorf("extractResourceWorkloadName() returned an unexpected error: %+v", err)
+			}
 
-		if workloadName != tt.wantPayload {
-			t.Errorf("extractResourceWorkloadName() returned workloadName = %v, but expected is workloadName = %v", workloadName, tt.wantPayload)
-			return
-		}
+			if workloadName != tt.wantPayload {
+				t.Errorf("extractResourceWorkloadName() returned workloadName = %v, but expected is workloadName = %v", workloadName, tt.wantPayload)
+				return
+			}
+		})
 	}
 }
 
@@ -1935,22 +1945,24 @@ func TestCheckIfPodHasLabel(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		labelValue, _, err := checkIfPodHasLabel(tt.args.pod, tt.args.envVar)
+		t.Run(tt.name, func(t *testing.T) {
+			labelValue, _, err := checkIfPodHasLabel(tt.args.pod, tt.args.envVar)
 
-		if (err != nil) != tt.wantErr {
-			t.Errorf("checkIfPodHasLabel() error = %v, but expected is error = %v", err, tt.wantErr)
-			return
-		}
+			if (err != nil) != tt.wantErr {
+				t.Errorf("checkIfPodHasLabel() error = %v, but expected is error = %v", err, tt.wantErr)
+				return
+			}
 
-		if err != nil && err != tt.wantPayload.err {
-			t.Errorf("checkIfPodHasLabel() error = %v, but expected is error = %v", err, tt.wantPayload.err)
-			return
-		}
+			if err != nil && err != tt.wantPayload.err {
+				t.Errorf("checkIfPodHasLabel() error = %v, but expected is error = %v", err, tt.wantPayload.err)
+				return
+			}
 
-		if labelValue != tt.wantPayload.lableValue {
-			t.Errorf("labelValue() returned labelName = %v, but expected is labelName = %v", labelValue, tt.wantPayload.lableValue)
-			return
-		}
+			if labelValue != tt.wantPayload.lableValue {
+				t.Errorf("checkIfPodHasLabel() returned labelName = %v, but expected labelName = %v", labelValue, tt.wantPayload.lableValue)
+				return
+			}
+		})
 	}
 }
 
@@ -2008,12 +2020,13 @@ func TestGetOTELSemVarKey(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		otelKey, found := getOTELSemVarKey(tt.args.rawKey)
-
-		if otelKey != tt.wantPayload.otelSemVarKey || found != tt.wantPayload.found {
-			t.Errorf("getOTELSemVarKey() returns otelSemVarKey = %v & found = %v, but expected is otelSemVarKey = %v & found = %v", otelKey, found, tt.wantPayload.otelSemVarKey, tt.wantPayload.found)
-			return
-		}
+		t.Run(tt.name, func(t *testing.T) {
+			otelKey, found := getOTELSemVarKey(tt.args.rawKey)
+			if otelKey != tt.wantPayload.otelSemVarKey || found != tt.wantPayload.found {
+				t.Errorf("getOTELSemVarKey() returns otelSemVarKey = %v & found = %v, but expected is otelSemVarKey = %v & found = %v", otelKey, found, tt.wantPayload.otelSemVarKey, tt.wantPayload.found)
+				return
+			}
+		})
 	}
 }
 
@@ -2046,12 +2059,14 @@ func TestRunMutations(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-
-		err := RunMutations(tt.args.ctx, tt.args.params)
-
-		if (err != nil) != tt.wantErr {
-			t.Errorf("RunMutations() error = %v, but expected is error = %v", err, tt.wantErr)
-			return
-		}
+		t.Run(tt.name, func(t *testing.T) {
+			err := RunMutations(tt.args.ctx, tt.args.params)
+			if err == nil && tt.wantErr {
+				t.Errorf("RunMutations() returned nil, instead of error")
+			}
+			if err != nil && !tt.wantErr {
+				t.Errorf("RunMutations() returned an unexpected error: %+v", err)
+			}
+		})
 	}
 }

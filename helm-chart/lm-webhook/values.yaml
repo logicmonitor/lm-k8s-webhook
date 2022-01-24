@@ -92,3 +92,13 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+# Reloader configurations
+lmreloader:
+  image:
+    repository: docker-registry.logicmonitor.net/development/lm-reloader
+    pullPolicy: Always
+    tag: dev
+
+  imagePullSecrets: []
+  config: {}
