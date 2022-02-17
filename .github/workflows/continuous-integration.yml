@@ -128,7 +128,7 @@ jobs:
         with:
           # Path to SARIF file relative to the root of the repository
           sarif_file: code-scan-results.sarif
-    vulnerabilities-scan:  
+  vulnerabilities-scan:  
       name: vulnerabilities-scan
       needs: lint
       runs-on: ubuntu-latest
