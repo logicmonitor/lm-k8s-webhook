@@ -145,7 +145,7 @@ jobs:
 
       - name: Build an image from Dockerfile for lm-webhook
         run: |
-          docker build --build-arg VERSION_PKG=${{ env.LM_WEBHOOK_VERSION_PKG }} --build-arg LM_K8s_VERSION=${{ env.LM_WEBHOOK_VERSION }} --build-arg VERSION_DATE=${{ env.VERSION_DATE }} -t ghcr.io/${{ github.repository_owner }}/${{ env.LM_K8S_WEBHOOK_IMAGE_NAME }}:${{ env.LM_WEBHOOK_VERSION }} .
+          docker build --build-arg VERSION_PKG=${{ env.LM_WEBHOOK_VERSION_PKG }} --build-arg LM_K8S_VERSION=${{ env.LM_WEBHOOK_VERSION }} --build-arg VERSION_DATE=${{ env.VERSION_DATE }} -t ghcr.io/${{ github.repository_owner }}/${{ env.LM_K8S_WEBHOOK_IMAGE_NAME }}:${{ env.LM_WEBHOOK_VERSION }} .
       - name: Run Trivy vulnerability scanner for lm-webhook
         uses: aquasecurity/trivy-action@master
         with:
@@ -163,7 +163,7 @@ jobs:
           category: lm-webhook-scan-results
       - name: Build an image for lm-reloader
         run: |
-          docker build --build-arg VERSION_PKG=${{ env.LM_RELOADER_VERSION_PKG }} --build-arg LM_RELOADER_VERSION=${{ env.LM_RELOADER_VERSION }} --build-arg VERSION_DATE=${{ env.VERSION_DATE }} -t ghcr.io/${{ github.repository_owner }}/${{ env.LM_RELOADER_IMAGE_NAME }}:${{ env.LM_RELOADER_VERSION }} ./reloader/.
+          docker build --build-arg VERSION_PKG=${{ env.LM_RELOADER_VERSION_PKG }} --build-arg LM_RELOADER_VERSION=${{ env.LM_RELOADER_VERSION }} --build-arg VERSION_DATE=${{ env.VERSION_DATE }} -t ghcr.io/${{ github.repository_owner }}/${{ env.LM_RELOADER_IMAGE_NAME }}:${{ env.LM_RELOADER_VERSION }} ./lm-config-reloader/.
       - name: Run Trivy vulnerability scanner for lm-reloader
         uses: aquasecurity/trivy-action@master
         with:
