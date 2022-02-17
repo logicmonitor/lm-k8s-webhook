@@ -6,11 +6,13 @@ import (
 	"os"
 	"sync"
 
+	"github.com/logicmonitor/lm-k8s-webhook/lm-config-reloader/internal/version"
+	"github.com/logicmonitor/lm-k8s-webhook/lm-config-reloader/pkg/config"
 	"github.com/logicmonitor/lm-k8s-webhook/lm-config-reloader/pkg/logger"
 	"github.com/logicmonitor/lm-k8s-webhook/lm-config-reloader/pkg/reloader"
 	"github.com/logicmonitor/lm-k8s-webhook/lm-config-reloader/pkg/watcher"
 
-	"github.com/logicmonitor/lm-k8s-webhook/lm-config-reloader/pkg/config"
+	goruntime "runtime"
 
 	"go.uber.org/zap"
 	"k8s.io/client-go/rest"
@@ -34,6 +36,16 @@ func main() {
 	if err := logger.Init(logLevel); err != nil {
 		panic(err)
 	}
+
+	v := version.Get()
+
+	logger.Logger().Info("Starting the LM-Config-Reloader",
+		zap.String("lm-config-reloader-version", v.LMConfigReloader),
+		zap.String("build-date", v.BuildDate),
+		zap.String("go-version", v.Go),
+		zap.String("go-arch", goruntime.GOARCH),
+		zap.String("go-os", goruntime.GOOS),
+	)
 
 	// load config
 	reloaderCfg, err = config.LoadConfig(lmReloaderFilePath)

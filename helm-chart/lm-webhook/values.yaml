@@ -21,21 +21,20 @@ mutatingWebhook:
     enabled: true
     issuerRef: {}
 
-lmconfig: {}
-
-loglevel: debug # Possible values debug, info, error
-
 # Enable RBAC. If your cluster does not have RBAC enabled, this value should be set to false.
 enableRBAC: true
 
-image:
-  # The image respository of the [lm-webhook](https://hub.docker.com/r/logicmonitor/lm-webhook) container.
-  repository: docker-registry.logicmonitor.net/development/lm-webhook
-  pullPolicy: Always
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: dev
+lmwebhook:
+  image:
+    repository: ghcr.io/logicmonitor/lm-webhook
+    pullPolicy: Always
+    tag: 0.0.1-alpha
+  resources: {}
+  loglevel: debug # Possible values debug, info, error
+  config: {}
 
 imagePullSecrets: []
+
 nameOverride: ""
 fullnameOverride: ""
 
@@ -68,18 +67,6 @@ service:
   name: lm-webhook-svc
   port: 443
 
-resources: {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
-
 autoscaling:
   enabled: false
   minReplicas: 1
@@ -96,9 +83,9 @@ affinity: {}
 # Reloader configurations
 lmreloader:
   image:
-    repository: docker-registry.logicmonitor.net/development/lm-reloader
+    repository: ghcr.io/logicmonitor/lm-reloader
     pullPolicy: Always
-    tag: dev
-
-  imagePullSecrets: []
+    tag: 0.0.1-alpha
+  resources: {}
   config: {}
+  loglevel: debug # Possible values debug, info, error

@@ -86,7 +86,7 @@ You can refer the following example commands for different scenarios for deployi
     $ helm install --debug --wait -n lm-webhook \
     --create-namespace \
     --set cluster_name="your-k8s-cluster-name" \
-    --set-file lmconfig=<path_to_external_config> \
+    --set-file lmwebhook.config=<path_to_external_config> \
     lm-webhook .
     ```
 ---
