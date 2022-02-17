@@ -24,7 +24,7 @@ lmEnvVars:
       overrideDisabled: true 
     - env:
         name: OTLP_ENDPOINT
-        value: lmotel-svc.logicmonitor.svc.cluster.local:4317
+        value: lmotel-svc:4317
       overrideDisabled: true 
     - env:
         name: OTEL_JAVAAGENT_ENABLED

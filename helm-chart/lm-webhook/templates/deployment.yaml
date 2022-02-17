@@ -41,13 +41,47 @@ spec:
       {{- end }}
       serviceAccountName: {{ template "lm-webhook.name" . }}
       containers:
-        {{- if .Values.lmreloader.config }}
+        - name: lm-webhook
+          image: "{{ .Values.lmwebhook.image.repository }}:{{ .Values.lmwebhook.image.tag | default "latest" }}"
+          imagePullPolicy: {{ .Values.lmwebhook.image.pullPolicy }}
+          ports:
+            - name: lm-webhook-port
+              containerPort: 9443
+          args:
+            - "--metrics-bind-address=:3030"
+            - "--webhook-bind-port=9443"
+            - "--health-probe-bind-address=:3333"
+            - "--webhook-cert-dir=/etc/lmwebhook/certs"
+            - "--lmconfig-file-path=/etc/lmwebhook/config/lmconfig.yaml"
+            - "--zap-log-level={{ .Values.lmwebhook.loglevel }}"
+          env:
+            - name: CLUSTER_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ template "lm-webhook.name" . }}
+                  key: cluster_name
+
+          volumeMounts:
+            - name: {{ template "lm-webhook.name" . }}-tls-certs
+              mountPath: /etc/lmwebhook/certs
+              readOnly: true
+            
+          {{- if .Values.lmwebhook.config }}
+            - name: {{ template "lm-webhook.name" . }}-lmconfig
+              mountPath: /etc/lmwebhook/config
+              # subPath: lmconfig.yaml
+          {{- end }}
+          
+          resources:
+            {{- toYaml .Values.lmwebhook.resources | nindent 12 }}
+
+        {{- if and .Values.lmwebhook.config .Values.lmreloader.config }}
         - name: lm-reloader
           image: "{{ .Values.lmreloader.image.repository }}:{{ .Values.lmreloader.image.tag | default "latest" }}"
           imagePullPolicy: {{ .Values.lmreloader.image.pullPolicy }}
           args:
             - "--lmreloader-file-path=/etc/lmreloader/config/lmreloaderconfig.yaml"
-            - "--log-level={{ .Values.loglevel }}"
+            - "--log-level={{ .Values.lmreloader.loglevel }}"
           env:
             - name: POD_NAME
               valueFrom:
@@ -61,41 +95,9 @@ spec:
             - name: {{ template "lm-webhook.name" . }}-lmreloader
               mountPath: /etc/lmreloader/config/lmreloaderconfig.yaml
               subPath: lmreloaderconfig.yaml
-        {{- end }}
-
-        - name: lm-webhook
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default "latest" }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          ports:
-            - name: lm-webhook-port
-              containerPort: 9443
-          args:
-            - "--metrics-bind-address=:3030"
-            - "--webhook-bind-port=9443"
-            - "--health-probe-bind-address=:3333"
-            - "--webhook-cert-dir=/etc/lmwebhook/certs"
-            - "--lmconfig-file-path=/etc/lmwebhook/config/lmconfig.yaml"
-            - "--zap-log-level={{ .Values.loglevel }}"
-          env:
-            - name: CLUSTER_NAME
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ template "lm-webhook.name" . }}
-                  key: cluster_name
-
-          volumeMounts:
-            - name: {{ template "lm-webhook.name" . }}-tls-certs
-              mountPath: /etc/lmwebhook/certs
-              readOnly: true
-            
-          {{- if .Values.lmconfig }}
-            - name: {{ template "lm-webhook.name" . }}-lmconfig
-              mountPath: /etc/lmwebhook/config
-              # subPath: lmconfig.yaml
-          {{- end }}
-          
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            {{- toYaml .Values.lmreloader.resources | nindent 12 }}
+        {{- end }}
       volumes:
         - name: {{ template "lm-webhook.name" . }}-tls-certs
           secret:
@@ -105,7 +107,7 @@ spec:
             secretName: {{ template "lm-webhook.name" . }}-tls-cert
             {{- end }}
 
-      {{- if .Values.lmconfig }}
+      {{- if .Values.lmwebhook.config }}
         - name: {{ template "lm-webhook.name" . }}-lmconfig
           configMap:
             name: {{ template "lm-webhook.name" . }}

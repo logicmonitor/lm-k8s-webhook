@@ -498,6 +498,8 @@ func getIndexOfEnv(envs []corev1.EnvVar, name string) int {
 }
 
 func getApplicationContainer(pod *corev1.Pod) corev1.Container {
+	// TODO: need to apply some logic to return the container to be mutated.
+	// For now first container in the list is returned.
 	return pod.Spec.Containers[0]
 }
 

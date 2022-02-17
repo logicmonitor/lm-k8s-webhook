@@ -14,7 +14,7 @@ metadata:
 
 data:
   cluster_name: {{ required "A valid .Values.cluster_name entry is required!" .Values.cluster_name }}
-{{- if .Values.lmconfig }}   
+{{- if .Values.lmwebhook.config }}   
   lmconfig.yaml: |
-{{ .Values.lmconfig | indent 4 }}
+{{ .Values.lmwebhook.config | indent 4 }}
 {{- end }}

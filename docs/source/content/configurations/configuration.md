@@ -23,11 +23,12 @@ menu:
 - **mutatingWebhook.tlsCertSecretName (default: ""):** tls secret name.
 - **mutatingWebhook.certManager.issuerRef (default: ""):** custom issuer other than self-signed issuer.
 - **mutatingWebhook.certManager.enabled (default: true):** Allows cert-manager to manage the lm-webhook's tls certificates. Please make it false if you want to generate & manage tls certificates for the lm-webhook on your own.
-- **lmconfig (default: ""):** specifies the external config file path.
-- **loglevel (default: "debug"):** sets log level. Possible values are debug, info, error
-- **image.repository (default: "docker-registry.logicmonitor.net/development/lm-webhook")** The image respository of the lm-k8s-webhook container.
-- **image.tag:** The image tag of lm-k8s-webhook
-- **image.pullPolicy (default: "Always"):** The image pull policy of the lm-k8s-webhook container.
+- **lmwebhook.config (default: ""):** specifies the external config file path.
+- **lmwebhook.loglevel (default: "debug"):** sets log level. Possible values are debug, info, error
+- **lmwebhook.image.repository (default: "docker-registry.logicmonitor.net/development/lm-webhook")** The image respository of the lm-k8s-webhook container.
+- **lmwebhook.image.tag:** The image tag of lm-k8s-webhook
+- **lmwebhook.image.pullPolicy (default: "Always"):** The image pull policy of the lm-k8s-webhook container.
+- **lmwebhook.imagePullSecrets:** The docker secret to pull the lm-k8s-webhook image
 - **service.name (default: lm-webhook-svc):** Service name of the lm-k8s-webhook
 - **service.port (default: 443):** Service Port of the lm-k8s-webhook
 - **tolerations (default: []):** Tolerations are applied to pods, and allow the pods to schedule onto nodes with matching taints.

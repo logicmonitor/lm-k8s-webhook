@@ -463,7 +463,7 @@
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ helm install --debug --wait -n lm-webhook <span class="se">\
 </span><span class="se"></span>--create-namespace <span class="se">\
 </span><span class="se"></span>--set <span class="nv">cluster_name</span><span class="o">=</span><span class="s2">&#34;your-k8s-cluster-name&#34;</span> <span class="se">\
-</span><span class="se"></span>--set-file <span class="nv">lmconfig</span><span class="o">=</span>&lt;path_to_external_config&gt; <span class="se">\
+</span><span class="se"></span>--set-file lmwebhook.config<span class="o">=</span>&lt;path_to_external_config&gt; <span class="se">\
 </span><span class="se"></span>lm-webhook .
 </code></pre></div></li>
 </ol>
@@ -472,7 +472,7 @@
 		
 			<aside class="copyright" role="note">
 				
-				&copy; 2021 Released under Mozilla Public License 2.0 &ndash;
+				&copy; 2022 Released under Mozilla Public License 2.0 &ndash;
 				
 				Documentation built with
 				<a href="https://www.gohugo.io" target="_blank">Hugo</a>

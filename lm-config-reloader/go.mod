@@ -2,6 +2,14 @@ module github.com/logicmonitor/lm-k8s-webhook/lm-config-reloader
 
 go 1.17
 
+// require (
+//   github.com/logicmonitor/lm-k8s-webhook/internal/version v0.0.0
+// )
+
+// replace (
+//    github.com/logicmonitor/lm-k8s-webhook/internal/version v0.0.0 => ../internal/version
+// )
+
 require (
 	github.com/go-logr/logr v0.4.0 // indirect
 	github.com/mitchellh/mapstructure v1.4.2
