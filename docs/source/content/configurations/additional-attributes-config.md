@@ -1,5 +1,5 @@
 ---
-title: "Additional attributes config"
+title: "Additional attributes config (Optional)"
 draft: false
 menu:
   main:
@@ -10,7 +10,7 @@ menu:
 
 Currently as a part of the external config, user can define the custom environment variables that are to be injected into the application pods.
 
-You can download the sample external config file from here: https://github.com/logicmonitor/lm-k8s-webhook/blob/main/sampleconfig.yaml
+You can download the sample external config file from [here](https://github.com/logicmonitor/lm-k8s-webhook/blob/main/sampleconfig.yaml)
 
 **Example:**
 ```yaml
@@ -74,7 +74,7 @@ environment variables can be of two types, i.e. `resource` and `operation`
 * It is not recommanded to explicitely specify these environment variables except `SERVICE_NAME`, `SERVICE_NAMESPACE` & `OTEL_RESOURCE_ATTRIBUTES` as a part of pod definition. 
 Default value of `SERVICE_NAMESPACE` is the value of the pod namespace, which can be overriden, either by specifying it as a part of pod definition (if overriding is allowed) or in the external configuration. 
 
-* You can pass the resource attributes which are not getting set by the lm-webhook by defining the `OTEL_RESOURCE_ATTRIBUTES` env variable in the pod definition, which will get merged with the ones which are defined by lm-webhook.
+* You can pass the resource attributes which are not getting set by the lm-k8s-webhook by defining the `OTEL_RESOURCE_ATTRIBUTES` env variable in the pod definition, which will get merged with the ones which are defined by lm-k8s-webhook.
 
 * Values for `SERVICE_NAME` and `SERVICE_NAMESPACE` can also be specified in terms of pod label as shown in above example config. So that value of the specified pod label can be used as a `SERVICE_NAME` or `SERVICE_NAMESPACE`.
 ---

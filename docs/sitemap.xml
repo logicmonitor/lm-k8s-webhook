@@ -37,6 +37,8 @@
   </url><url>
     <loc>https://logicmonitor.github.io/lm-k8s-webhook/configurations/configuration/</loc>
   </url><url>
+    <loc>https://logicmonitor.github.io/lm-k8s-webhook/configurations/config-reloader/</loc>
+  </url><url>
     <loc>https://logicmonitor.github.io/lm-k8s-webhook/</loc>
   </url><url>
     <loc>https://logicmonitor.github.io/lm-k8s-webhook/prerequisites/</loc>

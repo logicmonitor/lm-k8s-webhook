@@ -7,8 +7,8 @@ ALL_MODULES := $(shell find . -type f -name "go.mod" -exec dirname {} \; | sort 
 VERSION_DATE ?= $(shell date -u +'%Y-%m-%dT%H:%M:%SZ')
 VERSION_PKG ?= "github.com/logicmonitor/lm-k8s-webhook/internal/version"
 LM_K8S_WEBHOOK_IMG_PREFIX ?= ghcr.io/${USER}
-LM_K8S_WEBHOOK_IMG_REPO ?= lm-webhook
-LM_K8S_WEBHOOK_VERSION ?= "$(shell grep -v '\#' versions.txt | grep lm-webhook | awk -F= '{print $$2}')"
+LM_K8S_WEBHOOK_IMG_REPO ?= lm-k8s-webhook
+LM_K8S_WEBHOOK_VERSION ?= "$(shell grep -v '\#' versions.txt | grep lm-k8s-webhook | awk -F= '{print $$2}')"
 LM_K8S_WEBHOOK_IMG ?= ${LM_K8S_WEBHOOK_IMG_PREFIX}/${LM_K8S_WEBHOOK_IMG_REPO}:${LM_K8S_WEBHOOK_VERSION}
 
 CMD?=

@@ -2,7 +2,7 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: {{ template "lm-webhook.name" . }}-serving-cert
+  name: {{ template "lm-k8s-webhook.name" . }}-serving-cert
   namespace: {{ .Release.Namespace }}
 spec:
   dnsNames:
@@ -13,16 +13,16 @@ spec:
     {{- toYaml .Values.mutatingWebhook.certManager.issuerRef | nindent 4 }}
     {{- else }}
     kind: Issuer
-    name: {{ template "lm-webhook.name" . }}-selfsigned-issuer
+    name: {{ template "lm-k8s-webhook.name" . }}-selfsigned-issuer
     {{- end }}
-  secretName: {{ template "lm-webhook.name" . }}-tls-cert
+  secretName: {{ template "lm-k8s-webhook.name" . }}-tls-cert
 
 {{- if not .Values.mutatingWebhook.certManager.issuerRef }}
 ---
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
-  name: {{ template "lm-webhook.name" . }}-selfsigned-issuer
+  name: {{ template "lm-k8s-webhook.name" . }}-selfsigned-issuer
   namespace: {{ .Release.Namespace }}
 spec:
   selfSigned: {}

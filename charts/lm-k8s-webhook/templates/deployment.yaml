@@ -1,0 +1,138 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "lm-k8s-webhook.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ include "lm-k8s-webhook.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ include "lm-k8s-webhook.chart" . }}
+
+    {{- if .Values.labels}}
+    {{ toYaml .Values.labels | indent 4 }}
+    {{- end}}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "lm-k8s-webhook.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app.kubernetes.io/name: {{ include "lm-k8s-webhook.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/managed-by: {{ .Release.Service }}
+        helm.sh/chart: {{ include "lm-k8s-webhook.chart" . }}
+        {{- if .Values.labels}}
+        {{ toYaml .Values.labels | indent 4 }}
+        {{- end}}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ template "lm-k8s-webhook.name" . }}
+      containers:
+        - name: lm-k8s-webhook
+          image: "{{ .Values.lmK8sWebhook.image.repository }}:{{ .Values.lmK8sWebhook.image.tag | default "latest" }}"
+          imagePullPolicy: {{ .Values.lmK8sWebhook.image.pullPolicy }}
+          ports:
+            - name: lm-k8s-webhook
+              containerPort: 9443
+          args:
+            - "--metrics-bind-address=:3030"
+            - "--webhook-bind-port=9443"
+            - "--health-probe-bind-address=:3333"
+            - "--webhook-cert-dir=/etc/lmk8swebhook/certs"
+            - "--lmk8swebhookconfig-file-path=/etc/lmk8swebhook/config/lm-k8s-webhook-config.yaml"
+            - "--zap-log-level={{ .Values.lmK8sWebhook.loglevel }}"
+          env:
+            - name: CLUSTER_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ template "lm-k8s-webhook.name" . }}
+                  key: cluster_name
+
+          volumeMounts:
+            - name: {{ template "lm-k8s-webhook.name" . }}-tls-certs
+              mountPath: /etc/lmk8swebhook/certs
+              readOnly: true
+            
+          {{- if .Values.lmK8sWebhook.config }}
+            - name: {{ template "lm-k8s-webhook.name" . }}
+              mountPath: /etc/lmk8swebhook/config
+          {{- end }}
+          
+          resources:
+            {{- toYaml .Values.lmK8sWebhook.resources | nindent 12 }}
+
+        {{- if and .Values.lmK8sWebhook.config .Values.lmConfigReloader.config }}
+        - name: lm-config-reloader
+          image: "{{ .Values.lmConfigReloader.image.repository }}:{{ .Values.lmConfigReloader.image.tag | default "latest" }}"
+          imagePullPolicy: {{ .Values.lmConfigReloader.image.pullPolicy }}
+          args:
+            - "--lmconfigreloader-file-path=/etc/lmconfigreloader/config/lm-config-reloader-config.yaml"
+            - "--log-level={{ .Values.lmConfigReloader.loglevel }}"
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace 
+          volumeMounts:
+            - name: lm-config-reloader
+              mountPath: /etc/lmconfigreloader/config/lm-config-reloader-config.yaml
+              subPath: lm-config-reloader-config.yaml
+          resources:
+            {{- toYaml .Values.lmConfigReloader.resources | nindent 12 }}
+        {{- end }}
+      volumes:
+        - name: {{ template "lm-k8s-webhook.name" . }}-tls-certs
+          secret:
+            {{- if and (eq .Values.mutatingWebhook.certManager.enabled false) (.Values.mutatingWebhook.tlsCertSecretName) }}
+            secretName: {{ .Values.mutatingWebhook.tlsCertSecretName }}
+            {{- else }}
+            secretName: {{ template "lm-k8s-webhook.name" . }}-tls-cert
+            {{- end }}
+
+      {{- if .Values.lmK8sWebhook.config }}
+        - name: {{ template "lm-k8s-webhook.name" . }}
+          configMap:
+            name: {{ template "lm-k8s-webhook.name" . }}
+            items:
+              - key: lm-k8s-webhook-config.yaml
+                path: lm-k8s-webhook-config.yaml
+      {{- end }}
+
+      {{- if .Values.lmConfigReloader.config }}
+        - name: lm-config-reloader
+          configMap:
+            name: lm-config-reloader
+            items:
+              - key: lm-config-reloader-config.yaml
+                path: lm-config-reloader-config.yaml  
+      {{- end }}
+
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

@@ -255,9 +255,22 @@
 
 
 
-<a  title="Additional attributes config" href="https://logicmonitor.github.io/lm-k8s-webhook/configurations/additional-attributes-config/">
+<a  title="Additional attributes config (Optional)" href="https://logicmonitor.github.io/lm-k8s-webhook/configurations/additional-attributes-config/">
 	
-	Additional attributes config
+	Additional attributes config (Optional)
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="LM Config Reloader (Optional)" href="https://logicmonitor.github.io/lm-k8s-webhook/configurations/config-reloader/">
+	
+	LM Config Reloader (Optional)
 </a>
 
 
@@ -381,8 +394,13 @@
 
 			<h2 id="required-values">Required Values</h2>
 <ul>
-<li><strong>cluster_name (default: &ldquo;&quot;):</strong> Name of the k8s cluster in which lm-webhook will be deployed.</li>
+<li><strong>cluster_name (default: &ldquo;&quot;):</strong> Name of the k8s cluster in which lm-k8s-webhook will be deployed.</li>
 <li><strong>mutatingWebhook.caBundle (default: &ldquo;&quot;):</strong> Base64 encoded value of CA trust chain. Required if <code>mutatingWebhook.certManager.enabled</code> is set to false.</li>
+<li><strong>lmK8sWebhook.image.repository (default: &ldquo;ghcr.io/logicmonitor/lm-k8s-webhook&rdquo;)</strong> The image respository of the lm-k8s-webhook.</li>
+<li><strong>lmK8sWebhook.image.tag (default: &ldquo;0.0.1-alpha&rdquo;):</strong> The image tag of lm-k8s-webhook.</li>
+<li><strong>lmConfigReloader.config (default: &ldquo;&quot;):</strong> specifies the lm-config-reloader configuration file path. Required if lm-config-reloader is to be enabled.</li>
+<li><strong>lmConfigReloader.image.repository (default: &ldquo;ghcr.io/logicmonitor/lm-config-reloader&rdquo;)</strong> The image respository of the lm-config-reloader.</li>
+<li><strong>lmConfigReloader.image.tag (default: &ldquo;0.0.1-alpha&rdquo;):</strong> The image tag of lm-config-reloader.</li>
 </ul>
 <hr>
 <h2 id="optional-values">Optional Values</h2>
@@ -398,15 +416,17 @@
 <ul>
 <li><strong>mutatingWebhook.tlsCertSecretName (default: &ldquo;&quot;):</strong> tls secret name.</li>
 <li><strong>mutatingWebhook.certManager.issuerRef (default: &ldquo;&quot;):</strong> custom issuer other than self-signed issuer.</li>
-<li><strong>mutatingWebhook.certManager.enabled (default: true):</strong> Allows cert-manager to manage the lm-webhook&rsquo;s tls certificates. Please make it false if you want to generate &amp; manage tls certificates for the lm-webhook on your own.</li>
-<li><strong>lmwebhook.config (default: &ldquo;&quot;):</strong> specifies the external config file path.</li>
-<li><strong>lmwebhook.loglevel (default: &ldquo;debug&rdquo;):</strong> sets log level. Possible values are debug, info, error</li>
-<li><strong>lmwebhook.image.repository (default: &ldquo;docker-registry.logicmonitor.net/development/lm-webhook&rdquo;)</strong> The image respository of the lm-k8s-webhook container.</li>
-<li><strong>lmwebhook.image.tag:</strong> The image tag of lm-k8s-webhook</li>
-<li><strong>lmwebhook.image.pullPolicy (default: &ldquo;Always&rdquo;):</strong> The image pull policy of the lm-k8s-webhook container.</li>
-<li><strong>lmwebhook.imagePullSecrets:</strong> The docker secret to pull the lm-k8s-webhook image</li>
-<li><strong>service.name (default: lm-webhook-svc):</strong> Service name of the lm-k8s-webhook</li>
-<li><strong>service.port (default: 443):</strong> Service Port of the lm-k8s-webhook</li>
+<li><strong>mutatingWebhook.certManager.enabled (default: true):</strong> Allows cert-manager to manage the lm-k8s-webhook&rsquo;s tls certificates. Please make it false if you want to generate &amp; manage tls certificates for the lm-k8s-webhook on your own.</li>
+<li><strong>lmK8sWebhook.config (default: &ldquo;&quot;):</strong> specifies the external config file path.</li>
+<li><strong>lmK8sWebhook.loglevel (default: &ldquo;debug&rdquo;):</strong> sets log level. Possible values are debug, info, error.</li>
+<li><strong>lmK8sWebhook.image.pullPolicy (default: &ldquo;Always&rdquo;):</strong> The image pull policy of the lm-k8s-webhook.</li>
+<li><strong>lmK8sWebhook.imagePullSecrets:</strong> The docker secret to pull the lm-k8s-webhook image.</li>
+<li><strong>lmConfigReloader.config (default: &ldquo;&quot;):</strong> specifies the lm-config-reloader configuration file path.</li>
+<li><strong>lmConfigReloader.loglevel (default: &ldquo;debug&rdquo;):</strong> sets log level for lm-config-reloader. Possible values are debug, info, error.</li>
+<li><strong>lmConfigReloader.image.pullPolicy (default: &ldquo;Always&rdquo;):</strong> The image pull policy of the lm-config-reloader.</li>
+<li><strong>lmConfigReloader.imagePullSecrets:</strong> The docker secret to pull the lm-config-reloader image.</li>
+<li><strong>service.name (default: lm-k8s-webhook-svc):</strong> Service name of the lm-k8s-webhook.</li>
+<li><strong>service.port (default: 443):</strong> Service Port of the lm-k8s-webhook.</li>
 <li><strong>tolerations (default: []):</strong> Tolerations are applied to pods, and allow the pods to schedule onto nodes with matching taints.</li>
 </ul>
 <hr>
@@ -428,7 +448,7 @@
 <nav class="pagination" aria-label="Footer">
   <div class="previous">
   
-      <a href="https://logicmonitor.github.io/lm-k8s-webhook/prerequisites/" title="Prerequisites">
+      <a href="https://logicmonitor.github.io/lm-k8s-webhook/configurations/config-reloader/" title="LM Config Reloader (Optional)">
         <span class="direction">
           Previous
         </span>
@@ -438,7 +458,7 @@
           </div>
           <div class="stretch">
             <div class="title">
-              Prerequisites
+              LM Config Reloader (Optional)
             </div>
           </div>
         </div>

@@ -23,8 +23,8 @@ func annotatePodWithConfigHash(podName string, configName string, configHash []b
 	if pod.ObjectMeta.Annotations == nil {
 		pod.ObjectMeta.Annotations = make(map[string]string, 1)
 	}
-	pod.ObjectMeta.Annotations[fmt.Sprintf("lm-reloader/%s-configHash", configName)] = fmt.Sprintf("%x", configHash)
-	pod.ObjectMeta.Annotations[fmt.Sprintf("lm-reloader/%s-last-modified", configName)] = time.Now().String()
+	pod.ObjectMeta.Annotations[fmt.Sprintf("lm-config-reloader/%s-configHash", configName)] = fmt.Sprintf("%x", configHash)
+	pod.ObjectMeta.Annotations[fmt.Sprintf("lm-config-reloader/%s-last-modified", configName)] = time.Now().String()
 
 	_, err = k8sClient.Clientset.CoreV1().Pods(os.Getenv("POD_NAMESPACE")).Update(context.Background(), pod, updateOptions)
 	if err != nil {

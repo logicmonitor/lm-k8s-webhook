@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/fsnotify/fsnotify"
-	lmconfig "github.com/logicmonitor/lm-k8s-webhook/pkg/config"
+	lmk8swebhookconfig "github.com/logicmonitor/lm-k8s-webhook/pkg/config"
 	"github.com/spf13/viper"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 )
@@ -40,7 +40,7 @@ func reloadConfig(ctx context.Context, reloadCh <-chan bool, reloadDone chan<- b
 		select {
 		case <-reloadCh:
 			logger.Info("Reloading the config")
-			err := lmconfig.LoadConfig(lmconfigFilePath)
+			err := lmk8swebhookconfig.LoadConfig(lmconfigFilePath)
 			if err != nil {
 				logger.Error(err, "Error while loading the config file", "lmconfigFilePath", lmconfigFilePath)
 			}

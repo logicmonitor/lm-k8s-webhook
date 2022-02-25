@@ -7,13 +7,13 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language><atom:link href="https://logicmonitor.github.io/lm-k8s-webhook/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Additional attributes config</title>
+      <title>Additional attributes config (Optional)</title>
       <link>https://logicmonitor.github.io/lm-k8s-webhook/configurations/additional-attributes-config/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://logicmonitor.github.io/lm-k8s-webhook/configurations/additional-attributes-config/</guid>
       <description>Currently as a part of the external config, user can define the custom environment variables that are to be injected into the application pods.
-You can download the sample external config file from here: https://github.com/logicmonitor/lm-k8s-webhook/blob/main/sampleconfig.yaml
+You can download the sample external config file from here
 Example:
 lmEnvVars:resource:- env:name:SERVICE_ACCOUNT_NAMEvalueFrom:fieldRef:fieldPath:spec.serviceAccountNameresAttrName:serviceaccount.nameoverrideDisabled:true- env:name:SERVICE_NAMESPACEvalueFrom:fieldRef:fieldPath:metadata.labels[&amp;#39;app-namespace&amp;#39;]- env:name:SERVICE_NAMEvalueFrom:fieldRef:fieldPath:metadata.labels[&amp;#39;app-name&amp;#39;]operation:- env:name:COMPANY_NAMEvalue:ABC CorporationoverrideDisabled:true- env:name:OTLP_ENDPOINTvalue:lmotel-svc:4317overrideDisabled:true- env:name:OTEL_JAVAAGENT_ENABLEDvalue:trueoverrideDisabled:true- env:name:DEPLOYMENT_ENVvalue:productionenvironment variables can be of two types, i.e. resource and operation
  Resource holds the resource environment variables, which will be the part of OTEL_RESOURCE_ATTRIBUTES. Operation holds the operation environment variables, which will not be the part of OTEL_RESOURCE_ATTRIBUTES but can be used in the application for custom use cases.</description>
@@ -46,10 +46,10 @@ Option 1: The easiest and default method is to install the cert-manager. With th
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://logicmonitor.github.io/lm-k8s-webhook/examples/</guid>
-      <description>You can refer the following example commands for different scenarios for deploying the lm-webhook with the helm-chart.
- Note: You should check the troubleshooting guide in case you face any issue in the deployment of the lm-webhook.
+      <description>You can refer the following example commands for different scenarios for deploying the lm-k8s-webhook with the helm-chart.
+ Note: You should check the troubleshooting guide in case you face any issue in the deployment of the lm-k8s-webhook.
    Using default tls certificate handling (using cert-manager)
-$ helm install --debug --wait -n lm-webhook \ --create-namespace \ --set cluster_name=&amp;#34;your-k8s-cluster-name&amp;#34; \ lm-webhook .     Using custom issuer other than self-signed issuer</description>
+$ helm install --debug --wait -n lm-k8s-webhook \ --create-namespace \ --set cluster_name=&amp;#34;your-k8s-cluster-name&amp;#34; \ lm-k8s-webhook .     Using custom issuer other than self-signed issuer</description>
     </item>
     
     <item>
@@ -59,7 +59,7 @@ $ helm install --debug --wait -n lm-webhook \ --create-namespace \ --set cluster
       
       <guid>https://logicmonitor.github.io/lm-k8s-webhook/faq/</guid>
       <description>1. Does LM-K8s-Webhook support hot-reloading of the external configuration passed to it ?
- Yes, external config file content can be modified by updating the configmap, which causes lm-webhook to reload the external config inside the container without pod restart.   Note: lm-webhook does not support real-time config reload. As the official Kubernetes documentation says, the total delay from the moment when the ConfigMap is updated to the moment when new keys are projected to the Pod can be as long as the kubelet sync period + cache propagation delay, where the cache propagation delay depends on the chosen cache type (it equals to watch propagation delay, ttl of cache, or zero correspondingly).</description>
+ Yes, external config file content can be modified by updating the configmap, which causes lm-k8s-webhook to reload the external config inside the container without pod restart.   Note: lm-k8s-webhook does not support real-time config reload. As the official Kubernetes documentation says, the total delay from the moment when the ConfigMap is updated to the moment when new keys are projected to the Pod can be as long as the kubelet sync period + cache propagation delay, where the cache propagation delay depends on the chosen cache type (it equals to watch propagation delay, ttl of cache, or zero correspondingly).</description>
     </item>
     
     <item>
@@ -78,7 +78,16 @@ $ helm install --debug --wait -n lm-webhook \ --create-namespace \ --set cluster
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://logicmonitor.github.io/lm-k8s-webhook/configurations/configuration/</guid>
-      <description>Required Values  cluster_name (default: &amp;ldquo;&amp;quot;): Name of the k8s cluster in which lm-webhook will be deployed. mutatingWebhook.caBundle (default: &amp;ldquo;&amp;quot;): Base64 encoded value of CA trust chain. Required if mutatingWebhook.certManager.enabled is set to false.   Optional Values  mutatingWebhook.objectSelector (default: &amp;ldquo;&amp;quot;): specifies the label based selectors for the objects (pod) for which the requests are required to be intercepted. mutatingWebhook.namespaceSelector (default: &amp;ldquo;&amp;quot;): specifies the label based selectors for the namespaces.</description>
+      <description>Required Values  cluster_name (default: &amp;ldquo;&amp;quot;): Name of the k8s cluster in which lm-k8s-webhook will be deployed. mutatingWebhook.caBundle (default: &amp;ldquo;&amp;quot;): Base64 encoded value of CA trust chain. Required if mutatingWebhook.certManager.enabled is set to false. lmK8sWebhook.image.repository (default: &amp;ldquo;ghcr.io/logicmonitor/lm-k8s-webhook&amp;rdquo;) The image respository of the lm-k8s-webhook. lmK8sWebhook.image.tag (default: &amp;ldquo;0.0.1-alpha&amp;rdquo;): The image tag of lm-k8s-webhook. lmConfigReloader.config (default: &amp;ldquo;&amp;quot;): specifies the lm-config-reloader configuration file path. Required if lm-config-reloader is to be enabled. lmConfigReloader.image.repository (default: &amp;ldquo;ghcr.io/logicmonitor/lm-config-reloader&amp;rdquo;) The image respository of the lm-config-reloader.</description>
+    </item>
+    
+    <item>
+      <title>LM Config Reloader (Optional)</title>
+      <link>https://logicmonitor.github.io/lm-k8s-webhook/configurations/config-reloader/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://logicmonitor.github.io/lm-k8s-webhook/configurations/config-reloader/</guid>
+      <description>Overview  LM-K8s-Webhook uses 2 important configurations, one is Additional attribute config and other one is lm-k8s-webhook-mutating-webhook-configuration which is of kind MutatingWebhookConfiguration which basically contains the information about how the mutating webhook should be configured. You can have these two configuration files in your Github repo and once you update these configurations on Github, lm-config-reloader will fetch the updated configurations and update the configurations in the container.   Configurations By default, lm-config-reloader is disabled.</description>
     </item>
     
     <item>
@@ -107,7 +116,7 @@ Both ObjectSelector and NamespaceSelector can use matchLabels and matchExpressio
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://logicmonitor.github.io/lm-k8s-webhook/troubleshooting-guide/</guid>
-      <description>If you are using zsh terminal and you are using [] notation in the helm chart deployment command, then you might encounter an error saying zsh: no matches found:. [] syntax has its meaning in zsh. So there are two simple ways to step aside.  Change to bash: switch to bash by just entering bash. And then run you helm install again. noglob: you can use noglob. $ noglob helm install --debug --wait -n lm-webhook \  --create-namespace \  --set cluster_name=&amp;#34;your-k8s-cluster-name&amp;#34; \  --set mutatingWebhook.</description>
+      <description>If you are using zsh terminal and you are using [] notation in the helm chart deployment command, then you might encounter an error saying zsh: no matches found:. [] syntax has its meaning in zsh. So there are two simple ways to step aside.  Change to bash: switch to bash by just entering bash. And then run you helm install again. noglob: you can use noglob. $ noglob helm install --debug --wait -n lm-k8s-webhook \  --create-namespace \  --set cluster_name=&amp;#34;your-k8s-cluster-name&amp;#34; \  --set mutatingWebhook.</description>
     </item>
     
   </channel>

@@ -255,9 +255,22 @@
 
 
 
-<a  title="Additional attributes config" href="https://logicmonitor.github.io/lm-k8s-webhook/configurations/additional-attributes-config/">
+<a  title="Additional attributes config (Optional)" href="https://logicmonitor.github.io/lm-k8s-webhook/configurations/additional-attributes-config/">
 	
-	Additional attributes config
+	Additional attributes config (Optional)
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="LM Config Reloader (Optional)" href="https://logicmonitor.github.io/lm-k8s-webhook/configurations/config-reloader/">
+	
+	LM Config Reloader (Optional)
 </a>
 
 
@@ -385,7 +398,7 @@ So there are two simple ways to step aside.
 <ul>
 <li><strong>Change to bash:</strong> switch to bash by just entering <code>bash</code>. And then run you helm install again.</li>
 <li><strong>noglob:</strong> you can use noglob.
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">    $ noglob helm install --debug --wait -n lm-webhook <span class="se">\
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">    $ noglob helm install --debug --wait -n lm-k8s-webhook <span class="se">\
 </span><span class="se"></span>    --create-namespace <span class="se">\
 </span><span class="se"></span>    --set <span class="nv">cluster_name</span><span class="o">=</span><span class="s2">&#34;your-k8s-cluster-name&#34;</span> <span class="se">\
 </span><span class="se"></span>    --set mutatingWebhook.objectSelector.matchLabels.tier<span class="o">=</span><span class="s2">&#34;backend&#34;</span> <span class="se">\
@@ -397,7 +410,7 @@ So there are two simple ways to step aside.
 </span><span class="se"></span>    --set mutatingWebhook.namespaceSelector.matchExpressions<span class="o">[</span>0<span class="o">]</span>.operator<span class="o">=</span><span class="s2">&#34;In&#34;</span> <span class="se">\
 </span><span class="se"></span>    --set mutatingWebhook.namespaceSelector.matchExpressions<span class="o">[</span>0<span class="o">]</span>.values<span class="o">[</span>0<span class="o">]=</span><span class="s2">&#34;dev&#34;</span> <span class="se">\
 </span><span class="se"></span>    --set mutatingWebhook.namespaceSelector.matchExpressions<span class="o">[</span>0<span class="o">]</span>.values<span class="o">[</span>1<span class="o">]=</span><span class="s2">&#34;staging&#34;</span> <span class="se">\
-</span><span class="se"></span>    lm-webhook .
+</span><span class="se"></span>    lm-k8s-webhook .
 </code></pre></div></li>
 </ul>
 </li>

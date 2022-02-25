@@ -12,7 +12,7 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://logicmonitor.github.io/lm-k8s-webhook/troubleshooting-guide/</guid>
-      <description>If you are using zsh terminal and you are using [] notation in the helm chart deployment command, then you might encounter an error saying zsh: no matches found:. [] syntax has its meaning in zsh. So there are two simple ways to step aside.  Change to bash: switch to bash by just entering bash. And then run you helm install again. noglob: you can use noglob. $ noglob helm install --debug --wait -n lm-webhook \  --create-namespace \  --set cluster_name=&amp;#34;your-k8s-cluster-name&amp;#34; \  --set mutatingWebhook.</description>
+      <description>If you are using zsh terminal and you are using [] notation in the helm chart deployment command, then you might encounter an error saying zsh: no matches found:. [] syntax has its meaning in zsh. So there are two simple ways to step aside.  Change to bash: switch to bash by just entering bash. And then run you helm install again. noglob: you can use noglob. $ noglob helm install --debug --wait -n lm-k8s-webhook \  --create-namespace \  --set cluster_name=&amp;#34;your-k8s-cluster-name&amp;#34; \  --set mutatingWebhook.</description>
     </item>
     
   </channel>

@@ -2,7 +2,7 @@
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRole
 metadata:
-  name: {{ template "lm-webhook.name" . }}-role
+  name: {{ template "lm-k8s-webhook.name" . }}-role
 {{- if .Values.labels}}
   labels:
 {{ toYaml .Values.labels| indent 4 }}
@@ -24,7 +24,7 @@ rules:
   resources: ["jobs"]
   verbs: ["get", "list", "watch"]
 
-{{- if .Values.lmreloader.config }}
+{{- if .Values.lmConfigReloader.config }}
 - apiGroups: [""]
   resources: ["configmaps"]
   verbs: ["get", "list", "watch", "patch", "update"]

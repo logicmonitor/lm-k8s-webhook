@@ -1,27 +1,27 @@
 reloaders:
 - configProvider:
     git:
-      owner: "test-owner"
-      repo: "test-repo"
-      ref: "main"
-      filePath: "lmconfig.yaml"
-      authRequired: true
-      accessToken: "abcd"
-      pullInterval: 20s
+      owner: "test-owner" # Github repo owner
+      repo: "test-repo" # Github repo name
+      ref: "main" # branch name or commit 
+      filePath: "lm-k8s-webhook-config.yaml" # file path of external config file in the repo
+      authRequired: true # if access token authentication is required or not
+      accessToken: "abcd" # access token if authentication is required
+      pullInterval: 20s # config pull frequency
   resource:
-    kind: ConfigMap
-    name: lm-webhook
-    fileName: lmconfig.yaml
+    kind: ConfigMap # K8s resource where config will be updated
+    name: lm-k8s-webhook # Config map name which is holding the external config file content
+    fileName: lmk8swebhookconfig.yaml # Config file name used as a key in the config map
 
 - configProvider:
     git:
-      owner: "test-owner"
-      repo: "test-repo"
-      ref: "main"
-      filePath: "lm-webhook-selectors.yaml"
-      authRequired: true
-      accessToken: "abcd"
-      pullInterval: 20s
+      owner: "test-owner" # Github repo owner
+      repo: "test-repo" # Github repo name
+      ref: "main" # branch name or commit 
+      filePath: "lm-k8s-webhook-selectors.yaml" # file path of MutatingWebhookConfiguration (lm-k8s-webhook-mutating-webhook-configuration) file in the repo
+      authRequired: true # if access token authentication is required or not
+      accessToken: "abcd" # access token if authentication is required
+      pullInterval: 20s # config pull frequency
   resource:
-    kind: MutatingWebhookConfiguration
-    name: lm-webhook-mutating-webhook-configuration
+    kind: MutatingWebhookConfiguration # K8s resource where config will be updated
+    name: lm-k8s-webhook-mutating-webhook-configuration # Name of the MutatingWebhookConfiguration type resource 

@@ -19,15 +19,15 @@ ARG LM_RELOADER_VERSION
 ARG VERSION_DATE
 
 # Build
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GO111MODULE=on go build -ldflags="-X ${VERSION_PKG}.lmConfigReloader=${LM_RELOADER_VERSION} -X ${VERSION_PKG}.buildDate=${VERSION_DATE}" -a -o lmreloader main.go
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GO111MODULE=on go build -ldflags="-X ${VERSION_PKG}.lmConfigReloader=${LM_RELOADER_VERSION} -X ${VERSION_PKG}.buildDate=${VERSION_DATE}" -a -o lmconfigreloader main.go
 
 FROM alpine:3.15.0
 LABEL org.opencontainers.image.source https://github.com/logicmonitor/lm-k8s-webhook
 RUN apk --no-cache add ca-certificates
 RUN addgroup -S -g 1001 lmuser && adduser -S lmuser -u 1001 -G lmuser
-COPY --from=builder /workspace/lmreloader /usr/local/bin/lmreloader/
-WORKDIR /usr/local/bin/lmreloader
+COPY --from=builder /workspace/lmconfigreloader /usr/local/bin/lmconfigreloader/
+WORKDIR /usr/local/bin/lmconfigreloader
 RUN chown -R lmuser:lmuser .
-RUN chmod +x lmreloader
+RUN chmod +x lmconfigreloader
 USER lmuser
-ENTRYPOINT ["./lmreloader"]
+ENTRYPOINT ["./lmconfigreloader"]
