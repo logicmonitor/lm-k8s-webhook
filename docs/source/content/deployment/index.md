@@ -51,11 +51,11 @@ Default tls secret name consumed in the lm-k8s-webhook is `lm-k8s-webhook-tls-ce
 
 ## Deploying the LM-K8s-Webhook
 * Clone the github repo of [LM-K8s-Webhook](https://github.com/logicmonitor/lm-k8s-webhook).
-* Helm chart for the `LM-K8s-Webhook` is available at `helm-chart/lm-k8s-webhook` path in the repo.
+* Helm chart for the `LM-K8s-Webhook` is available at `charts/lm-k8s-webhook` path in the repo.
 * Depending on the certificate management you are using and the lm-k8s-webhook components like [selectors](https://logicmonitor.github.io/lm-k8s-webhook/configurations/selectors/) and [external-config](https://logicmonitor.github.io/lm-k8s-webhook/configurations/additional-attributes-config/), you need to modify the helm command for the lm-k8s-webhook deployment. You can refer the [examples page](https://logicmonitor.github.io/lm-k8s-webhook/examples/).
 
 * For all the possible values that can be configured with lm-k8s-webhook helm chart refer to [configuration page](https://logicmonitor.github.io/lm-k8s-webhook/configurations/configuration)
-* The simplest lm-k8s-webhook deployment without passing any selectors and external configuration can be done by running the following command in bash terminal from the `helm-chart/lm-k8s-webhook` directory.
+* The simplest lm-k8s-webhook deployment without passing any selectors and external configuration can be done by running the following command in bash terminal from the `charts/lm-k8s-webhook` directory.
 
 ```bash
 $ helm install --debug --wait -n lm-k8s-webhook \

@@ -439,7 +439,7 @@ If you want to generate &amp; manage tls certificates for the lm-k8s-webhook on 
 <p>Clone the github repo of <a href="https://github.com/logicmonitor/lm-k8s-webhook">LM-K8s-Webhook</a>.</p>
 </li>
 <li>
-<p>Helm chart for the <code>LM-K8s-Webhook</code> is available at <code>helm-chart/lm-k8s-webhook</code> path in the repo.</p>
+<p>Helm chart for the <code>LM-K8s-Webhook</code> is available at <code>charts/lm-k8s-webhook</code> path in the repo.</p>
 </li>
 <li>
 <p>Depending on the certificate management you are using and the lm-k8s-webhook components like <a href="https://logicmonitor.github.io/lm-k8s-webhook/configurations/selectors/">selectors</a> and <a href="https://logicmonitor.github.io/lm-k8s-webhook/configurations/additional-attributes-config/">external-config</a>, you need to modify the helm command for the lm-k8s-webhook deployment. You can refer the <a href="https://logicmonitor.github.io/lm-k8s-webhook/examples/">examples page</a>.</p>
@@ -448,7 +448,7 @@ If you want to generate &amp; manage tls certificates for the lm-k8s-webhook on 
 <p>For all the possible values that can be configured with lm-k8s-webhook helm chart refer to <a href="https://logicmonitor.github.io/lm-k8s-webhook/configurations/configuration">configuration page</a></p>
 </li>
 <li>
-<p>The simplest lm-k8s-webhook deployment without passing any selectors and external configuration can be done by running the following command in bash terminal from the <code>helm-chart/lm-k8s-webhook</code> directory.</p>
+<p>The simplest lm-k8s-webhook deployment without passing any selectors and external configuration can be done by running the following command in bash terminal from the <code>charts/lm-k8s-webhook</code> directory.</p>
 </li>
 </ul>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ helm install --debug --wait -n lm-k8s-webhook <span class="se">\
