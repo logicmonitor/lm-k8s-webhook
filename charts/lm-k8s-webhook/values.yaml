@@ -1,4 +1,4 @@
-# Default values for lm-webhook.
+# Default values for lm-k8s-webhook.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
@@ -24,9 +24,9 @@ mutatingWebhook:
 # Enable RBAC. If your cluster does not have RBAC enabled, this value should be set to false.
 enableRBAC: true
 
-lmwebhook:
+lmK8sWebhook:
   image:
-    repository: ghcr.io/logicmonitor/lm-webhook
+    repository: ghcr.io/logicmonitor/lm-k8s-webhook
     pullPolicy: Always
     tag: 0.0.1-alpha
   resources: {}
@@ -64,7 +64,7 @@ securityContext: {}
 
 service:
   type: ClusterIP
-  name: lm-webhook-svc
+  name: lm-k8s-webhook-svc
   port: 443
 
 autoscaling:
@@ -81,9 +81,9 @@ tolerations: []
 affinity: {}
 
 # Reloader configurations
-lmreloader:
+lmConfigReloader:
   image:
-    repository: ghcr.io/logicmonitor/lm-reloader
+    repository: ghcr.io/logicmonitor/lm-config-reloader
     pullPolicy: Always
     tag: 0.0.1-alpha
   resources: {}

@@ -1,6 +1,6 @@
 apiVersion: v2
-name: lm-webhook
-description: A Helm chart for Kubernetes lm-webhook (Mutating webhook) deployment
+name: lm-k8s-webhook
+description: A Helm chart for Kubernetes lm-k8s-webhook (Mutating webhook) deployment
 
 # A chart can be either an 'application' or a 'library' chart.
 #

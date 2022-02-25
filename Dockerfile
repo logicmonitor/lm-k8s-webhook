@@ -19,15 +19,15 @@ ARG LM_K8S_VERSION
 ARG VERSION_DATE
 
 # Build
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GO111MODULE=on go build -ldflags="-X ${VERSION_PKG}.lmK8sWebhook=${LM_K8S_VERSION} -X ${VERSION_PKG}.buildDate=${VERSION_DATE}" -a -o lmwebhook main.go
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GO111MODULE=on go build -ldflags="-X ${VERSION_PKG}.lmK8sWebhook=${LM_K8S_VERSION} -X ${VERSION_PKG}.buildDate=${VERSION_DATE}" -a -o lmk8swebhook main.go
 
 FROM alpine:3.15.0
 LABEL org.opencontainers.image.source https://github.com/logicmonitor/lm-k8s-webhook
 RUN apk --no-cache add ca-certificates
 RUN addgroup -S -g 1001 lmuser && adduser -S lmuser -u 1001 -G lmuser
-COPY --from=builder /workspace/lmwebhook /usr/local/bin/webhook/
+COPY --from=builder /workspace/lmk8swebhook /usr/local/bin/webhook/
 WORKDIR /usr/local/bin/webhook
 RUN chown -R lmuser:lmuser .
-RUN chmod +x lmwebhook
+RUN chmod +x lmk8swebhook
 USER lmuser
-ENTRYPOINT ["./lmwebhook"]
+ENTRYPOINT ["./lmk8swebhook"]

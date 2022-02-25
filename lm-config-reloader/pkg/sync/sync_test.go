@@ -157,7 +157,7 @@ func TestSync(t *testing.T) {
 				pod: corev1.Pod{
 					ObjectMeta: v1.ObjectMeta{
 						Name: "test-pod", Namespace: "test",
-						Annotations: map[string]string{"lm-reloader/test-file-configHash": "8d5e2a59220ca4ac504cf569c7ba7a0e7b5d266fe61cb6cd0af3912d1cf1f108"}},
+						Annotations: map[string]string{"lm-config-reloader/test-file-configHash": "8d5e2a59220ca4ac504cf569c7ba7a0e7b5d266fe61cb6cd0af3912d1cf1f108"}},
 				},
 			},
 		},
@@ -285,7 +285,7 @@ func TestSync(t *testing.T) {
 				pod: corev1.Pod{
 					ObjectMeta: v1.ObjectMeta{
 						Name: "test-pod", Namespace: "test",
-						Annotations: map[string]string{"lm-reloader/test-file-configHash": "71028f43f33acebfdcc1cc039a69d75b0da26e63b586f24bde4bd87f44975a2f"}},
+						Annotations: map[string]string{"lm-config-reloader/test-file-configHash": "71028f43f33acebfdcc1cc039a69d75b0da26e63b586f24bde4bd87f44975a2f"}},
 				},
 			},
 		},
@@ -325,7 +325,7 @@ func TestSync(t *testing.T) {
 				pod: corev1.Pod{
 					ObjectMeta: v1.ObjectMeta{
 						Name: "test-pod", Namespace: "test",
-						Annotations: map[string]string{"lm-reloader/test-file-configHash": "990d186237476b3d199c1953f02975b6e6a9861834311c5dbaa5937773304643"}},
+						Annotations: map[string]string{"lm-config-reloader/test-file-configHash": "990d186237476b3d199c1953f02975b6e6a9861834311c5dbaa5937773304643"}},
 				},
 			},
 		},

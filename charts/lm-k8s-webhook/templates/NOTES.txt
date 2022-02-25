@@ -1,0 +1,2 @@
+1. View the logs for lm-k8s-webhook by running this command:
+kubectl logs -f $(kubectl get pods --namespace={{ .Release.Namespace }} -o name) -n {{ .Release.Namespace }} -c lm-k8s-webhook

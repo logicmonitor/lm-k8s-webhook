@@ -4,10 +4,10 @@ metadata:
   name: {{ .Values.service.name }}
   namespace: {{ .Release.Namespace }}
   labels:
-    app.kubernetes.io/name: {{ include "lm-webhook.name" . }}
+    app.kubernetes.io/name: {{ include "lm-k8s-webhook.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-    helm.sh/chart: {{ include "lm-webhook.chart" . }}
+    helm.sh/chart: {{ include "lm-k8s-webhook.chart" . }}
 {{- if .Values.labels}}
 {{ toYaml .Values.labels| indent 4 }}
 {{- end }}
@@ -17,5 +17,5 @@ spec:
     - port: {{ .Values.service.port }}
       targetPort: 9443
   selector:
-    app.kubernetes.io/name: {{ include "lm-webhook.name" . }}
+    app.kubernetes.io/name: {{ include "lm-k8s-webhook.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}

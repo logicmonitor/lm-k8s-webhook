@@ -1,14 +1,14 @@
 apiVersion: {{ template "admissionregistration.apiVersion" . }}
 kind: MutatingWebhookConfiguration
 metadata:
-  name: {{ template "lm-webhook.name" . }}-mutating-webhook-configuration
+  name: {{ template "lm-k8s-webhook.name" . }}-mutating-webhook-configuration
   annotations:
     {{- if .Values.mutatingWebhook.annotations }}
       {{ toYaml .Values.mutatingWebhook.annotations | nindent 4 }}
     {{- end }}
-    cert-manager.io/inject-ca-from: {{ printf "%s/%s-serving-cert" .Release.Namespace (include "lm-webhook.name" .) }}
+    cert-manager.io/inject-ca-from: {{ printf "%s/%s-serving-cert" .Release.Namespace (include "lm-k8s-webhook.name" .) }}
   labels:
-    {{- include "lm-webhook.labels" . | nindent 4 }}
+    {{- include "lm-k8s-webhook.labels" . | nindent 4 }}
     app.kubernetes.io/component: admission-webhook
 webhooks:
   - name: {{ .Values.service.name }}.{{ .Release.Namespace }}.svc.cluster.local
