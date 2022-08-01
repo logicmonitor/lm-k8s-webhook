@@ -1,5 +1,5 @@
-# Represents current release of the LM-K8s-Webhook
-lm-webhook=0.0.1-alpha
+# Represents current release of the lm-K8s-Webhook
+lm-k8s-webhook=0.0.1-alpha
 
 # Represents current release of the lm-config-reloader
-lm-reloader=0.0.1-alpha
+lm-config-reloader=0.0.1-alpha

@@ -7,7 +7,7 @@ import (
 	"strconv"
 
 	"github.com/logicmonitor/lm-k8s-webhook/internal/version"
-	lmconfig "github.com/logicmonitor/lm-k8s-webhook/pkg/config"
+	lmk8swebhookconfig "github.com/logicmonitor/lm-k8s-webhook/pkg/config"
 	"github.com/logicmonitor/lm-k8s-webhook/pkg/handler"
 	"github.com/logicmonitor/lm-k8s-webhook/pkg/reloader"
 
@@ -54,9 +54,9 @@ func main() {
 
 	flag.StringVar(&metricAddr, "metrics-bind-address", ":8080", "The address the metric endpoint binds to.")
 	flag.StringVar(&webhookPort, "webhook-bind-port", "9443", "The port webhook will listen on.")
-	flag.StringVar(&webhookCertDir, "webhook-cert-dir", "/etc/lmwebhook/certs", "webhook certificate directory.")
+	flag.StringVar(&webhookCertDir, "webhook-cert-dir", "/etc/lmk8swebhook/certs", "webhook certificate directory.")
 	flag.StringVar(&probeAddr, "health-probe-bind-address", ":8081", "The address the probe endpoint binds to.")
-	flag.StringVar(&lmconfigFilePath, "lmconfig-file-path", "/etc/lmwebhook/config/lmconfig.yaml", "File path of lmconfig")
+	flag.StringVar(&lmconfigFilePath, "lmk8swebhookconfig-file-path", "/etc/lmk8swebhook/config/lmk8swebhookconfig.yaml", "File path of lmk8swebhookconfig")
 
 	var ctx context.Context
 	ctx = context.Background()
@@ -92,7 +92,7 @@ func main() {
 
 	// Load the external config
 
-	err = lmconfig.LoadConfig(lmconfigFilePath)
+	err = lmk8swebhookconfig.LoadConfig(lmconfigFilePath)
 
 	if err != nil {
 		// As external config is optional
@@ -126,7 +126,7 @@ func main() {
 	lmWebhookServer.CertName = webhookCertName
 	lmWebhookServer.KeyName = webhookKeyName
 
-	k8sClient, err := lmconfig.NewK8sClient(k8sRestConfig, lmconfig.NewK8sClientSet)
+	k8sClient, err := lmk8swebhookconfig.NewK8sClient(k8sRestConfig, lmk8swebhookconfig.NewK8sClientSet)
 	if err != nil {
 		setupLog.Error(err, "error in getting k8s client")
 		os.Exit(1)
@@ -144,7 +144,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	if lmconfig.GetConfig().MutationConfigProvided {
+	if lmk8swebhookconfig.GetConfig().MutationConfigProvided {
 		setupLog.Info("setup config reloader")
 		err := reloader.SetupConfigReloader(ctx, lmconfigFilePath)
 		if err != nil {

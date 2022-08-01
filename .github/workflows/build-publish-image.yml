@@ -8,8 +8,8 @@ on:
   workflow_dispatch:
 
 env:
-  LM_K8S_WEBHOOK_IMAGE_NAME: lm-webhook
-  LM_RELOADER_IMAGE_NAME: lm-reloader
+  LM_K8S_WEBHOOK_IMAGE_NAME: lm-k8s-webhook
+  LM_RELOADER_IMAGE_NAME: lm-config-reloader
 
 jobs:
   build-and-publish:
@@ -24,8 +24,8 @@ jobs:
 
       - name: Set env vars for the job
         run: |
-          grep -v '\#' versions.txt | grep lm-webhook | awk -F= '{print "LM_WEBHOOK_VERSION="$2}' >> $GITHUB_ENV
-          grep -v '\#' versions.txt | grep lm-reloader | awk -F= '{print "LM_RELOADER_VERSION="$2}' >> $GITHUB_ENV
+          grep -v '\#' versions.txt | grep lm-k8s-webhook | awk -F= '{print "LM_WEBHOOK_VERSION="$2}' >> $GITHUB_ENV
+          grep -v '\#' versions.txt | grep lm-config-reloader | awk -F= '{print "LM_RELOADER_VERSION="$2}' >> $GITHUB_ENV
           echo "VERSION_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_ENV
           echo "LM_WEBHOOK_VERSION_PKG=github.com/logicmonitor/lm-k8s-webhook/internal/version" >> $GITHUB_ENV
           echo "LM_RELOADER_VERSION_PKG=github.com/logicmonitor/lm-k8s-webhook/lm-config-reloader/internal/version" >> $GITHUB_ENV
@@ -37,11 +37,11 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build an image from Dockerfile for lm-webhook
+      - name: Build an image from Dockerfile for lm-config-webhook
         run: |
           docker build --build-arg VERSION_PKG=${{ env.LM_WEBHOOK_VERSION_PKG }} --build-arg LM_K8S_VERSION=${{ env.LM_WEBHOOK_VERSION }} --build-arg VERSION_DATE=${{ env.VERSION_DATE }} -t ghcr.io/${{ github.repository_owner }}/${{ env.LM_K8S_WEBHOOK_IMAGE_NAME }}:${{ env.LM_WEBHOOK_VERSION }} .
 
-      - name: Run Trivy vulnerability scanner for lm-webhook
+      - name: Run Trivy vulnerability scanner for lm-config-webhook
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: 'ghcr.io/${{ github.repository_owner }}/${{ env.LM_K8S_WEBHOOK_IMAGE_NAME }}:${{ env.LM_WEBHOOK_VERSION }}'
@@ -51,11 +51,11 @@ jobs:
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH,MEDIUM'
 
-      - name: Build an image for lm-reloader
+      - name: Build an image for lm-config-reloader
         run: |
           docker build --build-arg VERSION_PKG=${{ env.LM_RELOADER_VERSION_PKG }} --build-arg LM_RELOADER_VERSION=${{ env.LM_RELOADER_VERSION }} --build-arg VERSION_DATE=${{ env.VERSION_DATE }} -t ghcr.io/${{ github.repository_owner }}/${{ env.LM_RELOADER_IMAGE_NAME }}:${{ env.LM_RELOADER_VERSION }} ./lm-config-reloader/.
 
-      - name: Run Trivy vulnerability scanner for lm-reloader
+      - name: Run Trivy vulnerability scanner for lm-config-reloader
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: 'ghcr.io/${{ github.repository_owner }}/${{ env.LM_RELOADER_IMAGE_NAME }}:${{ env.LM_RELOADER_VERSION }}'
@@ -65,10 +65,10 @@ jobs:
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH,MEDIUM'
       
-      - name: Push an image for lm-webhook
+      - name: Push an image for lm-k8s-webhook
         run: |
           docker push ghcr.io/${{ github.repository_owner }}/${{ env.LM_K8S_WEBHOOK_IMAGE_NAME }}:${{ env.LM_WEBHOOK_VERSION }}
 
-      - name: Push an image for lm-reloader
+      - name: Push an image for lm-config-reloader
         run: |
           docker push ghcr.io/${{ github.repository_owner }}/${{ env.LM_RELOADER_IMAGE_NAME }}:${{ env.LM_RELOADER_VERSION }}

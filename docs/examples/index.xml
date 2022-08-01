@@ -12,10 +12,10 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://logicmonitor.github.io/lm-k8s-webhook/examples/</guid>
-      <description>You can refer the following example commands for different scenarios for deploying the lm-webhook with the helm-chart.
- Note: You should check the troubleshooting guide in case you face any issue in the deployment of the lm-webhook.
+      <description>You can refer the following example commands for different scenarios for deploying the lm-k8s-webhook with the helm-chart.
+ Note: You should check the troubleshooting guide in case you face any issue in the deployment of the lm-k8s-webhook.
    Using default tls certificate handling (using cert-manager)
-$ helm install --debug --wait -n lm-webhook \ --create-namespace \ --set cluster_name=&amp;#34;your-k8s-cluster-name&amp;#34; \ lm-webhook .     Using custom issuer other than self-signed issuer</description>
+$ helm install --debug --wait -n lm-k8s-webhook \ --create-namespace \ --set cluster_name=&amp;#34;your-k8s-cluster-name&amp;#34; \ lm-k8s-webhook .     Using custom issuer other than self-signed issuer</description>
     </item>
     
   </channel>

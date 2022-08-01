@@ -9,7 +9,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=10" />
-    <title>Additional attributes config - LM-K8s-Webhook</title>
+    <title>Additional attributes config (Optional) - LM-K8s-Webhook</title>
     <meta name="generator" content="Hugo 0.90.1" />
 
     
@@ -97,7 +97,7 @@
     </div>
     <div class="stretch">
       <div class="title">
-        Additional attributes config
+        Additional attributes config (Optional)
       </div>
     </div>
 
@@ -255,9 +255,22 @@
 
 
 
-<a  title="Additional attributes config" href="https://logicmonitor.github.io/lm-k8s-webhook/configurations/additional-attributes-config/">
+<a  title="Additional attributes config (Optional)" href="https://logicmonitor.github.io/lm-k8s-webhook/configurations/additional-attributes-config/">
 	
-	Additional attributes config
+	Additional attributes config (Optional)
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="LM Config Reloader (Optional)" href="https://logicmonitor.github.io/lm-k8s-webhook/configurations/config-reloader/">
+	
+	LM Config Reloader (Optional)
 </a>
 
 
@@ -377,10 +390,10 @@
 
 	<article class="article">
 		<div class="wrapper">
-			<h1>Additional attributes config </h1>
+			<h1>Additional attributes config (Optional) </h1>
 
 			<p>Currently as a part of the external config, user can define the custom environment variables that are to be injected into the application pods.</p>
-<p>You can download the sample external config file from here: <a href="https://github.com/logicmonitor/lm-k8s-webhook/blob/main/sampleconfig.yaml">https://github.com/logicmonitor/lm-k8s-webhook/blob/main/sampleconfig.yaml</a></p>
+<p>You can download the sample external config file from <a href="https://github.com/logicmonitor/lm-k8s-webhook/blob/main/sampleconfig.yaml">here</a></p>
 <p><strong>Example:</strong></p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="w">  </span><span class="nt">lmEnvVars</span><span class="p">:</span><span class="w">
 </span><span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w">
@@ -479,7 +492,7 @@
 Default value of <code>SERVICE_NAMESPACE</code> is the value of the pod namespace, which can be overriden, either by specifying it as a part of pod definition (if overriding is allowed) or in the external configuration.</p>
 </li>
 <li>
-<p>You can pass the resource attributes which are not getting set by the lm-webhook by defining the <code>OTEL_RESOURCE_ATTRIBUTES</code> env variable in the pod definition, which will get merged with the ones which are defined by lm-webhook.</p>
+<p>You can pass the resource attributes which are not getting set by the lm-k8s-webhook by defining the <code>OTEL_RESOURCE_ATTRIBUTES</code> env variable in the pod definition, which will get merged with the ones which are defined by lm-k8s-webhook.</p>
 </li>
 <li>
 <p>Values for <code>SERVICE_NAME</code> and <code>SERVICE_NAMESPACE</code> can also be specified in terms of pod label as shown in above example config. So that value of the specified pod label can be used as a <code>SERVICE_NAME</code> or <code>SERVICE_NAMESPACE</code>.</p>

@@ -24,7 +24,7 @@ var (
 )
 
 func main() {
-	flag.StringVar(&lmReloaderFilePath, "lmreloader-file-path", "/etc/lmreloader/config/lmreloaderconfig.yaml", "File path of lmreloader")
+	flag.StringVar(&lmReloaderFilePath, "lmconfigreloader-file-path", "/etc/lmconfigreloader/config/lmreloaderconfig.yaml", "File path of lmconfigreloader")
 	flag.StringVar(&logLevel, "log-level", "debug", "log level")
 	flag.Parse()
 
@@ -74,7 +74,7 @@ func main() {
 
 	var wg sync.WaitGroup
 
-	lmReloader := &reloader.LMReloader{
+	lmReloader := &reloader.LMConfigReloader{
 		ReloaderConfig: reloaderCfg,
 		Watcher: watcher.RemoteConfigWatcher{
 			K8sClient: k8sClient,

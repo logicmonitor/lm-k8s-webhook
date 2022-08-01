@@ -13,8 +13,8 @@ import (
 	"go.uber.org/zap"
 )
 
-// LMReloader holds the reloader config and watcher
-type LMReloader struct {
+// LMConfigReloader holds the reloader config and watcher
+type LMConfigReloader struct {
 	ReloaderConfig *config.ReloaderConfig
 	Watcher        watcher.Watcher
 	K8sClient      *config.K8sClient
@@ -22,7 +22,7 @@ type LMReloader struct {
 }
 
 // SetupProviders setups the providers and starts watching the config from providers
-func (lmReloader *LMReloader) SetupProviders(ctx context.Context) error {
+func (lmReloader *LMConfigReloader) SetupProviders(ctx context.Context) error {
 	for _, reloader := range lmReloader.ReloaderConfig.Reloaders {
 		var remoteProvider provider.RemoteProvider
 		var err error

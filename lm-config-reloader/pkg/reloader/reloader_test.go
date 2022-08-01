@@ -50,7 +50,7 @@ func TestSetupProviders(t *testing.T) {
 			ctx context.Context
 		}
 		fields struct {
-			lmreloader *LMReloader
+			lmConfigreloader *LMConfigReloader
 		}
 		wantErr bool
 	}{
@@ -59,8 +59,8 @@ func TestSetupProviders(t *testing.T) {
 			args: struct{ ctx context.Context }{
 				ctx: context.Background(),
 			},
-			fields: struct{ lmreloader *LMReloader }{
-				lmreloader: &LMReloader{
+			fields: struct{ lmConfigreloader *LMConfigReloader }{
+				lmConfigreloader: &LMConfigReloader{
 					ReloaderConfig: &config.ReloaderConfig{
 						Reloaders: []config.Reloader{
 							{
@@ -92,7 +92,7 @@ func TestSetupProviders(t *testing.T) {
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			err := test.fields.lmreloader.SetupProviders(test.args.ctx)
+			err := test.fields.lmConfigreloader.SetupProviders(test.args.ctx)
 			if err == nil && test.wantErr {
 				t.Errorf("SetupProviders() returned nil, instead of error")
 			}

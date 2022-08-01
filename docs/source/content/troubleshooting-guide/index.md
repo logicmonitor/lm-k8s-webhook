@@ -8,7 +8,7 @@ So there are two simple ways to step aside.
     * **Change to bash:** switch to bash by just entering `bash`. And then run you helm install again.
     * **noglob:** you can use noglob. 
         ```bash
-            $ noglob helm install --debug --wait -n lm-webhook \
+            $ noglob helm install --debug --wait -n lm-k8s-webhook \
             --create-namespace \
             --set cluster_name="your-k8s-cluster-name" \
             --set mutatingWebhook.objectSelector.matchLabels.tier="backend" \
@@ -20,6 +20,6 @@ So there are two simple ways to step aside.
             --set mutatingWebhook.namespaceSelector.matchExpressions[0].operator="In" \
             --set mutatingWebhook.namespaceSelector.matchExpressions[0].values[0]="dev" \
             --set mutatingWebhook.namespaceSelector.matchExpressions[0].values[1]="staging" \
-            lm-webhook .
+            lm-k8s-webhook .
         ```
 ---
